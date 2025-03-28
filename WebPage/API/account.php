@@ -3,6 +3,18 @@
 <?php
 require_once 'db.php';
 
+function create_account($tipo, $mail, $password) {
+	// registrare un account
+}
+
+function OTP() {
+	// codice OTP via mail (per registrazione e 2FA)
+}
+
+function verify() {
+	// verifica un account aziendale da parte della scuola
+}
+
 function login(&mail, &password) {
 	session_start();
 	
@@ -19,11 +31,11 @@ function login(&mail, &password) {
 	if (password_verify($password, $hashed_password)) {
 		$_SESSION['id'] = $record['IdUtente'];
 		return true;
-	else {
+	} else {
 		return false;
 	}
 	
-	// da mettere 2FA
+	// da aggiungere 2FA
 }
 
 function change_password($old_password, $new_password) {
