@@ -1,7 +1,7 @@
 <!-- Per gestire le funzioni relative agli utenti in generale --!>
 
 <?php
-include 'db.php';
+require_once 'db.php';
 
 function login(&mail, &password) {
 	session_start();
@@ -9,7 +9,7 @@ function login(&mail, &password) {
 	$tabella = 'utenti';
 	$sql = "SELECT IdUtente, Password FROM $tabella WHERE mail = ?"
 	
-	$stmt = $conn->prepare($sql);
+	$stmt = global $conn->prepare($sql);
 	$stmt->bind_param('s', $mail);
 	$stmt->execute();
 	$result = $stmt->get_result();
@@ -22,6 +22,8 @@ function login(&mail, &password) {
 	else {
 		return false;
 	}
+	
+	// da mettere 2FA
 }
 
 function change_password($old_password, $new_password) {
@@ -32,7 +34,7 @@ function change_password($old_password, $new_password) {
 	$tabella = 'utenti';
 	$sql = "SELECT Password FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
 	
-	$result = $conn->query($sql);
+	$result = global $conn->query($sql);
 	$result = $query->get_result();
 	$record = $result->fetch_assoc();
 	
@@ -42,13 +44,9 @@ function change_password($old_password, $new_password) {
 	}
 	
 	$sql = "UPDATE $tabella SET Password = ? WHERE IdUtente = {$_SESSION['id']}";
-	$stmt = $conn->prepare($sql);
+	$stmt = global $conn->prepare($sql);
 	$stmt->bind_param('s', $mail);
 	$stmt->execute();
-	$result = $stmt->get_result();
-	$record = $result->fetch_assoc();
-	
-	// Da finire
 }
 
 function logout(){
@@ -67,7 +65,7 @@ function delete_account($password) {
 	$tabella = 'utenti';
 	$sql = "SELECT Password FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
 	
-	$result = $conn->query($sql);
+	$result = global $conn->query($sql);
 	$result = $query->get_result();
 	$record = $result->fetch_assoc();
 	
@@ -77,7 +75,7 @@ function delete_account($password) {
 	}
 	
 	$sql = "DELETE FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
-	if ($conn->query($sql) === true) {
+	if (global $conn->query($sql) === true) {
 		return true;
 		session_destroy();
 	}
