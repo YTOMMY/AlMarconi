@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlMarconi</title>
+	
+<style>
+       body {
+	   
+           font-family: Arial, sans-serif;
+           display: flex;
+        justify-content: center;
+		align-items: center;
+           height: 100vh;
+           background-color: #f4f4f4;
+       
+       }.login-container {
+	   
+           background: white;
+           padding: 20px;
+           border-radius: 5px;
+           box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+           text-align: center;
+		   
+       }input {
+	   
+           width: 100%;
+           padding: 10px;
+           margin: 10px 0;
+           border: 1px solid #ccc;
+           border-radius: 5px;
+		   
+        }button {
+		
+           width: 100%;
+           padding: 10px;
+           background-color: blue;
+           color: white;
+           border: none;
+           border-radius: 5px;
+           cursor: pointer;
+ 
+       }button:hover {
+	   
+           background-color: darkblue;
+       
+       }.error {
+	   
+           color: red;
+       }
+</style>
+
+</head>
+<body
+
+	 <p><h1 text-align='center'>Benvenuto ad AlMarconi</h1></p>
+ 
+ 
+    <form id="contactForm">
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Inserisci la tua email"  required><br><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Inserisci la tua password" required><br><br>
+        
+        <button type="submit">Invia</button>
+    </form>
+
+    <div id="response"></div>
+
+
+    <script>
+        // Aggiungi un event listener per il submit del modulo
+        document.getElementById('contactForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Evita che il modulo venga inviato nel modo tradizionale
+            
+            // Ottieni i dati dal modulo
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const data = {
+                email: email,
+                password: password,
+            };
+
+            try {
+                // Effettua la richiesta POST al web service
+                const response = await fetch('api/login'), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data) // Converte l'oggetto dati in una stringa JSON
+                });
+
+                // Gestisci la risposta
+                if (response.ok) {
+                    const responseData = await response.json();
+                    document.getElementById('response').textContent = `Messaggio inviato con successo: ${responseData.status}`;
+                } else {
+                    const errorData = await response.json();
+                    document.getElementById('response').textContent = `Errore: ${errorData.error}`;
+                }
+            } catch (error) {
+                console.error('Errore di comunicazione con il web service:', error);
+                document.getElementById('response').textContent = 'Errore nella comunicazione con il server.';
+            }
+        });
+    </script>
+</body>
+</html>
