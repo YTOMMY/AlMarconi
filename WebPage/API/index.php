@@ -1,13 +1,11 @@
-<!-- Per gestisce le richieste GET, POST... --!>
+<?php	// Per gestisce le richieste GET, POST...
 
-<?php
 require_once 'account.php';
 require_once 'diplomati.php';
 require_once 'aziende.php';
 
 $request_method = $_SERVER['REQUEST_METHOD'] ?? null;
-$rquest_uri = $_SERVER['REQUEST_URI'] ?? null;	
-$content_type = $_SERVER['CONTENT_TYPE'] ?? null;
+$request_uri = $_SERVER['REQUEST_URI'] ?? null;
 $input = file_get_contents('php://input') ?? null;
 
 $path = substr($request_uri, strlen('/api'));
@@ -16,33 +14,50 @@ $path_parts = explode('/', trim($path, '/'));
 switch($path_parts) {
 	case 'login':
 		switch($request_method) {
-			case 'POST': 
-				if(content_type != 'application/json' || $input == null) {
-					header("HTTP/1.1 415 Unsupported Media Type");
-					exit;
-				}
+			case 'POST':
+				check_content($input);
 				$data = json_decode($input, true);
-				login($data['email'], $data['password']);
-				exit;
-			case default:
+				
+				if(login($data['email'], $data['password'])) {
+					$output = ['id' => 'null']; 
+				} else {
+					$id = $_SESSION['id'];
+					$output = ['id' => $id, 'verificato' => is_verified($id)];
+				}
+				break;
+			default:
 				method_error(['POST']);
-				exit;
 		}
 		break;
+	default:
+		not_found_error();
+}
+
+if(isset($output)) {
 	
-	case default:
-		header('HTTP/1.1 404 Not Found');
-		echo 'Pagina non trovata';
-		exit;
+}
+
+function not_found_error() {
+	header('HTTP/1.1 404 Not Found');
+	echo 'Pagina non trovata';
+	exit;
 }
 
 function method_error($consentiti) {
-	$consentiti_string = implode(', ', $allowed_methods)
+	$consentiti_string = implode(', ', $consentiti);
 	header('HTTP/1.1 405 Method Not Allowed');
-	header("Allow: $consentiti_string");  // Invia i metodi consentiti
+	header("Allow: $consentiti_string");
 	echo "Metodo non consentito. I metodi consentiti sono: $consentiti_string";
+	exit;
 }
 
+function check_content($input) {
+	$content_type = $_SERVER['CONTENT_TYPE'] ?? null;
+	if (content_type != 'application/json' || $input == null) {
+		header("HTTP/1.1 415 Unsupported Media Type");
+		exit;
+	}
+}
 
 /*
 if ($request_method === 'POST') {
