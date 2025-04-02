@@ -8,6 +8,7 @@ require_once 'aziende.php';
 $request_method = $_SERVER['REQUEST_METHOD'] ?? null;
 $rquest_uri = $_SERVER['REQUEST_URI'] ?? null;	
 $content_type = $_SERVER['CONTENT_TYPE'] ?? null;
+$input = file_get_contents('php://input') ?? null;
 
 $path = substr($request_uri, strlen('/api'));
 $path_parts = explode('/', trim($path, '/'));
@@ -16,13 +17,12 @@ switch($path_parts) {
 	case 'login':
 		switch($request_method) {
 			case 'POST': 
-				if(content_type != 'application/json') {
+				if(content_type != 'application/json' || $input == null) {
 					header("HTTP/1.1 415 Unsupported Media Type");
 					exit;
 				}
-				
-				//finire
-				
+				$data = json_decode($input, true);
+				login($data['email'], $data['password']);
 				exit;
 			case default:
 				method_error(['POST']);

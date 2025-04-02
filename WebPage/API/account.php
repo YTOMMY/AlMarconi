@@ -19,7 +19,7 @@ function login(&mail, &password) {
 	session_start();
 	
 	$tabella = 'utenti';
-	$sql = "SELECT IdUtente, Password FROM $tabella WHERE mail = ?"
+	$sql = "SELECT IdUtente, Password FROM $tabella WHERE mail = ? AND Verificato = 1"
 	
 	$stmt = global $conn->prepare($sql);
 	$stmt->bind_param('s', $mail);
