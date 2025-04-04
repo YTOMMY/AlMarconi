@@ -14,8 +14,29 @@ function check_email($email) {
 	}
 }
 
-function create_account($tipo, $email, $password) {
-	// registrare un account
+// curl -i -h "Content-type: application/json" http://localhost/AlMarconi/WebService/api.php/register -d "{\"tipo\": \"studente\", \"mail\": \"prova@gmail.com\", \"password\": \"12345678\"}"
+
+function create_account($data) {
+	global $conn;
+	echo 'aaaaa';
+	if($data['tipo'] != 'admin') {
+		$table = 'Utenti';
+		$sql = 'INSERT INTO Utenti(Mail, ' . ($data['telefono'] != null ? 'Telefono, ' : '') . 'HashPassword) ' .
+			   'VALUES(?, ?, ' . ($data['telefono'] != null ? '?' : '') . ');';
+		$hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
+		echo $sql;
+		
+		$stmt = $conn->prepare($sql);
+		if($data['telefono'] != null) {
+			$stmt->bind_param('sss', $data['mail'], $data['telefono'], $hashed_password);
+		} else {
+			$stmt->bind_param('ss', $data['mail'], $hashed_password);
+		}
+		$stmt->execute();
+	} else {
+	
+	}
+	return true;		
 }
 
 function OTP() {
@@ -30,7 +51,7 @@ function login($email, $password) {
 	session_start();
 	
 	global $conn;
-	$tabella = 'utenti';
+	$tabella = 'Utenti';
 	$sql = "SELECT IdUtente, HashPassword FROM $tabella WHERE Mail = ?";
 	
 	$stmt = $conn->prepare($sql);
@@ -42,6 +63,7 @@ function login($email, $password) {
 	$hashed_password = $record['HashPassword'];
 	if (password_verify($password, $hashed_password)) {
 		$_SESSION['id'] = $record['IdUtente'];
+		echo 'login';
 		return true;
 	} else {
 		return false;
@@ -52,7 +74,7 @@ function login($email, $password) {
 
 function is_verified($id) {
 	global $conn;
-	$tabella = 'utenti';
+	$tabella = 'Utenti';
 	$sql = "SELECT Verificato FROM $tabella WHERE IdUtente = ?";
 	
 	$stmt = $conn->prepare($sql);
@@ -76,7 +98,7 @@ function change_password($old_password, $new_password) {
 	}
 	
 	global $conn;
-	$tabella = 'utenti';
+	$tabella = 'Utenti';
 	$sql = "SELECT HashPassword FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
 	
 	$result = $conn->query($sql);
@@ -108,14 +130,14 @@ function delete_account($password) {
 	}
 	
 	global $conn;
-	$tabella = 'utenti';
-	$sql = "SELECT Password FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
+	$tabella = 'Utenti';
+	$sql = "SELECT HashPassword FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
 	
 	$result = $conn->query($sql);
 	$result = $query->get_result();
 	$record = $result->fetch_assoc();
 	
-	$hashed_password = $record['Password'];
+	$hashed_password = $record['HashPassword'];
 	if (!password_verify($password, $hashed_password)) {
 		return false;
 	}
