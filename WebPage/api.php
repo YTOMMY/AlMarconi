@@ -4,6 +4,7 @@ require_once 'backend/account.php';
 require_once 'backend/diplomati.php';
 require_once 'backend/aziende.php';
 
+session_start();
 $request_method = $_SERVER['REQUEST_METHOD'] ?? null;
 $request_uri = $_SERVER['REQUEST_URI'] ?? null;
 $input = file_get_contents('php://input') ?? null;
@@ -23,10 +24,10 @@ switch($uri[0]) {
 				$data = json_decode($input, true);
 				
 				if(login($data['email'], $data['password'])) {
-					$output = ['id' => 'null']; 
-				} else {
 					$id = $_SESSION['id'];
 					$output = ['id' => $id, 'verificato' => is_verified($id)];
+				} else {
+					$output = ['id' => 'null']; 
 				}
 				break;
 			default:
@@ -42,7 +43,6 @@ switch($uri[0]) {
 				if(create_account($data)) {
 				} else {
 				}
-				$output = '{}';
 				break;
 			default:
 				method_error(['POST']);

@@ -8,8 +8,8 @@
   <h2>Registrazione</h2>
 
   <form id="postForm">
-    <label for="mail">Email:</label><br>
-    <input type="email" id="mail" name="mail" required><br><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required><br><br>
 
     <label for="telefono">Telefono:</label><br>
     <input type="text" id="telefono" name="telefono" required><br><br>
@@ -34,7 +34,7 @@
       e.preventDefault();
 
       const data = {
-        mail: document.getElementById('mail').value,
+        email: document.getElementById('email').value,
         telefono: document.getElementById('telefono').value,
         password: document.getElementById('password').value,
         tipo: document.getElementById('tipo').value
