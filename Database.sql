@@ -15,19 +15,20 @@ CREATE TABLE Utenti(
 	HashPassword VARCHAR(60) NOT NULL,
 	2FA BIT NOT NULL DEFAULT 1,
 	Verificato BIT NOT NULL DEFAULT 0,
+	DataCreazione DATE NOT NULL,
 
 	PRIMARY KEY(IdUtente)
 );
 CREATE TABLE Citta(
-	IdCitta INT(6) AUTO_INCREMENT NOT NULL,
+	IdCitta INT(5) AUTO_INCREMENT NOT NULL,
 	Cap INT(5) NOT NULL,
-	Nome VARCHAR(30) NOT NULL,
+	Nome VARCHAR(50) NOT NULL,
 	Paese VARCHAR(30) NOT NULL,
 
 	PRIMARY KEY(IdCitta)
 );
 CREATE TABLE Indirizzi(
-	IdIndirizzo INT(6)	NOT NULL AUTO_INCREMENT,
+	IdIndirizzo INT(7)	NOT NULL AUTO_INCREMENT,
 	Via VARCHAR(30) NOT NULL,
 	Civico INT(6) NOT NULL,
 	Citta INT(6) NOT NULL,
@@ -44,7 +45,6 @@ CREATE TABLE Studenti(
 	DataNascita DATE NOT NULL,
 	IndirizzoScolastico VARCHAR(30) NOT NULL,
 	Voto INT(3) NOT NULL,
-	DataCreazione DATE NOT NULL,
 	Citta INT(6) NOT NULL,
 	Domicilio INT(6) NULL,
 	Residenza INT(6) NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE Studenti(
 	FOREIGN KEY(Residenza) REFERENCES Indirizzi(IdIndirizzo)
 );
 CREATE TABLE Abilita(
-	IdAbilita INT(6) AUTO_INCREMENT NOT NULL,
+	IdAbilita INT(7) AUTO_INCREMENT NOT NULL,
 	Descrizione TEXT NOT NULL,
 	IdUtente INT(6) NOT NULL,
 
@@ -96,8 +96,8 @@ CREATE TABLE Annunci(
 	AreaDisciplinare VARCHAR(30) NOT NULL,
 	AbilitaRichieste TEXT NULL,
 	DataPubblicazione DATE NOT NULL,
-	DataScadenza DATE NOT NULL,
-	MaxIscrizioni INT(6) NOT NULL,
+	DataScadenza DATE,
+	MaxIscrizioni INT(6),
 	Azienda INT(6) NOT NULL,
 	Indirizzo INT(6) NOT NULL,
 
