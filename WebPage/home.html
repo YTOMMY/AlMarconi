@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -218,3 +219,98 @@
     
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home-AlMarconi</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: grid;
+            justify-content: center;
+            height: 50vh;
+            margin: 0; /* Rimuoviamo i margini predefiniti */
+            padding: 0; /* Rimuoviamo i padding predefiniti */
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 100px;  /* Imposta la larghezza dell'immagine */
+            height: auto;  /* Mantenere l'aspect ratio dell'immagine */
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            display: block;  /* I bottoni saranno blocchi (l'intero link occupa tutta la larghezza) */
+            width: 200px;    /* Imposta la larghezza fissa per i bottoni */
+            padding: 25px;
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: black;
+            background-color: white;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            text-align: center; /* Centra il testo all'interno del bottone */
+        }
+
+        .btn:hover {
+            background-color: #005f99; /* Azzurro scuro */
+            color: white;
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+<body>
+    
+    <a href="home.html"><img src="logo.jpeg" alt="Logo" class="logo"></a>
+    <p><h1 text-align='center'>Home</h1></p>
+    <div id="pagina"></div>
+
+    <script>
+        // Recupero userID, validità e tipo account salvato
+        const userId = localStorage.getItem("userId");
+        const verificato = localStorage.getItem("verificato");
+        const tipoUtente = localStorage.getItem("tipoUtente");
+
+        if(verificato == 0) {
+            document.getElementById("pagina").innerHTML = `
+                <p>Account in attesa di validazione</p>
+            `;
+        } else {
+            if(tipoUtente == "studente") {
+                document.getElementById("pagina").innerHTML = `
+                    <a href="tutteAziende.html" class="btn">Tutte le aziende</a>
+                    </br><a href="annunci.html" class="btn">Annunci</a>
+                    <br><a href="profilo.html" class="btn">Profilo</a>
+                    <br><a href="impostazioni.html" class="btn">Impostazioni</a>    
+                `;
+            }
+            if(tipoUtente == "azienda") {
+                document.getElementById("pagina").innerHTML = `
+                    <a href="tuttiStudenti.html" class="btn">Tutti gli studenti</a>
+                    </br><a href="nuovoAnnuncio.html" class="btn">Nuovo annuncio</a>
+                    </br><a href="mieiAnnunci.html" class="btn">I miei annunci</a>
+                    <br><a href="profilo.html" class="btn">Profilo</a>
+                    <br><a href="impostazioni.html" class="btn">Impostazioni</a>    
+                `;
+            }
+        }
+    </script>
+    
+</body>
+</html>
+>>>>>>> 83478f27ea414063b61699d8b7c073532039818d

@@ -1,17 +1,22 @@
-<?php	// Per gestisce le richieste GET, POST...
+<?php	// Per gestire le richieste GET, POST...
 
-require_once 'account.php';
-require_once 'diplomati.php';
-require_once 'aziende.php';
+require_once 'backend/account.php';
+require_once 'backend/diplomati.php';
+require_once 'backend/aziende.php';
 
+session_start();
 $request_method = $_SERVER['REQUEST_METHOD'] ?? null;
 $request_uri = $_SERVER['REQUEST_URI'] ?? null;
 $input = file_get_contents('php://input') ?? null;
 
-$path = substr($request_uri, strlen('/api'));
-$path_parts = explode('/', trim($path, '/'));
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$uri = explode('/', $uri);
+while($uri[0] != 'api.php') {
+	array_shift($uri);
+}
+array_shift($uri);
 
-switch($path_parts) {
+switch($uri[0]) {
 	case 'login':
 		switch($request_method) {
 			case 'POST':
@@ -19,10 +24,24 @@ switch($path_parts) {
 				$data = json_decode($input, true);
 				
 				if(login($data['email'], $data['password'])) {
-					$output = ['id' => 'null']; 
-				} else {
 					$id = $_SESSION['id'];
 					$output = ['id' => $id, 'verificato' => is_verified($id)];
+				} else {
+					$output = ['id' => 'null']; 
+				}
+				break;
+			default:
+				method_error(['POST']);
+		}
+		break;
+	case 'register':
+		switch($request_method) {
+			case 'POST':
+				check_content($input);
+				$data = json_decode($input, true);
+				
+				if(create_account($data)) {
+				} else {
 				}
 				break;
 			default:
@@ -34,7 +53,7 @@ switch($path_parts) {
 }
 
 if(isset($output)) {
-	
+	echo json_encode($output);
 }
 
 function not_found_error() {
@@ -53,7 +72,7 @@ function method_error($consentiti) {
 
 function check_content($input) {
 	$content_type = $_SERVER['CONTENT_TYPE'] ?? null;
-	if (content_type != 'application/json' || $input == null) {
+	if ($content_type != 'application/json' || $input == null) {
 		header("HTTP/1.1 415 Unsupported Media Type");
 		exit;
 	}

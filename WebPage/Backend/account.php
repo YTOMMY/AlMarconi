@@ -5,17 +5,53 @@ function check_email($email) {
 	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 		$domain = substr(strrchr($email, "@"), 1);
 		if (checkdnsrr($domain, "MX")) {
-			return true;
+			return 'valid';
 		} else {
-			return false;
+			return 'invalid';
 		}
 	} else {
-		return false;
+		$domain = substr(strrchr($email, "@"), 1);
+		if(ctype_digit($domain)) {
+			return 'admin';
+		} else {
+			return 'invalid';
+		}
 	}
 }
 
-function create_account($tipo, $email, $password) {
-	// registrare un account
+function create_account($data) {
+	global $conn;
+	if($data['tipo'] != 'admin') {
+		if(check_email($data['email']) != 'valid') {
+			return false;
+		}
+		
+		if ($data['tipo'] == 'studente') {
+			//da fare
+		} else if ($data['tipo'] == 'azienda'){
+			//da fare
+		}
+		
+		$sql_utenti = 'INSERT INTO Utenti(Mail, ' . ($data['telefono'] != null ? 'Telefono, ' : '') . 'HashPassword) ' .
+			   'VALUES(?, ?, ' . ($data['telefono'] != null ? '?' : '') . ');';
+		$hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
+		
+		$stmt = $conn->prepare($sql);
+		if($data['telefono'] != null) {
+			$stmt->bind_param('sss', $data['email'], $data['telefono'], $hashed_password);
+		} else {
+			$stmt->bind_param('ss', $data['email'], $hashed_password);
+		}
+		$stmt->execute();
+		
+		
+	} else {
+		if(check_email($data['email']) != 'admin') {
+			return false;
+		}
+		
+	}
+	return true;		
 }
 
 function OTP() {
@@ -27,10 +63,8 @@ function verify() {
 }
 
 function login($email, $password) {
-	session_start();
-	
 	global $conn;
-	$tabella = 'utenti';
+	$tabella = 'Utenti';
 	$sql = "SELECT IdUtente, HashPassword FROM $tabella WHERE Mail = ?";
 	
 	$stmt = $conn->prepare($sql);
@@ -40,34 +74,35 @@ function login($email, $password) {
 	$record = $result->fetch_assoc();
 
 	$hashed_password = $record['HashPassword'];
-	if (password_verify($password, $hashed_password)) {
-		$_SESSION['id'] = $record['IdUtente'];
-		return true;
-	} else {
+	if (!password_verify($password, $hashed_password)) {
 		return false;
 	}
+	$_SESSION['id'] = $record['IdUtente'];
 	
+	return true;
 	// da aggiungere 2FA
 }
 
 function is_verified($id) {
 	global $conn;
-	$tabella = 'utenti';
+	$tabella = 'Utenti';
 	$sql = "SELECT Verificato FROM $tabella WHERE IdUtente = ?";
 	
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param('i', $id);
 	$stmt->execute();
-	$result = $stmt->execute();
+	$result = $stmt->get_result();
 	
-	if (!($record = $result->fetch_assoc())) {
+	if (!$result) {
 		return null;
 	}
-	if($record['Verifiacto'] == 1) {
+	$record = $result->fetch_assoc();
+	if($record['Verificato'] == 1) {
 		return true;
 	} else {
 		return false;
 	}
+	return true;
 }
 
 function change_password($old_password, $new_password) {
@@ -76,7 +111,7 @@ function change_password($old_password, $new_password) {
 	}
 	
 	global $conn;
-	$tabella = 'utenti';
+	$tabella = 'Utenti';
 	$sql = "SELECT HashPassword FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
 	
 	$result = $conn->query($sql);
@@ -108,14 +143,14 @@ function delete_account($password) {
 	}
 	
 	global $conn;
-	$tabella = 'utenti';
-	$sql = "SELECT Password FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
+	$tabella = 'Utenti';
+	$sql = "SELECT HashPassword FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
 	
 	$result = $conn->query($sql);
 	$result = $query->get_result();
 	$record = $result->fetch_assoc();
 	
-	$hashed_password = $record['Password'];
+	$hashed_password = $record['HashPassword'];
 	if (!password_verify($password, $hashed_password)) {
 		return false;
 	}
