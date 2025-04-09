@@ -21,13 +21,17 @@ function check_email($email) {
 
 function create_account($data) {
 	global $conn;
+	
 	if($data['tipo'] != 'admin') {
 		if(check_email($data['email']) != 'valid') {
 			return false;
 		}
 		
 		if ($data['tipo'] == 'studente') {
-			//da fare
+			$attr = ['CodiceFiscale', 'Nome', 'Cognome'
+			if(isset(
+			$sql = 'INSERT INTO Studenti(' . implode(",", $array) . ')'
+			
 		} else if ($data['tipo'] == 'azienda'){
 			//da fare
 		}
@@ -49,7 +53,7 @@ function create_account($data) {
 		if(check_email($data['email']) != 'admin') {
 			return false;
 		}
-		
+		//da fare
 	}
 	return true;		
 }
