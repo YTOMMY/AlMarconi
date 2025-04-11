@@ -27,16 +27,7 @@ function create_account($data) {
 			return false;
 		}
 		
-		if ($data['tipo'] == 'studente') {
-			$attr = ['CodiceFiscale', 'Nome', 'Cognome'
-			if(isset(
-			$sql = 'INSERT INTO Studenti(' . implode(",", $array) . ')'
-			
-		} else if ($data['tipo'] == 'azienda'){
-			//da fare
-		}
-		
-		$sql_utenti = 'INSERT INTO Utenti(Mail, ' . ($data['telefono'] != null ? 'Telefono, ' : '') . 'HashPassword) ' .
+		$sql = 'INSERT INTO Utenti(Mail, ' . ($data['telefono'] != null ? 'Telefono, ' : '') . 'HashPassword) ' .
 			   'VALUES(?, ?, ' . ($data['telefono'] != null ? '?' : '') . ');';
 		$hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
 		
@@ -48,6 +39,49 @@ function create_account($data) {
 		}
 		$stmt->execute();
 		
+		$sql = 'SELECT IdUtente FROM Utenti WHERE Mail = ?';
+		$stmt = $conn->prepare($sql);
+		$stmt->bind_param('s', $data['email']);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$record = $result->fetch_assoc();
+		$id = $record['IdUtente'];	
+		
+		if ($data['tipo'] == 'studente') {
+			$attr = ['IdUtente', 'CodiceFiscale', 'Nome', 'Cognome', 'DataNascita', 'Nazionalita', 'ResidenzaCitta', 'ResidenzaVia', 'ResidenzaCivico'];
+			$values = [$id, $data['cf'], $data['nome'], $data['cognome'], $data['nascita'], $data['nazionalita'], $data['residenza']['citta'], $data['residenza']['via'], $data['residenza']['civico']];
+			$values_type = 'isssssisi';
+			if(isset($data['sesso'])) {
+				array_push($values, $data['sesso']);
+				$values_type .= 's';
+				array_push($attr, 'Sesso');
+			}
+			if(isset($data['domicilio'])) {
+				array_push($values, $data['domicilio']['citta'], $data['domicilio']['via'], $data['domicilio']['civico']);
+				$values_type .= 'isi';
+				array_push($attr, 'DomicilioCitta', 'DomicilioVia', 'DomicilioCivico');
+			}
+			if(isset($data['indirizzoScolastico'])) {
+				array_push($values, $data['indirizzoScolastico']);
+				$values_type .= 's';
+				array_push($attr, 'IndirizzoScolastico');
+			}
+			$sql = 'INSERT INTO Studenti(' . implode(", ", $attr) . ') VALUES (' . str_repeat('?, ', count($attr)-1) . '?);';
+			$stmt = $conn->prepare($sql);
+			$stmt->bind_param($values_type, ...$values);
+			$stmt->execute();
+			
+		} else if ($data['tipo'] == 'azienda'){
+			$sql = "INSERT INTO Aziende(IdUtente, IVA, Nome, Settore, ReferenteCodiceFiscale, ReferenteNome, ReferenteCognome, ReferenteDataNascita) VALUES($id, ?, ?, ?, ?, ?, ?, ?);";
+			$stmt = $conn->prepare($sql);
+			$stmt->bind_param('issssss', $data['iva'], $data['nomeAzienda'], $data['settore'], $data['cf'], $data['nome'], $data['cognome'], $data['nascita']);
+			$stmt->execute();
+			
+			$sql = "INSERT INTO Sedi(Azienda, Citta, Via, Civico, Legale) VALUES($id, ?, ?, ?, 1)";
+			$stmt = $conn->prepare($sql);
+			$stmt->bind_param('isi', $data['sede']['citta'], $data['sede']['via'], $data['sede']['civico']);
+			$stmt->execute();
+		}
 		
 	} else {
 		if(check_email($data['email']) != 'admin') {
@@ -107,6 +141,22 @@ function is_verified($id) {
 		return false;
 	}
 	return true;
+}
+
+function get_type($id) {
+	global $conn;
+	$sql = 'SELECT idUtente FROM aziende WHERE idUtente = ?';
+	
+	$stmt = $conn->prepare($sql);
+	$stmt->bind_param('i', $id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+
+	if ($result->num_rows > 0) {
+		return 'azienda';
+	} else {
+		return 'studente';
+	}
 }
 
 function change_password($old_password, $new_password) {

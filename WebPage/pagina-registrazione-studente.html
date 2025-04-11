@@ -92,55 +92,63 @@
 
 	<div class="form-container">
 		<h2>Registrazione Studente</h2>
-		<form action="registrazione-completata.html" method="post">
-			<label for="nome">Nome</label>
-			<input type="text" id="nome" name="nome" required>
+		<form id="registrazioneForm">
+			<label for="nome">Nome*</label>
+			<input type="text" id="nome" required>
 
-			<label for="cognome">Cognome</label>
-			<input type="text" id="cognome" name="cognome" required>
+			<label for="cognome">Cognome*</label>
+			<input type="text" id="cognome" required>
 
-			<label for="email">Email</label>
-			<input type="email" id="email" name="email" required>
+			<label for="email">Email*</label>
+			<input type="email" id="email" required>
 
-			<label for="telefono">Telefono (facoltativo)</label>
-			<input type="tel" id="telefono" name="telefono">
+			<label for="telefono">Telefono</label>
+			<input type="tel" id="telefono">
 
-			<label for="data-nascita">Data di Nascita</label>
-			<input type="date" id="data-nascita" name="data-nascita" required>
+			<label for="data-nascita">Data di Nascita*</label>
+			<input type="date" id="data-nascita" required>
 
-			<label for="luogo-nascita">Nazionalità</label>
-			<input type="text" id="luogo-nascita" name="luogo-nascita" required>
+			<label for="nazionalita">Nazionalità*</label>
+			<input type="text" id="nazionalita" required>
 			
-			<label for="residenza">Residenza</label>
-			<input type="text" id="residenza" name="residenza" required>
+			<label for="citta-residenza">Citta di residenza*</label>
+			<input type="text" id="citta-residenza" required>
+			<label for="via-residenza">Via di residenza*</label>
+			<input type="text" id="via-residenza" required>
+			<label for="civico-residenza">Civico di Residenza*</label>
+			<input type="text" id="civico-residenza" required>
 
 			<label>
 				<input type="checkbox" id="diverso-domicilio"> Il domicilio è diverso dalla residenza
 			</label>
 
 			<div id="campo-domicilio" class="hidden">
-				<label for="domicilio">Domicilio</label>
-				<input type="text" id="domicilio" name="domicilio">
+				<label for="domicilio">Citta di domicilio</label>
+				<input type="text" id="citta-domicilio">
+				<label for="domicilio">Via di domicilio</label>
+				<input type="text" id="via-domicilio">
+				<label for="domicilio">Civico di domicilio</label>
+				<input type="text" id="civico-domicilio">
 			</div>
 
-			<label for="codice-fiscale">Codice Fiscale</label>
+			<label for="codice-fiscale">Codice Fiscale*</label>
 			<input type="text" id="codice-fiscale" name="codice-fiscale" required>
 
 			<label>Sesso</label>
-			<label><input type="radio" name="sesso" value="Maschio" required> Maschio</label>
-			<label><input type="radio" name="sesso" value="Femmina"> Femmina</label>
-			<label><input type="radio" name="sesso" value="Altro">Altro</label>
+			<label><input type="radio" name="sesso" value="M"> Maschio</label>
+			<label><input type="radio" name="sesso" value="F"> Femmina</label>
+			<label><input type="radio" name="sesso" value="A">Altro</label>
 			
 			<label for="Indirizzo-seguito">Indirizzo Seguito</label>
 			<input type="text" id="Indirizzo-seguito" name="Indirizzo-seguito">
 
-			<label for="password">Password</label>
+			<label for="password">Password*</label>
 			<div class="password-container">
 				<input type="password" id="password" name="password" required>
 				<img src="occhio.png" alt="Occhio" class="eye-icon" id="togglePassword">
 			</div>
 
-			<label for="conferma-password">Conferma Password</label>
+			<label for="conferma-password">Conferma Password*</label>
 			<div class="password-container">
 				<input type="password" id="conferma-password" name="conferma-password" required>
 				<img src="occhio.png" alt="Occhio" class="eye-icon" id="toggleConfermaPassword">
@@ -167,7 +175,6 @@
 		togglePassword.addEventListener('click', () => {
 			const type = password.type === 'password' ? 'text' : 'password';
 			password.type = type;
-			confermaPassword.type = type;
 		});
 
 		toggleConfermaPassword.addEventListener('click', () => {
@@ -202,7 +209,67 @@
 				campoDomicilio.classList.add('hidden');
 			}
 		});
-	</script>
+		
+		window.addEventListener('pageshow', () => {
+			// Svuota i campi ogni volta che la pagina viene visualizzata (anche da cache)
+			document.getElementById('email').value = '';
+			document.getElementById('password').value = '';
+			document.getElementById('response').textContent = '';
+		});
+		
+		document.getElementById('registrazioneForm').addEventListener('submit', async function(e) {
+			e.preventDefault(); // Impedisce l'invio predefinito del form (quindi la ricarica della pagina)
+			
+			// Recupero dei dati
+			const data = {
+				email: document.getElementById('email').value,
+				password: document.getElementById('password').value,
+				telefono: document.getElementById('telefono').value,
+				tipo: 'studente',
+				cf: document.getElementById('codice-fiscale').value,
+				nome: document.getElementById('nome').value,
+				cognome: document.getElementById('cognome').value,
+				sesso: (document.querySelector('input[name="sesso"]:checked')?.value || null), // Cambia il recupero del valore del sesso
+				nascita: document.getElementById('data-nascita').value,
+				nazionalita: document.getElementById('nazionalita').value,
+				residenza: {
+					citta: document.getElementById('citta-residenza').value,
+					via: document.getElementById('via-residenza').value,
+					civico: document.getElementById('civico-residenza').value
+				},
+				domicilio: {
+					citta: document.getElementById('citta-domicilio').value,
+					via: document.getElementById('via-domicilio').value,
+					civico: document.getElementById('civico-domicilio').value
+				},
+				indirizzoScolastico: document.getElementById('Indirizzo-seguito').value
+			};
 
+			document.getElementById('response').textContent = JSON.stringify(data);
+
+			try {
+				const response = await fetch('api.php/register', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(data)
+				});
+
+				const responseData = await response.json();
+
+				if (response.ok) {
+					if(responseData.id != 'null') {
+						// Salvo i dati nel localStorage
+						localStorage.setItem('userId', responseData.id);
+						localStorage.setItem('verificato', responseData.verificato);
+						localStorage.setItem('tipo', responseData.tipo);
+						window.location.href = "index.html";
+					}
+
+			} catch (error) {
+			}
+		});
+	</script>
 </body>
 </html>

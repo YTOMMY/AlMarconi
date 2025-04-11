@@ -126,9 +126,9 @@
 
 	<script>
 		// Recupera i valori dal localStorage
-		const userId = 0; //localStorage.getItem("userId");
-		const verificato = 0; //localStorage.getItem("verificato");
-		const tipo = ""; //localStorage.getItem("tipo");
+		const userId = localStorage.getItem("userId");
+		const verificato = localStorage.getItem("verificato");
+		const tipo = localStorage.getItem("tipo");
 
 		// Se userId NON esiste, mostra il messaggio di accesso
 		if (!userId) {

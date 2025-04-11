@@ -99,8 +99,8 @@
 			<label for="cognome">Settore</label>
 			<input type="text" id="cognome" name="cognome" required>
 			
-			<label for="data-nascita">Data di Nascita Referente</label>
-			<input type="date" id="data-nascita" name="data-nascita" required>
+			<label for="indirizzo">Indirizzo sede legale</label>
+			<input type="text" id="indirizzo" name="indirizzo" required>
 			
 			<label for="nome">Nome Referente</label>
 			<input type="text" id="nome" name="nome" required>
@@ -108,11 +108,11 @@
 			<label for="cognome">Cognome Referente</label>
 			<input type="text" id="cognome" name="cognome" required>
 			
+			<label for="data-nascita">Data di Nascita Referente</label>
+			<input type="date" id="data-nascita" name="data-nascita" required>
+			
 			<label for="email">Email Referente</label>
 			<input type="email" id="email" name="email" required>
-			
-			<label for="indirizzo">Indirizzo sede legale</label>
-			<input type="text" id="indirizzo" name="indirizzo" required>
 			
 			<label for="codice-fiscale">Codice Fiscale Referente</label>
 			<input type="text" id="codice-fiscale" name="codice-fiscale" required>
@@ -183,7 +183,44 @@
 
 			errore.textContent = "";
 		});
-	</script>
+		
+		document.getElementById('postForm').addEventListener('submit', function(e) {
+		e.preventDefault();
 
-</body>
+      const data = {
+	  
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        tipo: document.getElementById('tipo').value
+		
+      };
+
+      const jsonData = JSON.stringify(data, null, 2);
+      document.getElementById('sentJson').textContent = jsonData;
+
+      fetch('http://localhost/AlMarconi/WebPage/api.php/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+		
+        body: JSON.stringify(data)
+		
+      })
+	  
+      .then(response => response.text()) // <<< trattiamo la risposta come testo
+      .then(result => {
+        document.getElementById('response').textContent = result;
+		
+      })
+	  
+      .catch(error => {
+	  
+        document.getElementById('response').textContent = 'Errore: ' + error;
+		
+      });
+    });
+	
+		</script>
+	</body>
 </html>

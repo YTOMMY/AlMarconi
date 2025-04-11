@@ -42,10 +42,10 @@ CREATE TABLE Studenti(
 	Voto INT(3) NOT NULL,
 	Descrizione TEXT,
 	ResidenzaCitta INT(5) NOT NULL,
-	ResidenzaVia INT(7) NOT NULL,
+	ResidenzaVia VARCHAR(50) NOT NULL,
 	ResidenzaCivico INT(7) NOT NULL,
 	DomicilioCitta INT(5) NOT NULL,
-	DomicilioVia INT(7),
+	DomicilioVia VARCHAR(50),
 	DomicilioCivico INT(7),
 	
 	PRIMARY KEY(IdUtente),
@@ -81,7 +81,7 @@ CREATE TABLE Sedi(
 	IdSede INT(6) NOT NULL AUTO_INCREMENT,
 	Azienda INT(6) NOT NULL,
 	Citta INT(5) NOT NULL,
-	Via VARCHAR(30) NOT NULL,
+	Via VARCHAR(50) NOT NULL,
 	Civico INT(6) NOT NULL,
 	Legale BIT(1) NOT NULL,
 	
@@ -115,3 +115,5 @@ CREATE TABLE Candidarsi(
 	FOREIGN KEY (IdStudente) REFERENCES Studenti(IdUtente),
 	FOREIGN KEY (IdAnnuncio) REFERENCES Annunci(IdAnnuncio)
 );
+
+INSERT INTO citta(Cap, Nome, Provincia, Paese) VALUES(76433, "Peccioli2", "RE", "Metz");

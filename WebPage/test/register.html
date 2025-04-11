@@ -37,9 +37,56 @@
         email: document.getElementById('email').value,
         telefono: document.getElementById('telefono').value,
         password: document.getElementById('password').value,
-        tipo: document.getElementById('tipo').value
+        
+		tipo: 'azienda',
+		iva: 12345679810,
+		nomeAzienda: 'Chitarre da fuoco',
+		settore: 'Bellico',
+		cf: 'MTTFRN06A12G843R',
+		nome: 'Mattia',
+		cognome: 'Faraoni',
+		nascita: '2006-01-12',
+		sede: {
+			citta: 1,
+			via: "Dell' azienda del re",
+			civico: 2
+		}
       };
-
+	  /*
+	  tipo: 'studente',
+		cf: 'MTTFRN06A12G843R',
+		nome: 'Mattia',
+		cognome: 'Faraoni',
+		sesso: 'M',
+		nascita: '2006-01-12',
+		nazionalita: 'Italia',
+		residenza: {
+			citta: 1,
+			via: 'Del Re',
+			civico: 1
+		},
+		domicilio: {
+			citta: 1,
+			via: 'Della Regina',
+			civico: 232
+		},
+		indirizzoScolastico: 'Poligono'
+		*/
+	  
+		/*
+		tipo: 'azienda',
+		iva: 12345679810,
+		nomeAzienda: 'Chitarre da fuoco',
+		cf: 'MTTFRN06A12G843R',
+		nome: 'Mattia',
+		cognome: 'Faraoni',
+		nascita: '2006-01-12',
+		sede: {
+			citta: 1,
+			via: 'Dell'azienda del re',
+			civico: 2
+		}
+		*/
       const jsonData = JSON.stringify(data, null, 2);
       document.getElementById('sentJson').textContent = jsonData;
 

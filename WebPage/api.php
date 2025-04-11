@@ -25,7 +25,7 @@ switch($uri[0]) {
 				
 				if(login($data['email'], $data['password'])) {
 					$id = $_SESSION['id'];
-					$output = ['id' => $id, 'verificato' => is_verified($id)];
+					$output = ['id' => $id, 'verificato' => is_verified($id), 'tipo' => get_type($id)];
 				} else {
 					$output = ['id' => 'null']; 
 				}
@@ -41,7 +41,9 @@ switch($uri[0]) {
 				$data = json_decode($input, true);
 				
 				if(create_account($data)) {
+					$output = ['id' => $id, 'verificato' => is_verified($id), 'tipo' => get_type($id)];
 				} else {
+					$output = ['id' => 'null'];
 				}
 				break;
 			default:

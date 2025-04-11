@@ -81,7 +81,7 @@
 
     <h1>Login</h1>
     
-    <form id="contactForm">
+    <form id="loginForm">
         <div class="login-container">
             <label for="email">Email:</label>
             <input type="email" id="email" placeholder="Inserisci la tua email" required><br><br>
@@ -101,50 +101,50 @@
     </div>
 
     <script>
-        // Aggiungi un event listener per il submit del modulo
-        document.getElementById('contactForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Evita che il modulo venga inviato nel modo tradizionale
-            
-            // Ottieni i dati dal modulo
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+		window.addEventListener('pageshow', () => {
+			// Svuota i campi ogni volta che la pagina viene visualizzata (anche da cache)
+			document.getElementById('email').value = '';
+			document.getElementById('password').value = '';
+			document.getElementById('response').textContent = '';
+		});
+		
+		document.getElementById('loginForm').addEventListener('submit', async function(e) {
+			e.preventDefault();
 
-            const data = {
-                email: email,
-                password: password,
-            };
+			const data = {
+				email: document.getElementById('email').value,
+				password: document.getElementById('password').value
+			};
 
-            try {
-                // Effettua la richiesta POST al web service
-                const response = await fetch('api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data) // Converte l'oggetto dati in una stringa JSON
-                });
+			document.getElementById('response').textContent = 'Invio in corso...';
 
-                // Gestisci la risposta
-                if (response.ok) {
-					const responseData = await response.json();
+			try {
+				const response = await fetch('api.php/login', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(data)
+				});
 
-					// Salvo i dati nel localStorage
-					localStorage.setItem('userId', responseData.userId);
-					localStorage.setItem('verificato', responseData.verificato);
-					localStorage.setItem('tipo', responseData.tipo);
+				const responseData = await response.json();
 
-					// Reindirizza alla home
-					window.location.href = "home.html";
+				if (response.ok) {
+					if(responseData.id != 'null') {
+						// Salvo i dati nel localStorage
+						localStorage.setItem('userId', responseData.id);
+						localStorage.setItem('verificato', responseData.verificato);
+						localStorage.setItem('tipo', responseData.tipo);
+						window.location.href = "index.html";
+					} else {
+						document.getElementById('response').textContent = 'Mail o password errati.';
+					}
+				}
 
-				}else {
-                    const errorData = await response.json();
-                    document.getElementById('response').textContent = `Errore: ${errorData.error}`;
-                }
-            } catch (error) {
-                console.error('Errore di comunicazione con il web service:', error);
-                document.getElementById('response').textContent = 'Errore nella comunicazione con il server.';
-            }
-        });
-    </script>
+			} catch (error) {
+				document.getElementById('response').textContent = 'Errore nella comunicazione con il server.';
+			}
+		});
+	</script>
 </body>
 </html>
