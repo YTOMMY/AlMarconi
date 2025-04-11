@@ -44,7 +44,7 @@ CREATE TABLE Studenti(
 	ResidenzaCitta INT(5) NOT NULL,
 	ResidenzaVia VARCHAR(50) NOT NULL,
 	ResidenzaCivico INT(7) NOT NULL,
-	DomicilioCitta INT(5) NOT NULL,
+	DomicilioCitta INT(5),
 	DomicilioVia VARCHAR(50),
 	DomicilioCivico INT(7),
 	

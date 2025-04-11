@@ -37,7 +37,8 @@
 		input[type="text"],
 		input[type="email"],
 		input[type="date"],
-		input[type="password"] {
+		input[type="password"],
+		input[type="tel"] {
 			width: 100%;
 			padding: 10px;
 			margin-top: 5px;
@@ -88,42 +89,51 @@
 
 	<div class="form-container">
 		<h2>Registrazione Azienda</h2>
-		<form action="registrazione-completata.html" method="post" id="registrazioneForm">
+		<form id="registrazioneForm" method="POST">
 		
-			<label for="partita-iva">Partita Iva</label>
-			<input type="text" id="partita-iva" name="partita-iva" required>
+			<label for="email">Email*</label>
+			<input type="email" id="email" required>
+
+			<label for="telefono">Telefono</label>
+			<input type="tel" id="telefono">
+			
+			<label for="partita-iva">Partita Iva*</label>
+			<input type="text" id="partita-iva" required>
 		
-			<label for="nome">Nome Azienda</label>
-			<input type="text" id="nome" name="nome" required>
+			<label for="nome">Nome Azienda*</label>
+			<input type="text" id="nome-azienda" required>
 
-			<label for="cognome">Settore</label>
-			<input type="text" id="cognome" name="cognome" required>
+			<label for="cognome">Settore*</label>
+			<input type="text" id="settore" required>
 			
-			<label for="indirizzo">Indirizzo sede legale</label>
-			<input type="text" id="indirizzo" name="indirizzo" required>
+			<label for="indirizzo">Citta sede legale*</label>
+			<input type="text" id="citta" required>
 			
-			<label for="nome">Nome Referente</label>
-			<input type="text" id="nome" name="nome" required>
+			<label for="indirizzo">Via sede legale*</label>
+			<input type="text" id="via" required>
 			
-			<label for="cognome">Cognome Referente</label>
-			<input type="text" id="cognome" name="cognome" required>
+			<label for="indirizzo">Civico sede legale*</label>
+			<input type="text" id="civico" required>
 			
-			<label for="data-nascita">Data di Nascita Referente</label>
-			<input type="date" id="data-nascita" name="data-nascita" required>
+			<label for="nome">Nome Referente*</label>
+			<input type="text" id="nome" required>
 			
-			<label for="email">Email Referente</label>
-			<input type="email" id="email" name="email" required>
+			<label for="cognome">Cognome Referente*</label>
+			<input type="text" id="cognome" required>
 			
-			<label for="codice-fiscale">Codice Fiscale Referente</label>
-			<input type="text" id="codice-fiscale" name="codice-fiscale" required>
+			<label for="data-nascita">Data di Nascita Referente*</label>
+			<input type="date" id="data-nascita" required>
+			
+			<label for="codice-fiscale">Codice Fiscale Referente*</label>
+			<input type="text" id="codice-fiscale" required>
 
-			<label for="password">Password</label>
+			<label for="password">Password*</label>
 			<div class="password-container">
 				<input type="password" id="password" name="password" required>
 				<img src="occhio.png" alt="Occhio" class="eye-icon" id="togglePassword">
 			</div>
 
-			<label for="conferma-password">Conferma Password</label>
+			<label for="conferma-password">Conferma Password*</label>
 			<div class="password-container">
 				<input type="password" id="conferma-password" name="conferma-password" required>
 				<img src="occhio.png" alt="Occhio" class="eye-icon" id="toggleConfermaPassword">
@@ -163,64 +173,57 @@
 		const form = document.getElementById('registrazioneForm');
 		const errore = document.getElementById('errore');
 
-		form.addEventListener('submit', function (e) {
-			const email = document.getElementById('email').value;
-			const confermaEmail = document.getElementById('conferma-email').value;
-			const password = document.getElementById('password').value;
-			const confermaPassword = document.getElementById('conferma-password').value;
-
-			if (email !== confermaEmail) {
-				e.preventDefault();
-				errore.textContent = "Le email non corrispondono.";
-				return;
-			}
-
-			if (password !== confermaPassword) {
-				e.preventDefault();
-				errore.textContent = "Le password non corrispondono.";
-				return;
-			}
-
-			errore.textContent = "";
+		window.addEventListener('pageshow', () => {
+			// Svuota i campi ogni volta che la pagina viene visualizzata
+			document.getElementById('registrazioneForm').reset();
 		});
 		
-		document.getElementById('postForm').addEventListener('submit', function(e) {
-		e.preventDefault();
+		document.getElementById('registrazioneForm').addEventListener('submit', async function(e) {
+			e.preventDefault(); // Impedisce l'invio predefinito del form (quindi la ricarica della pagina)
+			
+			// Recupero dei dati
+			const data = {
+				email: document.getElementById('email').value,
+				password: document.getElementById('password').value,
+				telefono: document.getElementById('telefono').value,
+				tipo: 'azienda',
+				nomeAzienda: document.getElementById('nome-azienda').value,
+				iva: document.getElementById('partita-iva').value,
+				settore: document.getElementById('settore').value,
+				cf: document.getElementById('codice-fiscale').value,
+				nome: document.getElementById('nome').value,
+				cognome: document.getElementById('cognome').value,
+				nascita: document.getElementById('data-nascita').value,
+				sede: {
+					citta: document.getElementById('citta').value,
+					via: document.getElementById('via').value,
+					civico: document.getElementById('civico').value
+				}
+			};
+			
+			try {
+				const response = await fetch('api.php/register', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(data)
+				});
 
-      const data = {
-	  
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value,
-        tipo: document.getElementById('tipo').value
-		
-      };
-
-      const jsonData = JSON.stringify(data, null, 2);
-      document.getElementById('sentJson').textContent = jsonData;
-
-      fetch('http://localhost/AlMarconi/WebPage/api.php/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-		
-        body: JSON.stringify(data)
-		
-      })
-	  
-      .then(response => response.text()) // <<< trattiamo la risposta come testo
-      .then(result => {
-        document.getElementById('response').textContent = result;
-		
-      })
-	  
-      .catch(error => {
-	  
-        document.getElementById('response').textContent = 'Errore: ' + error;
-		
-      });
-    });
-	
-		</script>
-	</body>
+				const responseData = await response.json();
+				
+				if (response.ok) {
+					if(responseData.id != 'null') {
+						// Salvo i dati nel localStorage
+						localStorage.setItem('userId', responseData.id);
+						localStorage.setItem('verificato', responseData.verificato);
+						localStorage.setItem('tipo', responseData.tipo);
+						window.location.href = "index.html";
+					}
+				}
+			} catch (error) {
+			}
+		});
+	</script>
+</body>
 </html>

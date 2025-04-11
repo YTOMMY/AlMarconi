@@ -102,10 +102,8 @@
 
     <script>
 		window.addEventListener('pageshow', () => {
-			// Svuota i campi ogni volta che la pagina viene visualizzata (anche da cache)
-			document.getElementById('email').value = '';
-			document.getElementById('password').value = '';
-			document.getElementById('response').textContent = '';
+			// Svuota i campi ogni volta che la pagina viene visualizzata
+			document.getElementById('loginForm').reset();
 		});
 		
 		document.getElementById('loginForm').addEventListener('submit', async function(e) {
@@ -115,8 +113,6 @@
 				email: document.getElementById('email').value,
 				password: document.getElementById('password').value
 			};
-
-			document.getElementById('response').textContent = 'Invio in corso...';
 
 			try {
 				const response = await fetch('api.php/login', {
@@ -131,7 +127,6 @@
 
 				if (response.ok) {
 					if(responseData.id != 'null') {
-						// Salvo i dati nel localStorage
 						localStorage.setItem('userId', responseData.id);
 						localStorage.setItem('verificato', responseData.verificato);
 						localStorage.setItem('tipo', responseData.tipo);

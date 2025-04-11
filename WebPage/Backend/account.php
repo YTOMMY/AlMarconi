@@ -1,14 +1,21 @@
 <?php	//Per gestire le funzioni relative agli utenti in generale
 require_once 'db.php';
 
+// Controlla se un'email esiste
 function check_email($email) {
+	
+	// Controllo del formato
 	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		
+		// Controllo dell'esistenza del dominio
 		$domain = substr(strrchr($email, "@"), 1);
 		if (checkdnsrr($domain, "MX")) {
 			return 'valid';
 		} else {
 			return 'invalid';
 		}
+		
+	// Potrebbe essere un admin
 	} else {
 		$domain = substr(strrchr($email, "@"), 1);
 		if(ctype_digit($domain)) {
@@ -19,14 +26,18 @@ function check_email($email) {
 	}
 }
 
+// Creazione di un account
 function create_account($data) {
 	global $conn;
 	
 	if($data['tipo'] != 'admin') {
+		
+		// Se non è admin
 		if(check_email($data['email']) != 'valid') {
 			return false;
 		}
 		
+		// Creazione in tabella 'Utenti'
 		$sql = 'INSERT INTO Utenti(Mail, ' . ($data['telefono'] != null ? 'Telefono, ' : '') . 'HashPassword) ' .
 			   'VALUES(?, ?, ' . ($data['telefono'] != null ? '?' : '') . ');';
 		$hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
@@ -39,6 +50,7 @@ function create_account($data) {
 		}
 		$stmt->execute();
 		
+		// Query al database per sapere l'id dell'utente
 		$sql = 'SELECT IdUtente FROM Utenti WHERE Mail = ?';
 		$stmt = $conn->prepare($sql);
 		$stmt->bind_param('s', $data['email']);
@@ -48,6 +60,8 @@ function create_account($data) {
 		$id = $record['IdUtente'];	
 		
 		if ($data['tipo'] == 'studente') {
+			
+			// Creazione in tabella 'Studenti'
 			$attr = ['IdUtente', 'CodiceFiscale', 'Nome', 'Cognome', 'DataNascita', 'Nazionalita', 'ResidenzaCitta', 'ResidenzaVia', 'ResidenzaCivico'];
 			$values = [$id, $data['cf'], $data['nome'], $data['cognome'], $data['nascita'], $data['nazionalita'], $data['residenza']['citta'], $data['residenza']['via'], $data['residenza']['civico']];
 			$values_type = 'isssssisi';
@@ -56,7 +70,7 @@ function create_account($data) {
 				$values_type .= 's';
 				array_push($attr, 'Sesso');
 			}
-			if(isset($data['domicilio'])) {
+			if(isset($data['domicilio']) && isset($data['domicilio']['citta'])) {
 				array_push($values, $data['domicilio']['citta'], $data['domicilio']['via'], $data['domicilio']['civico']);
 				$values_type .= 'isi';
 				array_push($attr, 'DomicilioCitta', 'DomicilioVia', 'DomicilioCivico');
@@ -67,11 +81,14 @@ function create_account($data) {
 				array_push($attr, 'IndirizzoScolastico');
 			}
 			$sql = 'INSERT INTO Studenti(' . implode(", ", $attr) . ') VALUES (' . str_repeat('?, ', count($attr)-1) . '?);';
+			
 			$stmt = $conn->prepare($sql);
 			$stmt->bind_param($values_type, ...$values);
 			$stmt->execute();
 			
 		} else if ($data['tipo'] == 'azienda'){
+			
+			//Creazione in tabella 'Aziende'
 			$sql = "INSERT INTO Aziende(IdUtente, IVA, Nome, Settore, ReferenteCodiceFiscale, ReferenteNome, ReferenteCognome, ReferenteDataNascita) VALUES($id, ?, ?, ?, ?, ?, ?, ?);";
 			$stmt = $conn->prepare($sql);
 			$stmt->bind_param('issssss', $data['iva'], $data['nomeAzienda'], $data['settore'], $data['cf'], $data['nome'], $data['cognome'], $data['nascita']);
@@ -84,11 +101,15 @@ function create_account($data) {
 		}
 		
 	} else {
+		
+		// Se è un admin
 		if(check_email($data['email']) != 'admin') {
 			return false;
 		}
 		//da fare
 	}
+	
+	$_SESSION['id'] = $id;
 	return true;		
 }
 
@@ -100,8 +121,11 @@ function verify() {
 	// verifica un account aziendale da parte della scuola
 }
 
+// Login nell'account
 function login($email, $password) {
 	global $conn;
+	
+	// Query al database per sapere mail e hash della password
 	$tabella = 'Utenti';
 	$sql = "SELECT IdUtente, HashPassword FROM $tabella WHERE Mail = ?";
 	
@@ -110,7 +134,8 @@ function login($email, $password) {
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$record = $result->fetch_assoc();
-
+	
+	// Controllo password
 	$hashed_password = $record['HashPassword'];
 	if (!password_verify($password, $hashed_password)) {
 		return false;
@@ -121,6 +146,7 @@ function login($email, $password) {
 	// da aggiungere 2FA
 }
 
+// Controllo se un utente è stato verificato
 function is_verified($id) {
 	global $conn;
 	$tabella = 'Utenti';
@@ -143,6 +169,7 @@ function is_verified($id) {
 	return true;
 }
 
+// Controllo del tipo dell'utente ('studente', 'azienda', 'admin'
 function get_type($id) {
 	global $conn;
 	$sql = 'SELECT idUtente FROM aziende WHERE idUtente = ?';
@@ -159,11 +186,15 @@ function get_type($id) {
 	}
 }
 
+// Cambio password di un utente
 function change_password($old_password, $new_password) {
+	
+	// Verifica che l'utente sia loggato
 	if(!isset($_SESSION['id'])) {
 		return false;
 	}
 	
+	// Query per ottenere la vecchia password
 	global $conn;
 	$tabella = 'Utenti';
 	$sql = "SELECT HashPassword FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
@@ -172,30 +203,39 @@ function change_password($old_password, $new_password) {
 	$result = $query->get_result();
 	$record = $result->fetch_assoc();
 	
+	// Controllo password
 	$hashed_password = $record['HashPassword'];
 	if (!password_verify($old_password, $hashed_password)) {
 		return false;
 	}
 	
+	// Update password
 	$sql = "UPDATE $tabella SET HashPassword = ? WHERE IdUtente = {$_SESSION['id']}";
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param('s', $email);
 	$stmt->execute();
 }
 
+// Logout dall'account
 function logout(){
-	if(!isset($_SESSION['id'])) {
-		return false;
-	}
-	session_destroy();
-	return true;
-}
-
-function delete_account($password) {
+	
+	// Verifica che l'utente sia loggato
 	if(!isset($_SESSION['id'])) {
 		return false;
 	}
 	
+	unset($_SESSION['id'])
+	return true;
+}
+
+function delete_account($password) {
+	
+	// Verifica che l'utente sia loggato
+	if(!isset($_SESSION['id'])) {
+		return false;
+	}
+	
+	// Query per ottenere la password
 	global $conn;
 	$tabella = 'Utenti';
 	$sql = "SELECT HashPassword FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
@@ -204,11 +244,13 @@ function delete_account($password) {
 	$result = $query->get_result();
 	$record = $result->fetch_assoc();
 	
+	// Controllo della password
 	$hashed_password = $record['HashPassword'];
 	if (!password_verify($password, $hashed_password)) {
 		return false;
 	}
 	
+	// Eliminazione dell'account
 	$sql = "DELETE FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
 	if ($conn->query($sql) === true) {
 		return true;

@@ -1,14 +1,19 @@
-<?php	// Per gestire le richieste GET, POST...
+<?php	// Per gestire le richieste
 
 require_once 'backend/account.php';
 require_once 'backend/diplomati.php';
 require_once 'backend/aziende.php';
 
+
+// Avvio della sessione
 session_start();
+
+// aquisizione Method, URI e input
 $request_method = $_SERVER['REQUEST_METHOD'] ?? null;
 $request_uri = $_SERVER['REQUEST_URI'] ?? null;
 $input = file_get_contents('php://input') ?? null;
 
+// separazione di ogni componente dell'uri dopo '/api.php'
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode('/', $uri);
 while($uri[0] != 'api.php') {
@@ -16,7 +21,10 @@ while($uri[0] != 'api.php') {
 }
 array_shift($uri);
 
+// scelta del web service
 switch($uri[0]) {
+	
+	// Login
 	case 'login':
 		switch($request_method) {
 			case 'POST':
@@ -34,6 +42,8 @@ switch($uri[0]) {
 				method_error(['POST']);
 		}
 		break;
+		
+	// Registrazione
 	case 'register':
 		switch($request_method) {
 			case 'POST':
@@ -41,6 +51,7 @@ switch($uri[0]) {
 				$data = json_decode($input, true);
 				
 				if(create_account($data)) {
+					$id = $_SESSION['id'];
 					$output = ['id' => $id, 'verificato' => is_verified($id), 'tipo' => get_type($id)];
 				} else {
 					$output = ['id' => 'null'];
@@ -50,20 +61,25 @@ switch($uri[0]) {
 				method_error(['POST']);
 		}
 		break;
+		
+	// Web service non trovato
 	default:
 		not_found_error();
 }
 
+// Trasfomazione output in json e invio della risposta
 if(isset($output)) {
 	echo json_encode($output);
 }
 
+// errore: Web Service non trovato
 function not_found_error() {
 	header('HTTP/1.1 404 Not Found');
 	echo 'Pagina non trovata';
 	exit;
 }
 
+// errore: Metodo non corretto
 function method_error($consentiti) {
 	$consentiti_string = implode(', ', $consentiti);
 	header('HTTP/1.1 405 Method Not Allowed');
@@ -72,6 +88,7 @@ function method_error($consentiti) {
 	exit;
 }
 
+// errore: Formato dati non corretto
 function check_content($input) {
 	$content_type = $_SERVER['CONTENT_TYPE'] ?? null;
 	if ($content_type != 'application/json' || $input == null) {
@@ -79,30 +96,4 @@ function check_content($input) {
 		exit;
 	}
 }
-
-/*
-if ($request_method === 'POST') {
-    // Se il contenuto è JSON
-    if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
-        // Leggi i dati JSON dal corpo della richiesta
-        $input = file_get_contents('php://input');
-        $data = json_decode($input, true);  // Decodifica il JSON in un array associativo
-        
-        echo "<strong>Dati JSON ricevuti tramite POST:</strong><br>";
-        echo '<pre>';
-        print_r($data);
-        echo '</pre>';
-    } else {
-        // Se i dati sono POST classici (non JSON)
-        echo "<strong>Dati POST:</strong><br>";
-        if (!empty($_POST)) {
-            echo '<pre>';
-            print_r($_POST);
-            echo '</pre>';
-        } else {
-            echo "Nessun dato POST trovato.<br>";
-        }
-    }
-}
-*/
 ?>

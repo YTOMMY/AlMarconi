@@ -211,14 +211,12 @@
 		});
 		
 		window.addEventListener('pageshow', () => {
-			// Svuota i campi ogni volta che la pagina viene visualizzata (anche da cache)
-			document.getElementById('email').value = '';
-			document.getElementById('password').value = '';
-			document.getElementById('response').textContent = '';
+			// Svuota i campi ogni volta che la pagina viene visualizzata
+			document.getElementById('registrazioneForm').reset();
 		});
 		
 		document.getElementById('registrazioneForm').addEventListener('submit', async function(e) {
-			e.preventDefault(); // Impedisce l'invio predefinito del form (quindi la ricarica della pagina)
+			e.preventDefault();
 			
 			// Recupero dei dati
 			const data = {
@@ -229,7 +227,7 @@
 				cf: document.getElementById('codice-fiscale').value,
 				nome: document.getElementById('nome').value,
 				cognome: document.getElementById('cognome').value,
-				sesso: (document.querySelector('input[name="sesso"]:checked')?.value || null), // Cambia il recupero del valore del sesso
+				sesso: (document.querySelector('input[name="sesso"]:checked')?.value || null),
 				nascita: document.getElementById('data-nascita').value,
 				nazionalita: document.getElementById('nazionalita').value,
 				residenza: {
@@ -237,15 +235,13 @@
 					via: document.getElementById('via-residenza').value,
 					civico: document.getElementById('civico-residenza').value
 				},
-				domicilio: {
+				domicilio: document.getElementById('diverso-domicilio').checked ? {
 					citta: document.getElementById('citta-domicilio').value,
 					via: document.getElementById('via-domicilio').value,
 					civico: document.getElementById('civico-domicilio').value
-				},
+				} : null,
 				indirizzoScolastico: document.getElementById('Indirizzo-seguito').value
 			};
-
-			document.getElementById('response').textContent = JSON.stringify(data);
 
 			try {
 				const response = await fetch('api.php/register', {
@@ -257,7 +253,7 @@
 				});
 
 				const responseData = await response.json();
-
+				
 				if (response.ok) {
 					if(responseData.id != 'null') {
 						// Salvo i dati nel localStorage
@@ -266,7 +262,7 @@
 						localStorage.setItem('tipo', responseData.tipo);
 						window.location.href = "index.html";
 					}
-
+				}
 			} catch (error) {
 			}
 		});

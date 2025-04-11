@@ -4,6 +4,7 @@ $dbname = 'AlMarconi';
 $username = 'root';
 $password = '';
 
+// Avvio della connessione
 $conn = new mysqli($host, $username, $password, $dbname);
 if($conn->connect_errno) {
 	die('Connessione non riuscita: ' . $conn->connect_error);
