@@ -125,10 +125,10 @@
 	</div>
 
 	<script>
-		// Recupera i valori dal localStorage
-		const userId = localStorage.getItem("userId");
-		const verificato = localStorage.getItem("verificato");
-		const tipo = localStorage.getItem("tipo");
+		// Recupera i valori dal sessionStorage
+		const userId = sessionStorage.getItem("userId");
+		const verificato = sessionStorage.getItem("verificato");
+		const tipo = sessionStorage.getItem("tipo");
 
 		// Se userId NON esiste, mostra il messaggio di accesso
 		if (!userId) {

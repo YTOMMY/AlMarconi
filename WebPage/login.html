@@ -127,9 +127,9 @@
 
 				if (response.ok) {
 					if(responseData.id != 'null') {
-						localStorage.setItem('userId', responseData.id);
-						localStorage.setItem('verificato', responseData.verificato);
-						localStorage.setItem('tipo', responseData.tipo);
+						sessionStorage.setItem('userId', responseData.id);
+						sessionStorage.setItem('verificato', responseData.verificato);
+						sessionStorage.setItem('tipo', responseData.tipo);
 						window.location.href = "index.html";
 					} else {
 						document.getElementById('response').textContent = 'Mail o password errati.';
