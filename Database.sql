@@ -49,9 +49,9 @@ CREATE TABLE Studenti(
 	DomicilioCivico INT(7),
 	
 	PRIMARY KEY(IdUtente),
-	FOREIGN KEY(IdUtente) REFERENCES Utenti(IdUtente),
-	FOREIGN KEY(ResidenzaCitta) REFERENCES Citta(IdCitta),
-	FOREIGN KEY(DomicilioCitta) REFERENCES Citta(IdCitta)
+	FOREIGN KEY(IdUtente) REFERENCES Utenti(IdUtente) ON DELETE CASCADE,
+	FOREIGN KEY(ResidenzaCitta) REFERENCES Citta(IdCitta) ON DELETE RESTRICT,
+	FOREIGN KEY(DomicilioCitta) REFERENCES Citta(IdCitta) ON DELETE RESTRICT
 );
 CREATE TABLE Abilita(
 	IdAbilita INT(7) AUTO_INCREMENT NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE Aziende(
 	ReferenteDataNascita DATE NOT NULL,
 
 	PRIMARY KEY(IdUtente),
-	FOREIGN KEY(IdUtente) REFERENCES Utenti(IdUtente)
+	FOREIGN KEY(IdUtente) REFERENCES Utenti(IdUtente) ON DELETE CASCADE
 );
 CREATE TABLE Sedi(
 	IdSede INT(6) NOT NULL AUTO_INCREMENT,
@@ -86,8 +86,8 @@ CREATE TABLE Sedi(
 	Legale BIT(1) NOT NULL,
 	
 	PRIMARY KEY(IdSede),
-	FOREIGN KEY(Azienda) REFERENCES Aziende(IdUtente),
-	FOREIGN KEY(Citta) REFERENCES Citta(IdCitta)
+	FOREIGN KEY(Azienda) REFERENCES Aziende(IdUtente) ON DELETE CASCADE,
+	FOREIGN KEY(Citta) REFERENCES Citta(IdCitta) ON DELETE RESTRICT
 );
 CREATE TABLE Annunci(
 	IdAnnuncio INT(6) AUTO_INCREMENT NOT NULL,
@@ -100,11 +100,11 @@ CREATE TABLE Annunci(
 	DataScadenza DATE NULL,
 	MaxIscrizioni INT(6),
 	Azienda INT(6) NOT NULL,
-	Sede INT(6) NOT NULL,
+	Sede INT(6),
 
 	PRIMARY KEY(IdAnnuncio),
-	FOREIGN KEY(Azienda) REFERENCES Aziende(IdUtente),
-	FOREIGN KEY(Sede) REFERENCES Sedi(IdSede)
+	FOREIGN KEY(Azienda) REFERENCES Aziende(IdUtente) ON DELETE CASCADE,
+	FOREIGN KEY(Sede) REFERENCES Sedi(IdSede) ON DELETE SET NULL
 );
 CREATE TABLE Candidarsi(
 	IdStudente INT(6) NOT NULL,
@@ -112,8 +112,8 @@ CREATE TABLE Candidarsi(
 	Data DATE NOT NULL DEFAULT CURDATE(),
 	
 	PRIMARY KEY(IdStudente, IdAnnuncio),
-	FOREIGN KEY (IdStudente) REFERENCES Studenti(IdUtente),
-	FOREIGN KEY (IdAnnuncio) REFERENCES Annunci(IdAnnuncio)
+	FOREIGN KEY (IdStudente) REFERENCES Studenti(IdUtente) ON DELETE CASCADE,
+	FOREIGN KEY (IdAnnuncio) REFERENCES Annunci(IdAnnuncio) ON DELETE CASCADE
 );
 
 INSERT INTO citta(Cap, Nome, Provincia, Paese) VALUES(76433, "Peccioli2", "RE", "Metz");

@@ -256,10 +256,10 @@
 				
 				if (response.ok) {
 					if(responseData.id != 'null') {
-						// Salvo i dati nel localStorage
-						localStorage.setItem('userId', responseData.id);
-						localStorage.setItem('verificato', responseData.verificato);
-						localStorage.setItem('tipo', responseData.tipo);
+						// Salvo i dati nel sessionStorage
+						sessionStorage.setItem('userId', responseData.id);
+						sessionStorage.setItem('verificato', responseData.verificato);
+						sessionStorage.setItem('tipo', responseData.tipo);
 						window.location.href = "index.html";
 					}
 				}

@@ -224,7 +224,7 @@ function logout(){
 		return false;
 	}
 	
-	unset($_SESSION['id'])
+	unset($_SESSION['id']);
 	return true;
 }
 

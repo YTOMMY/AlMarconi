@@ -214,10 +214,10 @@
 				
 				if (response.ok) {
 					if(responseData.id != 'null') {
-						// Salvo i dati nel localStorage
-						localStorage.setItem('userId', responseData.id);
-						localStorage.setItem('verificato', responseData.verificato);
-						localStorage.setItem('tipo', responseData.tipo);
+						// Salvo i dati nel sessionStorage
+						localStorage.setItem('userId', sessionStorage.id);
+						localStorage.setItem('verificato', sessionStorage.verificato);
+						localStorage.setItem('tipo', sessionStorage.tipo);
 						window.location.href = "index.html";
 					}
 				}
