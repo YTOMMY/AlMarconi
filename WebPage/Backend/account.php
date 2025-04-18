@@ -110,6 +110,7 @@ function create_account($data) {
 	}
 	
 	$_SESSION['id'] = $id;
+	$_SESSION['tipo'] = get_type($id);
 	return true;		
 }
 
@@ -141,6 +142,7 @@ function login($email, $password) {
 		return false;
 	}
 	$_SESSION['id'] = $record['IdUtente'];
+	$_SESSION['tipo'] = get_type($record['IdUtente']);
 	
 	return true;
 	// da aggiungere 2FA
@@ -225,6 +227,7 @@ function logout(){
 	}
 	
 	unset($_SESSION['id']);
+	unset($_SESSION['tipo']);
 	return true;
 }
 

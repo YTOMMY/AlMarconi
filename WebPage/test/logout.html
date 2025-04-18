@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it">
+<body>
+
+  <h1>Logout</h1>
+
+  <form id="logoutForm">
+    <button type="submit">Logout</button>
+  </form>
+
+  <div id="responseMessage"></div> <!-- Dove verrà mostrata la risposta -->
+
+  <script>
+    document.getElementById('logoutForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Evita il comportamento predefinito del form
+
+      fetch('../api.php/logout', {
+        method: 'GET',
+        credentials: 'include' // Include cookie/sessione se necessario
+      })
+      .then(response => response.text()) // Risposta come testo
+      .then(data => {
+        document.getElementById('responseMessage').textContent = data; // Mostra la risposta sotto
+      })
+      .catch(error => {
+        console.error('Errore nella richiesta:', error);
+        document.getElementById('responseMessage').textContent = 'Errore di rete.';
+      });
+    });
+  </script>
+
+</body>
+</html>

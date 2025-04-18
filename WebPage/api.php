@@ -1,7 +1,7 @@
 <?php	// Per gestire le richieste
 
 require_once 'backend/account.php';
-require_once 'backend/diplomati.php';
+require_once 'backend/studenti.php';
 require_once 'backend/aziende.php';
 
 
@@ -34,6 +34,13 @@ switch($uri[0]) {
 				if(login($data['email'], $data['password'])) {
 					$id = $_SESSION['id'];
 					$output = ['id' => $id, 'verificato' => is_verified($id), 'tipo' => get_type($id)];
+					if($output['tipo'] == 'studente') {
+						$datiStudente = getStudente();
+						$output['nome'] = $datiStudente['Nome'] . ' ' . $datiStudente['Cognome'];
+					}
+					if($output['tipo'] == 'azienda') {
+						$output['nome'] = getAzienda()['Nome'];
+					}
 				} else {
 					$output = ['id' => 'null']; 
 				}
@@ -61,7 +68,18 @@ switch($uri[0]) {
 				method_error(['POST']);
 		}
 		break;
-		
+	
+	// Logout
+	case 'logout':
+		switch($request_method) {
+			case 'GET':
+				$output = ['logout' => logout()];
+				break;
+			default:
+				method_error(['GET']);
+		}
+		break;
+
 	// Web service non trovato
 	default:
 		not_found_error();

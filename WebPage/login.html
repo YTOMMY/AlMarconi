@@ -122,7 +122,7 @@
 					},
 					body: JSON.stringify(data)
 				});
-
+				
 				const responseData = await response.json();
 
 				if (response.ok) {
@@ -130,6 +130,7 @@
 						sessionStorage.setItem('userId', responseData.id);
 						sessionStorage.setItem('verificato', responseData.verificato);
 						sessionStorage.setItem('tipo', responseData.tipo);
+						sessionStorage.setItem('userName', responseData.nome);
 						window.location.href = "index.html";
 					} else {
 						document.getElementById('response').textContent = 'Mail o password errati.';
