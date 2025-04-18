@@ -116,4 +116,4 @@ CREATE TABLE Candidarsi(
 	FOREIGN KEY (IdAnnuncio) REFERENCES Annunci(IdAnnuncio) ON DELETE CASCADE
 );
 
-INSERT INTO citta(Cap, Nome, Provincia, Paese) VALUES(76433, "Peccioli2", "RE", "Metz");
+INSERT INTO citta(Cap, Nome, Provincia, Paese) VALUES(56025, "Pontedera", "PI", "Italia");

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tutte le aziende-AlMarconi</title>
+
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin: 0;
+			padding: 100px 0 40px;
+			background-color: #f4f4f4;
+			min-height: 100vh;
+		}
+
+		.btn {
+			display: block;
+			width: 200px;
+			padding: 25px;
+			font-size: 1.5rem;
+			text-decoration: none;
+			color: black;
+			background-color: white;
+			border: 2px solid #ccc;
+			border-radius: 10px;
+			transition: background-color 0.3s ease, color 0.3s ease;
+			text-align: center;
+		}
+
+		.btn:hover {
+			background-color: #005f99;
+			color: white;
+			cursor: pointer;
+		}
+
+		.menu {
+			display: block;
+			width: 100px;
+			padding: 12px;
+			font-size: 1rem;
+			text-decoration: none;
+			color: black;
+			background-color: white;
+			border: 2px solid #ccc;
+			border-radius: 10px;
+			transition: background-color 0.3s ease, color 0.3s ease;
+			text-align: center;
+		}
+
+		.menu:hover {
+			background-color: #005f99;
+			color: white;
+			cursor: pointer;
+		}
+
+		.top-bar {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 80px;
+			background-color: #f4f4f4;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0 20px;
+			z-index: 1000;
+			border-bottom: 1px solid #ccc;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+		}
+
+		.left, .center, .right {
+			display: flex;
+			align-items: center;
+		}
+
+		.center {
+			flex: 1;
+			justify-content: center;
+		}
+
+		.logo {
+			width: 80px;
+			height: auto;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 1.8rem;
+			text-align: center;
+		}
+
+		.container {
+			background: white;
+			padding: 40px;
+			border-radius: 10px;
+			box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+			text-align: center;
+			display: inline-block;
+			max-width: 90%;
+			margin: 0 auto;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="top-bar">
+		<div class="left">
+			<a href="index.html"><img src="logo.jpeg" alt="Logo" class="logo"></a>
+		</div>
+
+		<div class="center">
+			<h1>Tutte le aziende</h1>
+		</div>
+
+		<div class="right" id="account"></div>
+	</div>
+
+	<div class="container">
+		<div id="pagina"></div>
+	</div>
+
+	<script>
+		// Recupera i valori dal sessionStorage
+		const userId = sessionStorage.getItem("userId");
+		const verificato= sessionStorage.getItem("verificato");
+		const tipo = sessionStorage.getItem("tipo");
+		console.log("userId");
+		// Se userId NON esiste, mostra il messaggio di accesso
+		if (userId!=1) {
+			document.getElementById("account").innerHTML = `
+				<a href="login.html" class="menu">Accedi</a>
+			`;
+
+			document.getElementById("pagina").innerHTML = `
+				<h3>Benvenuto in AlMarconi</h3>
+				<p>Accedi per visualizzare le informazioni</p>
+			`;
+		} else {
+			document.getElementById("account").innerHTML = `
+				<a href="impostazioni.html" class="menu">Impostazioni</a>
+			`;
+
+			// Se l'utente esiste ma è non verificato
+			if (verificato!=1) {
+				document.getElementById("pagina").innerHTML = `
+					<p>Account in attesa di validazione</p>
+				`;
+			} else {
+				// Se è uno studente
+				if (tipo == "studente") {
+					
+						
+					//Richiedi e mostra le aziende presenti
+					
+					window.addEventListener('DOMContentLoaded', async function () {
+
+						try {
+							const response = await fetch('api.php/tutteAziende', {
+								method: 'GET',
+							});
+
+							const responseData = await response.json();
+
+							if (response.ok) {
+									
+								//Memorizza nomi e settori delle aziende in due array
+								const nomiAziende = responseData.nomi;
+								const settori = responseData.settori;
+								
+								document.getElementById("pagina")={
+									for (let i = 0; i < nomiAziende.length; i++) {
+										const riga = document.createElement('p');
+										riga.textContent = `${nomiAziende[i]} ${settori[i]}`;
+									}
+								};
+							}
+
+						} catch (error) {
+							document.getElementById('response').textContent = 'Errore nella comunicazione con il server.';
+						}
+					});
+					
+
+						
+					
+				} else {
+					// Se è un'azienda
+					if (tipo == "azienda") {
+						
+						
+						//Richiedi e mostra gli studenti presenti
+					
+						window.addEventListener('DOMContentLoaded', async function () {
+
+							try {
+								const response = await fetch('api.php/tuttiStudenti', {
+									method: 'GET',
+								});
+
+								const responseData = await response.json();
+
+								if (response.ok) {
+										
+									//Memorizza nomi e cognomi degli studenti in due array
+									const nomiStudenti = responseData.nomi;
+									const cognomiStudenti = responseData.cognomi;
+									
+									document.getElementById("pagina")={
+										for (let i = 0; i < nomiStudenti.length; i++) {
+											const riga = document.createElement('p');
+											riga.textContent = `${nomiStudenti[i]} ${cognomiStudenti[i]}`;
+										}
+									};
+								}
+
+							} catch (error) {
+								document.getElementById('response').textContent = 'Errore nella comunicazione con il server.';
+							}
+						});
+						
+							
+						
+					} else {
+						document.getElementById("pagina").innerHTML = `
+							Errore: non è stato possibile recuperare i dati
+						`;
+					}
+				}
+			}
+		}
+	</script>
+</body>
+</html>
