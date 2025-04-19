@@ -4,114 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Account-AlMarconi</title>
-
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			margin: 0;
-			padding: 100px 0 40px;
-			background-color: #f4f4f4;
-			min-height: 100vh;
-		}
-
-		.btn {
-			display: block;
-			width: 200px;
-			padding: 25px;
-			font-size: 1.5rem;
-			text-decoration: none;
-			color: black;
-			background-color: white;
-			border: 2px solid #ccc;
-			border-radius: 10px;
-			transition: background-color 0.3s ease, color 0.3s ease;
-			text-align: center;
-		}
-
-		.btn:hover {
-			background-color: #005f99;
-			color: white;
-			cursor: pointer;
-		}
-
-		.menu {
-			display: block;
-			width: 100px;
-			padding: 12px;
-			font-size: 1rem;
-			text-decoration: none;
-			color: black;
-			background-color: white;
-			border: 2px solid #ccc;
-			border-radius: 10px;
-			transition: background-color 0.3s ease, color 0.3s ease;
-			text-align: center;
-		}
-
-		.menu:hover {
-			background-color: #005f99;
-			color: white;
-			cursor: pointer;
-		}
-
-		.top-bar {
-			position: fixed;
-			top: 0;
-			left: 0;
-			right: 0;
-			height: 80px;
-			background-color: #f4f4f4;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 0 20px;
-			z-index: 1000;
-			border-bottom: 1px solid #ccc;
-			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-		}
-
-		.left {
-			display: flex;
-			align-items: center;
-		}
-
-		.center {
-			position: absolute;
-			left: 50%;
-			transform: translateX(-50%);
-			text-align: center;
-		}
-
-		.logo {
-			width: 80px;
-			height: auto;
-		}
-
-		h1 {
-			margin: 0;
-			font-size: 1.8rem;
-			text-align: center;
-		}
-
-		.container {
-			background: white;
-			padding: 40px;
-			border-radius: 10px;
-			box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-			text-align: center;
-			display: inline-block;
-			max-width: 90%;
-			margin: 0 auto;
-		}
-
-		a {
-			color: black;
-			text-decoration: none;
-		}
-	</style>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -127,12 +20,12 @@
 
 	<div class="container">
 		<div id="pagina">
-			<p><a href="#" onclick="email()">Cambia email</a></p>
-			<p><a href="#" onclick="telefono()">Cambia numero di telefono</a></p>
-			<p><a href="#" onclick="password()">Cambia password</a></p>
-			<p><a href="#" onclick="twoFA()">Abilita 2FA</a></p>
-			<p><a href="#" onclick="esci()">Esci dall'account</a></p>
-			<p><a href="#" onclick="elimina()" style="color:red">Elimina account</a></p>
+			<p class="clickable-text" onclick="email()">Cambia email</p>
+			<p class="clickable-text" onclick="telefono()">Cambia numero di telefono</p>
+			<p class="clickable-text" onclick="password()">Cambia password</p>
+			<p class="clickable-text" onclick="twoFA()">Abilita 2FA</p>
+			<p class="clickable-text" onclick="esci()">Esci dall'account</p>
+			<p class="clickable-text" onclick="elimina()" style="color:red">Elimina account</p>
 		</div>
 	</div>
 
