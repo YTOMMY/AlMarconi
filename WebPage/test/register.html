@@ -95,7 +95,7 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: '{"email":"r@gmail.com","password":"r","telefono":"2131","tipo":"azienda","nomeAzienda":"Rr","cf":"RrRr","nome":"rrrr","cognome":"RRrr","nascita":"2025-04-07","sede":{"citta":"1","via":"rr","civico":"2"}}' //JSON.stringify(data)
+        body: JSON.stringify(data)
       })
       .then(response => response.text()) // <<< trattiamo la risposta come testo
       .then(result => {

@@ -49,10 +49,23 @@ switch($uri[0]) {
 				method_error(['POST']);
 		}
 		break;
-		
-	// Registrazione
-	case 'register':
+			
+	// Logout
+	case 'logout':
 		switch($request_method) {
+			case 'POST':
+				$output = ['logout' => logout()];
+				break;
+			default:
+				method_error(['POST']);
+		}
+		break;
+	
+	// Gestione account
+	case 'account':
+		switch($request_method) {
+
+			// Registrazione
 			case 'POST':
 				check_content($input);
 				$data = json_decode($input, true);
@@ -60,23 +73,26 @@ switch($uri[0]) {
 				if(create_account($data)) {
 					$id = $_SESSION['id'];
 					$output = ['id' => $id, 'verificato' => is_verified($id), 'tipo' => get_type($id)];
+					if($output['tipo'] == 'studente') {
+						$datiStudente = getStudente();
+						$output['nome'] = $datiStudente['Nome'] . ' ' . $datiStudente['Cognome'];
+					}
+					if($output['tipo'] == 'azienda') {
+						$output['nome'] = getAzienda()['Nome'];
+					}
 				} else {
 					$output = ['id' => 'null'];
 				}
 				break;
-			default:
-				method_error(['POST']);
-		}
-		break;
-	
-	// Logout
-	case 'logout':
-		switch($request_method) {
-			case 'GET':
-				$output = ['logout' => logout()];
+			
+			// Elimina account
+			case 'DELETE':
+				check_content($input);
+				$data = json_decode($input, true);
+				$output = ['delete' => delete_account($data['password'])];
 				break;
 			default:
-				method_error(['GET']);
+				method_error(['DELETE']);
 		}
 		break;
 

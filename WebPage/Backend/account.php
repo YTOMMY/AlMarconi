@@ -59,47 +59,52 @@ function create_account($data) {
 		$record = $result->fetch_assoc();
 		$id = $record['IdUtente'];	
 		
-		if ($data['tipo'] == 'studente') {
-			
-			// Creazione in tabella 'Studenti'
-			$attr = ['IdUtente', 'CodiceFiscale', 'Nome', 'Cognome', 'DataNascita', 'Nazionalita', 'ResidenzaCitta', 'ResidenzaVia', 'ResidenzaCivico'];
-			$values = [$id, $data['cf'], $data['nome'], $data['cognome'], $data['nascita'], $data['nazionalita'], $data['residenza']['citta'], $data['residenza']['via'], $data['residenza']['civico']];
-			$values_type = 'isssssisi';
-			if(isset($data['sesso'])) {
-				array_push($values, $data['sesso']);
-				$values_type .= 's';
-				array_push($attr, 'Sesso');
+		try {
+			if ($data['tipo'] == 'studente') {
+				
+				// Creazione in tabella 'Studenti'
+				$attr = ['IdUtente', 'CodiceFiscale', 'Nome', 'Cognome', 'DataNascita', 'Nazionalita', 'ResidenzaCitta', 'ResidenzaVia', 'ResidenzaCivico'];
+				$values = [$id, $data['cf'], $data['nome'], $data['cognome'], $data['nascita'], $data['nazionalita'], $data['residenza']['citta'], $data['residenza']['via'], $data['residenza']['civico']];
+				$values_type = 'isssssisi';
+				if(isset($data['sesso'])) {
+					array_push($values, $data['sesso']);
+					$values_type .= 's';
+					array_push($attr, 'Sesso');
+				}
+				if(isset($data['domicilio']) && isset($data['domicilio']['citta'])) {
+					array_push($values, $data['domicilio']['citta'], $data['domicilio']['via'], $data['domicilio']['civico']);
+					$values_type .= 'isi';
+					array_push($attr, 'DomicilioCitta', 'DomicilioVia', 'DomicilioCivico');
+				}
+				if(isset($data['indirizzoScolastico'])) {
+					array_push($values, $data['indirizzoScolastico']);
+					$values_type .= 's';
+					array_push($attr, 'IndirizzoScolastico');
+				}
+				$sql = 'INSERT INTO Studenti(' . implode(", ", $attr) . ') VALUES (' . str_repeat('?, ', count($attr)-1) . '?);';
+				
+				$stmt = $conn->prepare($sql);
+				$stmt->bind_param($values_type, ...$values);
+				$stmt->execute();
+				
+			} else if ($data['tipo'] == 'azienda'){
+				//Creazione in tabella 'Aziende'
+				$sql = "INSERT INTO Aziende(IdUtente, IVA, Nome, Settore, ReferenteCodiceFiscale, ReferenteNome, ReferenteCognome, ReferenteDataNascita) VALUES($id, ?, ?, ?, ?, ?, ?, ?);";
+				$stmt = $conn->prepare($sql);
+				$stmt->bind_param('issssss', $data['iva'], $data['nomeAzienda'], $data['settore'], $data['cf'], $data['nome'], $data['cognome'], $data['nascita']);
+				$stmt->execute();
+				
+				$sql = "INSERT INTO Sedi(Azienda, Citta, Via, Civico, Legale) VALUES($id, ?, ?, ?, 1)";
+				$stmt = $conn->prepare($sql);
+				$stmt->bind_param('isi', $data['sede']['citta'], $data['sede']['via'], $data['sede']['civico']);
+				$stmt->execute();
 			}
-			if(isset($data['domicilio']) && isset($data['domicilio']['citta'])) {
-				array_push($values, $data['domicilio']['citta'], $data['domicilio']['via'], $data['domicilio']['civico']);
-				$values_type .= 'isi';
-				array_push($attr, 'DomicilioCitta', 'DomicilioVia', 'DomicilioCivico');
-			}
-			if(isset($data['indirizzoScolastico'])) {
-				array_push($values, $data['indirizzoScolastico']);
-				$values_type .= 's';
-				array_push($attr, 'IndirizzoScolastico');
-			}
-			$sql = 'INSERT INTO Studenti(' . implode(", ", $attr) . ') VALUES (' . str_repeat('?, ', count($attr)-1) . '?);';
-			
-			$stmt = $conn->prepare($sql);
-			$stmt->bind_param($values_type, ...$values);
-			$stmt->execute();
-			
-		} else if ($data['tipo'] == 'azienda'){
-			
-			//Creazione in tabella 'Aziende'
-			$sql = "INSERT INTO Aziende(IdUtente, IVA, Nome, Settore, ReferenteCodiceFiscale, ReferenteNome, ReferenteCognome, ReferenteDataNascita) VALUES($id, ?, ?, ?, ?, ?, ?, ?);";
-			$stmt = $conn->prepare($sql);
-			$stmt->bind_param('issssss', $data['iva'], $data['nomeAzienda'], $data['settore'], $data['cf'], $data['nome'], $data['cognome'], $data['nascita']);
-			$stmt->execute();
-			
-			$sql = "INSERT INTO Sedi(Azienda, Citta, Via, Civico, Legale) VALUES($id, ?, ?, ?, 1)";
-			$stmt = $conn->prepare($sql);
-			$stmt->bind_param('isi', $data['sede']['citta'], $data['sede']['via'], $data['sede']['civico']);
-			$stmt->execute();
+		} catch(Exception  $e) {
+			$sql = "DELETE FROM Utenti WHERE IdUtente = $id";
+			$conn->query($sql);
+			echo $e;
+			return false;
 		}
-		
 	} else {
 		
 		// Se è un admin
@@ -244,7 +249,6 @@ function delete_account($password) {
 	$sql = "SELECT HashPassword FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
 	
 	$result = $conn->query($sql);
-	$result = $query->get_result();
 	$record = $result->fetch_assoc();
 	
 	// Controllo della password

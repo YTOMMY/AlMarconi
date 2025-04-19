@@ -97,7 +97,45 @@
 			}
 		}
 		function elimina() {
-			
+			if (confirm("Sei sicuro di voler eliminare l'account?")) {
+				document.getElementById("pagina").innerHTML += `
+					<p>
+						<form id="form-elimina">
+							<label for="password">Inserire la password per continuare</label>
+							<input type="password" id="password" placeholder="password">
+							<input type="submit">
+						</form>
+					</p>
+				`;
+				
+				document.getElementById('form-elimina').addEventListener('submit', async function(e) {
+					e.preventDefault();
+
+					const data = {
+						password: document.getElementById('password').value
+					};
+
+					try {
+						const response = await fetch('api.php/account', {
+							method: 'DELETE',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							body: JSON.stringify(data)
+						});
+						
+						const responseData = await response.json();
+
+						if (response.ok) {
+							if(responseData.delete == true) {
+								sessionStorage.clear();
+								window.location.href = "index.html";
+							}
+						}
+					} catch (error) {
+					}
+				});
+			}
 		}
 	</script>
 </body>

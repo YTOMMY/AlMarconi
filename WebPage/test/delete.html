@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Delete</title>
+</head>
+<body>
+  <h2>Delete</h2>
+
+  <form id="form">
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <button type="submit">Elimina</button>
+  </form>
+
+  <h3>Dati Inviati (JSON):</h3>
+  <pre id="sentJson"></pre>
+
+  <h3>Risposta del server:</h3>
+  <pre id="response"></pre>
+  <script>
+    document.getElementById('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const data = {
+        password: document.getElementById('password').value
+      };
+
+      const jsonData = JSON.stringify(data, null, 2);
+      document.getElementById('sentJson').textContent = jsonData;
+
+      fetch('../api.php/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.text())
+      .then(result => {
+        document.getElementById('response').textContent = result;
+      })
+      .catch(error => {
+        document.getElementById('response').textContent = 'Errore: ' + error;
+      });
+    });
+  </script>
+</body>
+</html>
