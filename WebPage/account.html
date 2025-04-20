@@ -81,7 +81,7 @@
 		async function esci() {
 			try {
 				const response = await fetch('api.php/logout', {
-					method: 'GET'
+					method: 'POST'
 				});
 				
 				const responseData = await response.json();
@@ -116,7 +116,7 @@
 					};
 
 					try {
-						const response = await fetch('api.php/account', {
+						const response = await fetch('api.php/account/' + sessionStorage.getItem("userId"), {
 							method: 'DELETE',
 							headers: {
 								'Content-Type': 'application/json'

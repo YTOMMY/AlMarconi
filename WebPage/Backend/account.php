@@ -193,6 +193,45 @@ function get_type($id) {
 	}
 }
 
+function check_password($id, $password) {
+	global $conn;
+	$sql = 'SELECT HashPassword FROM Utenti WHERE IdUtente = ?';
+	
+	$stmt = $conn->prepare($sql);
+	$stmt->bind_param('i', $id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$record = $result->fetch_assoc();
+	
+	// Controllo della password
+	$hashed_password = $record['HashPassword'];
+	return password_verify($password, $hashed_password);
+}
+
+function change($id = null, $data) {
+	if(!isset($_SESSION['id'])) {
+		if($id != null && isset($data['password'])) {
+			if(!check_password($id, $password)) {
+				return false;
+			}
+		}
+	}
+
+	foreach($data : $attr => $val) {
+		switch($attr) {
+			case 'email':
+				break;
+			case 'nuovaPassword':
+				break;
+			case 'telefono':
+				break;
+			case '2FA':
+				break;
+									
+		}
+	}
+}
+
 // Cambio password di un utente
 function change_password($old_password, $new_password) {
 	
@@ -236,30 +275,19 @@ function logout(){
 	return true;
 }
 
-function delete_account($password) {
-	
-	// Verifica che l'utente sia loggato
-	if(!isset($_SESSION['id'])) {
-		return false;
-	}
+function delete_account($id, $password) {
 	
 	// Query per ottenere la password
-	global $conn;
-	$tabella = 'Utenti';
-	$sql = "SELECT HashPassword FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
-	
-	$result = $conn->query($sql);
-	$record = $result->fetch_assoc();
-	
-	// Controllo della password
-	$hashed_password = $record['HashPassword'];
-	if (!password_verify($password, $hashed_password)) {
+	if(!check_password($id, $password)) {
 		return false;
 	}
 	
+	global $conn;
+	
 	// Eliminazione dell'account
-	$sql = "DELETE FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
-	if ($conn->query($sql) === true) {
+	$sql = 'DELETE FROM Utenti WHERE IdUtente = ?';
+	$stmt->bind_param('i', $id);
+	if ($stmt->execute()) {
 		return true;
 		session_destroy();
 	}

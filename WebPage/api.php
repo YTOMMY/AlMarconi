@@ -87,9 +87,12 @@ switch($uri[0]) {
 			
 			// Elimina account
 			case 'DELETE':
+				if(!isset($uri[1])) {
+					not_found_error();
+				}
 				check_content($input);
 				$data = json_decode($input, true);
-				$output = ['delete' => delete_account($data['password'])];
+				$output = ['delete' => delete_account($uri[1], $data['password'])];
 				break;
 			default:
 				method_error(['DELETE']);
@@ -110,6 +113,12 @@ if(isset($output)) {
 function not_found_error() {
 	header('HTTP/1.1 404 Not Found');
 	echo 'Pagina non trovata';
+	exit;
+}
+
+function unauthorized_error() {
+	header('HTTP/1.1 401 Unauthorized');
+	echo "Autenticazione richiesta";
 	exit;
 }
 
