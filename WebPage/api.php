@@ -85,6 +85,18 @@ switch($uri[0]) {
 				}
 				break;
 			
+			//Modifica account
+			case 'PATCH':
+				check_content($input);
+				$data = json_decode($input, true);
+				if(isset($uri[1])) {
+					$id = $uri[1];
+				} else {
+					$id = null;
+				}
+				change($id, $data);
+				break;
+			
 			// Elimina account
 			case 'DELETE':
 				if(!isset($uri[1])) {
@@ -95,7 +107,7 @@ switch($uri[0]) {
 				$output = ['delete' => delete_account($uri[1], $data['password'])];
 				break;
 			default:
-				method_error(['DELETE']);
+				method_error([''POST', 'PATCH', 'DELETE']);
 		}
 		break;
 

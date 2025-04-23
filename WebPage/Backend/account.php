@@ -209,25 +209,75 @@ function check_password($id, $password) {
 }
 
 function change($id = null, $data) {
-	if(!isset($_SESSION['id'])) {
-		if($id != null && isset($data['password'])) {
+	if($id != null) {
+		if(isset($data['password']) {
 			if(!check_password($id, $password)) {
 				return false;
 			}
 		}
+	} else if(isset($_SESSION['id']) {
+		$id = $_SESSION['id'];
 	}
 
-	foreach($data : $attr => $val) {
+	$attr_list = [];
+	$var_list = [];
+	$attr_type = '';
+	$more_attr = false;
+	
+	foreach($data as $attr => $val) {
 		switch($attr) {
 			case 'email':
 				break;
 			case 'nuovaPassword':
 				break;
 			case 'telefono':
+				array_push($attr_list, 'Telefono');
+				array_push($val_list, $val);
+				$attr_type .= 'i';
 				break;
 			case '2FA':
+				array_push($attr_list, '2FA');
+				array_push($val_list, $val);
+				$attr_type .= 'i';
 				break;
-									
+			case 'visualizzaEmail':
+				array_push($attr_list, 'VisualizzaMail');
+				array_push($val_list, $val);
+				$attr_type .= 'i';
+				break;
+			case 'visualizzaTelefono':
+				array_push($attr_list, 'VisualizzaTelefono');
+				array_push($val_list, $val);
+				$attr_type .= 'i';
+				break;
+			default:
+				$more_attr = true;
+				break;
+		}
+	}
+	
+	global $conn;
+	
+	array_push($val_list, $id);
+	$attr_type .= 'i';
+	
+	$sql = 'UPDATE Utenti SET ';
+	foreach($attr_list as $attr) {
+		$sql .= $attr . ' = ?, '
+	}
+	$sql = substr($sql, 0, -1);
+	$sql .= 'WHERE IdUtente = ?;';
+	
+	$stmt = $conn->prepare($sql);
+	$stmt->bind_param($val_type, ...$val_list);
+	$stmt->execute();
+	
+	if($more_attr) {
+		$tipo = $get_type($id);
+		if($tipo == 'studente') {
+		
+		} else if($tipo == 'azienda') {
+		
 		}
 	}
 }
