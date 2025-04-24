@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tutti gli studenti - AlMarconi</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<div class="top-bar">
+		<div class="left">
+			<a href="index.html"><img src="logo.jpeg" alt="Logo" class="logo"></a>
+		</div>
+
+		<div class="center">
+			<h1>Tutte gli studenti</h1>
+		</div>
+
+		<div class="right">
+			<div id="account"></div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div id="pagina"></div>
+	</div>
+
+	<script>
+		const userId = sessionStorage.getItem("userId");
+		const verificato = sessionStorage.getItem("verificato");
+		const tipo = sessionStorage.getItem("tipo");
+
+		if (!userId || userId == 0) {
+			document.getElementById("account").innerHTML = `
+				<a href="login.html" class="menu">Accedi</a>
+			`;
+
+			document.getElementById("pagina").innerHTML = `
+				<h3>Benvenuto in AlMarconi</h3>
+				<p>Accedi per visualizzare le informazioni</p>
+			`;
+		} else {
+			document.getElementById("account").innerHTML = `
+				<a href="impostazioni.html" class="menu">Impostazioni</a>
+			`;
+
+			if (verificato != 1) {
+				document.getElementById("pagina").innerHTML = `
+					<p>Account in attesa di validazione</p>
+				`;
+			} else {
+				if (tipo === "azienda") {
+					window.addEventListener('DOMContentLoaded', async function () {
+						try {
+							const response = await fetch('api.php/tuttiStudenti', {
+								method: 'GET',
+							});
+
+							const responseData = await response.json();
+
+							if (response.ok) {
+								const nomi = responseData.nomi;
+								const cognomi = responseData.cognomi;
+								const idStudenti = responseData.id;
+
+
+								const pagina = document.getElementById("pagina");
+								pagina.innerHTML = "";
+
+								for (let i = 0; i < idStudenti.length; i++) {
+									const riga = document.createElement('p');
+									riga.innerHTML = `<a href="schedaStudente.html?id=${idStudenti[i]}">${nomi[i]} ${cognomi[i]}</a>`;
+									pagina.appendChild(riga);
+								}
+							}
+						} catch (error) {
+							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+						}
+					});
+				} else if (tipo === "studente") {
+					document.getElementById("pagina").textContent ="Questa pagina è visualizzabile solo ad un account azienda";
+				} else {
+					document.getElementById("pagina").innerHTML = `
+						Errore: non è stato possibile recuperare i dati
+					`;
+				}
+			}
+		}
+	</script>
+
+</body>
+</html>

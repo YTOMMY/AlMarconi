@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Scheda Azienda - AlMarconi</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<div class="top-bar">
+		<div class="left">
+			<a href="index.html"><img src="logo.jpeg" alt="Logo" class="logo"></a>
+		</div>
+
+		<div class="center">
+			<h1>Scheda Azienda</h1>
+		</div>
+
+		<div class="right">
+			<div id="account"></div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div id="pagina"></div>
+	</div>
+
+	<script>
+		const userId = sessionStorage.getItem("userId");
+		const verificato = sessionStorage.getItem("verificato");
+		const tipo = sessionStorage.getItem("tipo");
+
+		if (!userId || userId == 0) {
+			document.getElementById("account").innerHTML = `
+				<a href="login.html" class="menu">Accedi</a>
+			`;
+
+			document.getElementById("pagina").innerHTML = `
+				<h3>Benvenuto in AlMarconi</h3>
+				<p>Accedi per visualizzare le informazioni</p>
+			`;
+		} else {
+			document.getElementById("account").innerHTML = `
+				<a href="impostazioni.html" class="menu">Impostazioni</a>
+			`;
+
+			if (verificato != 1) {
+				document.getElementById("pagina").innerHTML = `
+					<p>Account in attesa di validazione</p>
+				`;
+			} else {
+				if (tipo === "studente") {
+					const urlParams = new URLSearchParams(window.location.search);
+					const idAzienda = urlParams.get('id');
+
+					window.addEventListener('DOMContentLoaded', async function () {
+						try {
+							const response = await fetch(`api.php/azienda?id=${idAzienda}`, {
+								method: 'GET',
+							});
+
+							const responseData = await response.json();
+
+							if (response.ok) {
+								const nomeAzienda = responseData.nome;
+								const settore = responseData.settore;
+								const numDipendenti = responseData.num;
+								const sito = responseData.sito;
+								const descrizione = responseData.descrizione;
+								const stato = responseData.stato;
+								const provincia = responseData.provincia;
+								const comune = responseData.comune;
+								const indirizzo = responseData.indirizzo;
+								const cap = responseData.cap;
+								const altreSedi = responseData.sedi;
+
+								const pagina = document.getElementById("pagina");
+								pagina.innerHTML = "";
+
+								const info = document.createElement('p');
+								info.innerHTML = `
+									<strong>${nomeAzienda}</strong><br>
+									Settore: ${settore}<br>
+									Dipendenti: ${numDipendenti}<br>
+									Sito: <a href="${sito}" target="_blank">${sito}</a><br>
+									Descrizione: ${descrizione}<br>
+									Indirizzo: ${indirizzo}, ${cap}, ${comune}, ${provincia}, ${stato}
+								`;
+								pagina.appendChild(info);
+
+								if (altreSedi && altreSedi.length > 0) {
+									const titoloSedi = document.createElement('h4');
+									titoloSedi.textContent = "Altre sedi:";
+									pagina.appendChild(titoloSedi);
+
+									altreSedi.forEach(sede => {
+										const sedeEl = document.createElement('p');
+										sedeEl.textContent = sede;
+										pagina.appendChild(sedeEl);
+									});
+								}
+							} else {
+								document.getElementById("pagina").textContent = 'Errore nel recupero dei dati aziendali.';
+							}
+						} catch (error) {
+							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+						}
+					});
+				} else if (tipo === "azienda") {
+					document.getElementById("pagina").textContent = "Questa pagina è visualizzabile solo da un account studente.";
+				} else {
+					document.getElementById("pagina").innerHTML = `
+						Errore: non è stato possibile recuperare i dati
+					`;
+				}
+			}
+		}
+	</script>
+
+</body>
+</html>
