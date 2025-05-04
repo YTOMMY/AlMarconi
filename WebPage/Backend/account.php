@@ -210,12 +210,12 @@ function check_password($id, $password) {
 
 function change($id = null, $data) {
 	if($id != null) {
-		if(isset($data['password']) {
+		if(isset($data['password'])) {
 			if(!check_password($id, $password)) {
 				return false;
 			}
 		}
-	} else if(isset($_SESSION['id']) {
+	} else if(isset($_SESSION['id'])) {
 		$id = $_SESSION['id'];
 	}
 
