@@ -25,7 +25,7 @@ function query_select(Table $table, array $select_args, array $cond_args, array 
 		$param_type .= $arg->getType();
 	}
 
-	$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . $table->value. ' ' . implode(' AND ', $cond) . ';';
+	$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . $table->value. ' WHERE ' . implode(' AND ', $cond) . ';';
 
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param($param_type, ...$cond_values);
@@ -78,9 +78,9 @@ function query_update(Table $table, array $update_args, array $update_values, ar
 }
 
 /**  
- * @param Arg[] $args
+ * @param Arg[] $cond_args
 */
-function query_delete(Table $table, array $select_args, array $cond_args, array $cond_values) {
+function query_delete(Table $table, array $cond_args, array $cond_values) {
 	global $conn;
 	
 	$param_type = '';
@@ -89,7 +89,7 @@ function query_delete(Table $table, array $select_args, array $cond_args, array 
 		$param_type .= $arg->getType();
 	}
 
-	$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . $table->value. ' ' . implode(' AND ', $cond) . ';';
+	$sql = 'DELETE  FROM ' . $table->value. ' WHERE ' . implode(' AND ', $cond) . ';';
 
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param($param_type, ...$cond_values);
