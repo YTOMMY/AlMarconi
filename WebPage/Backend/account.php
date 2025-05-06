@@ -257,28 +257,13 @@ function change($id = null, $data) {
 	}
 	
 	global $conn;
-	
-	array_push($val_list, $id);
-	$attr_type .= 'i';
-	
-	$sql = 'UPDATE Utenti SET ';
-	foreach($attr_list as $attr) {
-		$sql .= $attr . ' = ?, '
-	}
-	$sql = substr($sql, 0, -1);
-	$sql .= 'WHERE IdUtente = ?;';
-	
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param($val_type, ...$val_list);
-	$stmt->execute();
-	
-	if($more_attr) {
-		$tipo = $get_type($id);
-		if($tipo == 'studente') {
-		
-		} else if($tipo == 'azienda') {
-		
-		}
+	$conn->begin_transaction();
+	try {
+	  query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
+	  
+	  $conn->commit();
+	} catch (mysqli_sql_exception $e) {
+	  $conn->rolback();
 	}
 }
 
