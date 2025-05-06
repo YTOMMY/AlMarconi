@@ -114,7 +114,7 @@ enum Arg: string{
 	case Username = 'Username';
 	case HashPassword = 'HashPassword';
 	case IdUtente = 'IdUtente';
-	case Mail = 'Mail';
+	case Email = 'Mail';
 	case Telefono = 'Telefono';
 	case TwoFA = '2FA';
 	case Verificato = 'Verificato';
@@ -145,7 +145,7 @@ enum Arg: string{
 	case IVA = 'IVA';
 	case Settore = 'Settore';
 	case NumeroDipendenti = 'NumeroDipendenti';
-	case Link = 'Link';
+	case LinkEsterno = 'Link';
 	case ReferenteCodiceFiscale = 'ReferenteCodiceFiscale';
 	case ReferenteNome = 'ReferenteNome';
 	case ReferenteCognome = 'ReferenteCognome';
@@ -172,7 +172,7 @@ enum Arg: string{
 			case Arg::Username: return 's';
 			case Arg::HashPassword: return 's';
 			case Arg::IdUtente: return 'i';
-			case Arg::Mail: return 's';
+			case Arg::Email: return 's';
 			case Arg::Telefono: return 's';
 			case Arg::TwoFA: return 's';
 			case Arg::Verificato: return 's';
@@ -203,7 +203,7 @@ enum Arg: string{
 			case Arg::IVA: return 'i';
 			case Arg::Settore: return 's';
 			case Arg::NumeroDipendenti: return 'i';
-			case Arg::Link: return 's';
+			case Arg::LinkEsterno: return 's';
 			case Arg::ReferenteCodiceFiscale: return 's';
 			case Arg::ReferenteNome: return 's';
 			case Arg::ReferenteCognome: return 's';

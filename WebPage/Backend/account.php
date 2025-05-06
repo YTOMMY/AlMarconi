@@ -221,34 +221,33 @@ function change($id = null, $data) {
 
 	$attr_list = [];
 	$var_list = [];
-	$attr_type = '';
 	$more_attr = false;
 	
 	foreach($data as $attr => $val) {
 		switch($attr) {
 			case 'email':
+			  array_push($attr_list, Arg::Email);
+				array_push($val_list, $val);
 				break;
-			case 'nuovaPassword':
+			case 'password':
+			  array_push($attr_list, Arg::Password);
+				array_push($val_list, $val);
 				break;
 			case 'telefono':
-				array_push($attr_list, 'Telefono');
+				array_push($attr_list, Arg::Telefono);
 				array_push($val_list, $val);
-				$attr_type .= 'i';
 				break;
 			case '2FA':
-				array_push($attr_list, '2FA');
+				array_push($attr_list, Arg::TwoFA);
 				array_push($val_list, $val);
-				$attr_type .= 'i';
 				break;
 			case 'visualizzaEmail':
-				array_push($attr_list, 'VisualizzaMail');
+				array_push($attr_list, Arg::VisualizzaMail);
 				array_push($val_list, $val);
-				$attr_type .= 'i';
 				break;
 			case 'visualizzaTelefono':
-				array_push($attr_list, 'VisualizzaTelefono');
+				array_push($attr_list, Arg::VisualizzaTelefono);
 				array_push($val_list, $val);
-				$attr_type .= 'i';
 				break;
 			default:
 				$more_attr = true;
@@ -268,6 +267,9 @@ function change($id = null, $data) {
 }
 
 // Cambio password di un utente
+/**
+ * @deprecated usa change()
+ */
 function change_password($old_password, $new_password) {
 	
 	// Verifica che l'utente sia loggato
