@@ -34,11 +34,12 @@ function exists_annuncio($id) {
 	}
 }
 
-function get_annuncio($id = null, $data) {
+function get_annuncio($id = null, $data = null) {
 	if(isset($data)) {
-		foreach($data as $attr) {
+		foreach($data as &$attr) {
 			$attr = Arg::fromJson(Table::Annunci, $attr);
 		}
+		unset($attr);
 	}
 	
 	if(isset($id)) {
