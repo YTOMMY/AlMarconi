@@ -16,7 +16,7 @@ $conn->set_charset('utf8');
  * @param Arg[]|null $select_args
  * @param Arg[]|null $cond_args
 */
-function query_select(Table $table, array|null $select_args, array|null $cond_args, array|null $cond_values) {
+function query_select(Table $table, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null) {
 	global $conn;
 	
 	if(isset($select_args)) {
@@ -70,7 +70,7 @@ function query_insert(Table $table, array $insert_args, array $insert_values) {
  * @param Arg[] $update_args
  * @param Arg[]|null $cond_args
 */
-function query_update(Table $table, array $update_args, array $update_values, array|null $cond_args, array|null $cond_values) {
+function query_update(Table $table, array $update_args, array $update_values, array $cond_args, array $cond_values) {
 	global $conn;
 	
 	$param_type = '';
@@ -86,6 +86,7 @@ function query_update(Table $table, array $update_args, array $update_values, ar
 	$sql = 'UPDATE '. $table . 'SET ' . implode(' = ?, ', $update_args) . ' WHERE '. implode(' AND ', $cond) . ';';
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param($param_type, ...$param_values);
+	
 	$stmt->execute();
 	return $stmt->get_result();
 }
