@@ -94,7 +94,7 @@ switch($uri[0]) {
 				} else {
 					$id = null;
 				}
-				change($id, $data);
+				update_account($id, $data);
 				break;
 			
 			// Elimina account
@@ -107,10 +107,28 @@ switch($uri[0]) {
 				$output = ['delete' => delete_account($uri[1], $data['password'])];
 				break;
 			default:
-				method_error([''POST', 'PATCH', 'DELETE']);
+				method_error(['POST', 'PATCH', 'DELETE']);
 		}
 		break;
+	case 'annuncio':
+		switch($request_method) {
 
+			// Registrazione
+			case 'GET':
+				check_content($input);
+				$data = json_decode($input, true);
+				if(isset($uri[1])) {
+					$id = $uri[1];
+				} else {
+					$id = null;
+				}
+				
+				$output = get_annuncio($id, $data['data']);
+				break;
+			default:
+				method_error(['GET']);
+		}
+		break;
 	// Web service non trovato
 	default:
 		not_found_error();

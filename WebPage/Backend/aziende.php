@@ -1,6 +1,7 @@
 <?php	//Per gestire le funzioni relative alle aziende
 require_once 'db.php';
 
+/*
 function getAzienda($id = null) {
 	global $conn;
 	if(!isset($id)) {
@@ -20,6 +21,38 @@ function getAzienda($id = null) {
 		} else {
 			return null;
 		}
+	}
+}
+*/
+
+function exists_annuncio($id) {
+	$result = query_select(Table::Annunci, null, [Arg::IdAnnuncio], [$id]);
+	if ($result) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function get_annuncio($id = null, $data) {
+	if(isset($data)) {
+		foreach($data as $attr) {
+			$attr = Arg::fromJson($attr);
+		}
+	}
+	
+	if(isset($id)) {
+		if(!exists_annuncio($id) {
+			return false;
+		}
+		$result = query_select(Table::Annunci, $data, [Arg::IdAnnuncio], [$id]);
+		return $result->fetch_assoc();
+	} else {
+		$result = query_select(Table::Annunci, $data, null, null);
+		while($row = $result->fetch_assoc()) {
+			$output[] = $row;
+		}
+		return $output;
 	}
 }
 ?>

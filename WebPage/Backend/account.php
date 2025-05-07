@@ -208,7 +208,7 @@ function check_password($id, $password) {
 	return password_verify($password, $hashed_password);
 }
 
-function change($id = null, $data) {
+function update_account($id = null, $data) {
 	if($id != null) {
 		if(isset($data['password'])) {
 			if(!check_password($id, $password)) {
@@ -222,6 +222,10 @@ function change($id = null, $data) {
 	$attr_list = [];
 	$var_list = [];
 	$more_attr = false;
+	foreach($data as $attr) {
+		$attr = Arg::fromJson($attr) ?? $attr;
+		// 			DA FINIRE
+	}
 	
 	foreach($data as $attr => $val) {
 		switch($attr) {
@@ -267,9 +271,7 @@ function change($id = null, $data) {
 }
 
 // Cambio password di un utente
-/**
- * @deprecated usa change()
- */
+/*
 function change_password($old_password, $new_password) {
 	
 	// Verifica che l'utente sia loggato
@@ -298,6 +300,7 @@ function change_password($old_password, $new_password) {
 	$stmt->bind_param('s', $email);
 	$stmt->execute();
 }
+*/
 
 // Logout dall'account
 function logout(){

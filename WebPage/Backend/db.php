@@ -19,16 +19,24 @@ $conn->set_charset('utf8');
 function query_select(Table $table, array $select_args, array $cond_args, array $cond_values) {
 	global $conn;
 	
-	$param_type = '';
-	foreach($cond_args as $arg) {
-		$cond[] = $arg->value . ' = ?';
-		$param_type .= $arg->getType();
+	if(!isset($select_args)) {
+		$select_args = ['*'];
 	}
+	if(isset($cond_args)) {
+		$param_type = '';
+		foreach($cond_args as $arg) {
+			$cond[] = $arg->value . ' = ?';
+			$param_type .= $arg->getType();
+		}
 
-	$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . $table->value. ' WHERE ' . implode(' AND ', $cond) . ';';
+		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . $table->value . ' WHERE ' . implode(' AND ', $cond) . ';';
 
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param($param_type, ...$cond_values);
+		$stmt = $conn->prepare($sql);
+		$stmt->bind_param($param_type, ...$cond_values);
+	} else {
+		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . $table->value . ';';
+		$stmt = $conn->prepare($sql);
+	}
 	$stmt->execute();
 	return $stmt->get_result();
 }
@@ -223,6 +231,158 @@ enum Arg: string{
 			case Arg::DataScadenza: return 's';
 			case Arg::MaxIscrizioni: return 'i';
 			case Arg::Sede: return 'i';
+			default: return 's';
+		}
+	}
+	
+	/**
+	 * @param Table $table
+	*/
+	public static function fromJson($table, $value) {
+	case Table::Admin: switch($this) {
+				
+				default: return null;
+			}
+			case Table::Utenti: switch($this) {
+				case 'id': return Arg::IdUtente;
+				case 'email': return Arg::Email;
+				case 'password': return Arg::HashPassword;
+				case 'telefono': return Arg::Telefono;
+				case '2FA': return Arg::TwoFA;
+				case 'visualizzaEmail': return Arg::VisualizzaMail;
+				case 'visualizzaTelefono': return Arg::VisualizzaTelefono;
+				default: return null;
+			case Table::Citta: switch($this) {
+				
+				default: return null;
+			}
+			case Table::Studenti: switch($this) {
+				
+				default: return null;
+			}
+			case Table::Aziende: switch($this) {
+				
+				default: return null;
+			}
+			case Table::Annunci: switch($this) {
+				case 'id': return Arg::IdAnnuncio;
+				case 'tipo': return Arg::TipoContratto;
+				case 'mansione': return Arg::Mansione;
+				case 'descrizione': return Arg::Descrizione;
+				case 'areaDisciplinare': return Arg::AreaDisciplinare;
+				case 'abilita': return Arg::AbilitaRichieste;
+				case 'pubblicazione': return Arg::DataPubblicazione;
+				case 'scadenza': return Arg::DataScadenza;
+				case 'maxIscrizioni': return Arg::MaxIscrizioni;
+				case 'azienda': return Arg::Azienda;
+				case 'sede': return Arg::Sede;
+				default: return null;
+			}
+			default: return null;
+	}
+	
+	/**
+	 * @param Table $table
+	*/
+	public function jsonValue($table): string {
+		switch($table) {
+			case Table::Admin: switch($this) {
+				
+				default: return '';
+			}
+			case Table::Utenti: switch($this) {
+				case Arg::IdUtente: return 'id';
+				case Arg::Email: return 'email';
+				case Arg::HashPassword: return 'password';
+				case Arg::Telefono: return 'telefono';
+				case Arg::TwoFA: return '2FA';
+				case Arg::VisualizzaMail: return 'visualizzaEmail';
+				case Arg::VisualizzaTelefono: return 'visualizzaTelefono';
+				default: return '';
+			case Table::Citta: switch($this) {
+				
+				default: return '';
+			}
+			case Table::Studenti: switch($this) {
+				
+				default: return '';
+			}
+			case Table::Aziende: switch($this) {
+				
+				default: return '';
+			}
+			case Table::Annunci: switch($this) {
+				case Arg::IdAnnuncio: return "id";
+				case Arg::TipoContratto: return "tipo";
+				case Arg::Mansione: return "mansione";
+				case Arg::Descrizione: return "descrizione";
+				case Arg::AreaDisciplinare: return "areaDisciplinare";
+				case Arg::AbilitaRichieste: return "abilita";
+				case Arg::DataPubblicazione: return "pubblicazione";
+				case Arg::DataScadenza: return "scadenza";
+				case Arg::MaxIscrizioni: return "maxIscrizioni";
+				case Arg::Azienda: return "azienda";
+				case Arg::Sede: return "sede";
+				default: return '';
+			}
+			default: return '';
+		}
+		switch ($this) {
+			case Arg::IdAdmin: return 'idAdmin';
+			case Arg::Username: return 'username';
+			case Arg::HashPassword: return 'password';
+			case Arg::IdUtente: return 'idUtente';
+			case Arg::Email: return 'email';
+			case Arg::Telefono: return 's';
+			case Arg::TwoFA: return 's';
+			case Arg::Verificato: return 's';
+			case Arg::DataCreazione: return 's';
+			case Arg::VisualizzaMail: return 's';
+			case Arg::VisualizzaTelefono: return 's';
+			case Arg::IdCitta: return 'i';
+			case Arg::Cap: return 'i';
+			case Arg::Nome: return 's';
+			case Arg::Provincia: return 's';
+			case Arg::Paese: return 's';
+			case Arg::CodiceFiscale: return 's';
+			case Arg::Cognome: return 's';
+			case Arg::Sesso: return 's';
+			case Arg::DataNascita: return 's';
+			case Arg::Nazionalita: return 's';
+			case Arg::IndirizzoScolastico: return 's';
+			case Arg::Voto: return 'i';
+			case Arg::Descrizione: return 's';
+			case Arg::ResidenzaCitta: return 'i';
+			case Arg::ResidenzaVia: return 's';
+			case Arg::ResidenzaCivico: return 'i';
+			case Arg::DomicilioCitta: return 'i';
+			case Arg::DomicilioVia: return 's';
+			case Arg::DomicilioCivico: return 'i';
+			case Arg::IdAbilita: return 'i';
+			case Arg::Studente: return 'i';
+			case Arg::IVA: return 'i';
+			case Arg::Settore: return 's';
+			case Arg::NumeroDipendenti: return 'i';
+			case Arg::LinkEsterno: return 's';
+			case Arg::ReferenteCodiceFiscale: return 's';
+			case Arg::ReferenteNome: return 's';
+			case Arg::ReferenteCognome: return 's';
+			case Arg::ReferenteDataNascita: return 's';
+			case Arg::IdSede: return 'i';
+			case Arg::Azienda: return 'i';
+			case Arg::Citta: return 'i';
+			case Arg::Via: return 's';
+			case Arg::Civico: return 'i';
+			case Arg::Legale: return 's';
+			case Arg::IdAnnuncio: return 'i';
+			case Arg::TipoContratto: return 's';
+			case Arg::Mansione: return 's';
+			case Arg::AreaDisciplinare: return 's';
+			case Arg::AbilitaRichieste: return '';
+			case Arg::DataPubblicazione: return 'pubblicazione';
+			case Arg::DataScadenza: return 'scadenza';
+			case Arg::MaxIscrizioni: return 'maxIscrizioni';
+			case Arg::Sede: return 'sede';
 			default: return 's';
 		}
 	}
