@@ -39,7 +39,7 @@ switch($uri[0]) {
 						$output['nome'] = $datiStudente['Nome'] . ' ' . $datiStudente['Cognome'];
 					}
 					if($output['tipo'] == 'azienda') {
-						$output['nome'] = getAzienda()['Nome'];
+						$output['nome'] = get_azienda()['Nome'];
 					}
 				} else {
 					$output = ['id' => 'null']; 
@@ -78,7 +78,7 @@ switch($uri[0]) {
 						$output['nome'] = $datiStudente['Nome'] . ' ' . $datiStudente['Cognome'];
 					}
 					if($output['tipo'] == 'azienda') {
-						$output['nome'] = getAzienda()['Nome'];
+						$output['nome'] = get_azienda()['Nome'];
 					}
 				} else {
 					$output = ['id' => 'null'];

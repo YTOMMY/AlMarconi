@@ -13,13 +13,18 @@ if($conn->connect_errno) {
 $conn->set_charset('utf8');
 
 /**
- * @param Arg[] $args
- * @param Arg[] $cond_args
+ * @param Arg[]|null $select_args
+ * @param Arg[]|null $cond_args
 */
-function query_select(Table $table, array $select_args, array $cond_args, array $cond_values) {
+function query_select(Table $table, array|null $select_args, array|null $cond_args, array|null $cond_values) {
 	global $conn;
 	
-	if(!isset($select_args)) {
+	if(isset($select_args)) {
+		foreach($select_args as &$arg) {
+			$arg = $arg->value;
+		}
+		unset($arg);
+	} else {
 		$select_args = ['*'];
 	}
 	if(isset($cond_args)) {
@@ -42,7 +47,7 @@ function query_select(Table $table, array $select_args, array $cond_args, array 
 }
 
 /**  
- * @param Arg[] $args
+ * @param Arg[] $insert_args
 */
 function query_insert(Table $table, array $insert_args, array $insert_values) {
 	global $conn;
@@ -56,16 +61,16 @@ function query_insert(Table $table, array $insert_args, array $insert_values) {
 	$sql = 'INSERT INTO '. $table . '(' . implode(', ', $insert_args) . ') VALUES(' . implode(', ', $insert_placeholder) . ');'; 
 
 	$stmt = $conn->prepare($sql);
-	$stmt->bind_param($param_type, ...$values);
+	$stmt->bind_param($param_type, ...$insert_values);
 	$stmt->execute();
 	return $stmt->get_result();
 }
 
 /**  
- * @param Arg[] $args
- * @param Arg[] $cond_args
+ * @param Arg[] $update_args
+ * @param Arg[]|null $cond_args
 */
-function query_update(Table $table, array $update_args, array $update_values, array $cond_args, array $cond_values) {
+function query_update(Table $table, array $update_args, array $update_values, array|null $cond_args, array|null $cond_values) {
 	global $conn;
 	
 	$param_type = '';
@@ -120,7 +125,7 @@ enum Table: string{
 enum Arg: string{
 	case IdAdmin = 'IdAdmin';
 	case Username = 'Username';
-	case HashPassword = 'HashPassword';
+	case Password = 'HashPassword';
 	case IdUtente = 'IdUtente';
 	case Email = 'Mail';
 	case Telefono = 'Telefono';
@@ -178,7 +183,7 @@ enum Arg: string{
 		switch ($this) {
 			case Arg::IdAdmin: return 'i';
 			case Arg::Username: return 's';
-			case Arg::HashPassword: return 's';
+			case Arg::Password: return 's';
 			case Arg::IdUtente: return 'i';
 			case Arg::Email: return 's';
 			case Arg::Telefono: return 's';
@@ -239,32 +244,34 @@ enum Arg: string{
 	 * @param Table $table
 	*/
 	public static function fromJson($table, $value) {
-	case Table::Admin: switch($this) {
+		switch ($table) {
+			case Table::Admin: switch($value) {
 				
 				default: return null;
 			}
-			case Table::Utenti: switch($this) {
+			case Table::Utenti: switch($value) {
 				case 'id': return Arg::IdUtente;
 				case 'email': return Arg::Email;
-				case 'password': return Arg::HashPassword;
+				case 'password': return Arg::Password;
 				case 'telefono': return Arg::Telefono;
 				case '2FA': return Arg::TwoFA;
 				case 'visualizzaEmail': return Arg::VisualizzaMail;
 				case 'visualizzaTelefono': return Arg::VisualizzaTelefono;
 				default: return null;
-			case Table::Citta: switch($this) {
+			}
+			case Table::Citta: switch($value) {
 				
 				default: return null;
 			}
-			case Table::Studenti: switch($this) {
+			case Table::Studenti: switch($value) {
 				
 				default: return null;
 			}
-			case Table::Aziende: switch($this) {
+			case Table::Aziende: switch($value) {
 				
 				default: return null;
 			}
-			case Table::Annunci: switch($this) {
+			case Table::Annunci: switch($value) {
 				case 'id': return Arg::IdAnnuncio;
 				case 'tipo': return Arg::TipoContratto;
 				case 'mansione': return Arg::Mansione;
@@ -279,6 +286,7 @@ enum Arg: string{
 				default: return null;
 			}
 			default: return null;
+		}
 	}
 	
 	/**
@@ -293,12 +301,13 @@ enum Arg: string{
 			case Table::Utenti: switch($this) {
 				case Arg::IdUtente: return 'id';
 				case Arg::Email: return 'email';
-				case Arg::HashPassword: return 'password';
+				case Arg::Password: return 'password';
 				case Arg::Telefono: return 'telefono';
 				case Arg::TwoFA: return '2FA';
 				case Arg::VisualizzaMail: return 'visualizzaEmail';
 				case Arg::VisualizzaTelefono: return 'visualizzaTelefono';
 				default: return '';
+			}
 			case Table::Citta: switch($this) {
 				
 				default: return '';
@@ -327,10 +336,11 @@ enum Arg: string{
 			}
 			default: return '';
 		}
+		/*
 		switch ($this) {
 			case Arg::IdAdmin: return 'idAdmin';
 			case Arg::Username: return 'username';
-			case Arg::HashPassword: return 'password';
+			case Arg::Password: return 'password';
 			case Arg::IdUtente: return 'idUtente';
 			case Arg::Email: return 'email';
 			case Arg::Telefono: return 's';
@@ -385,6 +395,7 @@ enum Arg: string{
 			case Arg::Sede: return 'sede';
 			default: return 's';
 		}
+		*/
 	}
 }
 ?>

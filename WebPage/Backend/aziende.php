@@ -1,8 +1,8 @@
 <?php	//Per gestire le funzioni relative alle aziende
 require_once 'db.php';
 
-/*
-function getAzienda($id = null) {
+
+function get_azienda($id = null) {
 	global $conn;
 	if(!isset($id)) {
 		if(isset($_SESSION['id']) && $_SESSION['tipo'] == 'azienda') {
@@ -23,7 +23,7 @@ function getAzienda($id = null) {
 		}
 	}
 }
-*/
+
 
 function exists_annuncio($id) {
 	$result = query_select(Table::Annunci, null, [Arg::IdAnnuncio], [$id]);
@@ -37,12 +37,12 @@ function exists_annuncio($id) {
 function get_annuncio($id = null, $data) {
 	if(isset($data)) {
 		foreach($data as $attr) {
-			$attr = Arg::fromJson($attr);
+			$attr = Arg::fromJson(Table::Annunci, $attr);
 		}
 	}
 	
 	if(isset($id)) {
-		if(!exists_annuncio($id) {
+		if(!exists_annuncio($id)) {
 			return false;
 		}
 		$result = query_select(Table::Annunci, $data, [Arg::IdAnnuncio], [$id]);

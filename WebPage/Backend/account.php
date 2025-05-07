@@ -173,7 +173,6 @@ function is_verified($id) {
 	} else {
 		return false;
 	}
-	return true;
 }
 
 // Controllo del tipo dell'utente ('studente', 'azienda', 'admin'
@@ -208,7 +207,7 @@ function check_password($id, $password) {
 	return password_verify($password, $hashed_password);
 }
 
-function update_account($id = null, $data) {
+function update_account($id = null, $password, $data) {
 	if($id != null) {
 		if(isset($data['password'])) {
 			if(!check_password($id, $password)) {
@@ -223,7 +222,7 @@ function update_account($id = null, $data) {
 	$var_list = [];
 	$more_attr = false;
 	foreach($data as $attr) {
-		$attr = Arg::fromJson($attr) ?? $attr;
+		$attr = Arg::fromJson(Table::Utenti, $attr) ?? $attr;
 		// 			DA FINIRE
 	}
 	
@@ -266,7 +265,7 @@ function update_account($id = null, $data) {
 	  
 	  $conn->commit();
 	} catch (mysqli_sql_exception $e) {
-	  $conn->rolback();
+	  $conn->rollback();
 	}
 }
 
@@ -326,10 +325,11 @@ function delete_account($id, $password) {
 	
 	// Eliminazione dell'account
 	$sql = 'DELETE FROM Utenti WHERE IdUtente = ?';
+	$stmt = $conn->prepare($sql);
 	$stmt->bind_param('i', $id);
 	if ($stmt->execute()) {
-		return true;
 		session_destroy();
+		return true;
 	}
 	return false;
 }
