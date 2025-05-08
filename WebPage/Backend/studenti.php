@@ -28,13 +28,13 @@ function update_studente($id, $data) {
 	$attr_list = [];
 	$var_list = [];
 	foreach($data as $attr => $value) {
-		$arg = Arg::fromJson(Table::Utenti, $attr);
+		$arg = Arg::fromJson(Table::Studenti, $attr);
 		if($arg != null) {
 			$attr_list[] = $arg;
 			$var_list[] = $value;
 		}
 	}
 	
-	query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
+	return query_update(Table::Studenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
 }
 ?>

@@ -314,7 +314,24 @@ enum Arg: string{
 				default: return '';
 			}
 			case Table::Studenti: switch($this) {
-				
+				case Arg::IdUtente: return 'id';
+				case Arg::CodiceFiscale: return 'cf';
+				case Arg::Nome: return 'nome';
+				case Arg::Cognome: return 'cognome';
+				case Arg::Sesso: return 'sesso';
+				case Arg::DataNascita: return 'nascita';
+				case Arg::Nazionalita: return 'nazionalita';
+				case Arg::IndirizzoScolastico: return 'indirizzo';
+				case Arg::Voto: return 'voto';
+				case Arg::Descrizione: return 'descrizione';
+				case Arg::ResidenzaCitta: return '';
+				case Arg::ResidenzaVia: return '';
+				case Arg::ResidenzaCivico: return '';
+				case Arg::DomicilioCitta: return '';
+				case Arg::DomicilioVia: return '';
+				case Arg::DomicilioCivico: return '';
+				case Arg::IdAbilita: return '';
+				case Arg::Studente: return '';
 				default: return '';
 			}
 			case Table::Aziende: switch($this) {
