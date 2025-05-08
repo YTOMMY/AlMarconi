@@ -22,4 +22,19 @@ function getStudente($id = null) {
 		}
 	}
 }
+
+//		DA FINIRE
+function update_studente($id, $data) {
+	$attr_list = [];
+	$var_list = [];
+	foreach($data as $attr => $value) {
+		$arg = Arg::fromJson(Table::Utenti, $attr);
+		if($arg != null) {
+			$attr_list[] = $arg;
+			$var_list[] = $value;
+		}
+	}
+	
+	query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
+}
 ?>

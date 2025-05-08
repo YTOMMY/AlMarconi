@@ -56,4 +56,7 @@ function get_annuncio($id = null, $data = null) {
 		return $output;
 	}
 }
+
+function update_azienda($id, $data) {
+}
 ?>

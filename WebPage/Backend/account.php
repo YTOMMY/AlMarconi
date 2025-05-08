@@ -1,5 +1,7 @@
 <?php	//Per gestire le funzioni relative agli utenti in generale
 require_once 'db.php';
+require_once 'studenti.php';
+require_once 'aziende.php';
 
 // Controlla se un'email esiste
 function check_email($email) {
@@ -221,26 +223,19 @@ function update_account($id = null, $password, $data) {
 	global $conn;
 	$conn->begin_transaction();
 	try {
-	  update_utente($id, $data);
-	  $conn->commit();
+	  $result = update_utente($id, $data);
 	} catch (mysqli_sql_exception $e) {
-	  $conn->rollback();
+	  $result = false;
 	}
+	if($result) {
+		$conn->commit();
+	} else {
+		$conn->rollback();
+	}
+	return $result;
 }
 
 function update_utente($id, $data) {
-	if($id != null) {
-		if(isset($data['password'])) {
-			if(!check_password($id, $password)) {
-				return false;
-			}
-		}
-	} else if(isset($_SESSION['id'])) {
-		$id = $_SESSION['id'];
-	}
-
-	$attr_list = [];
-	$var_list = [];
 	$more_attr = false;
 	foreach($data as $attr => $value) {
 		$arg = Arg::fromJson(Table::Utenti, $attr);
@@ -252,14 +247,20 @@ function update_utente($id, $data) {
 		}
 	}
 	
-	query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
-	if($more_attr) {
-		$type = get_type($id);
-		if($type == 'studente') {
-			update_studente($id, $data);
-		} else if($type == 'azienda') {
-			update_azienda($id, $data);
+	if(isset($attr_list)) {
+		if(query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id])) {
+			if($more_attr) {
+				$type = get_type($id);
+				if($type == 'studente') {
+					return update_studente($id, $data);
+				} else if($type == 'azienda') {
+					return update_azienda($id, $data);
+				}
+			}
 		}
+		return false;
+	} else {
+		return false;
 	}
 }
 
