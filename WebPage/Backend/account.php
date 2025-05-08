@@ -217,55 +217,49 @@ function update_account($id = null, $password, $data) {
 	} else if(isset($_SESSION['id'])) {
 		$id = $_SESSION['id'];
 	}
-
-	$attr_list = [];
-	$var_list = [];
-	$more_attr = false;
-	foreach($data as $attr) {
-		$attr = Arg::fromJson(Table::Utenti, $attr) ?? $attr;
-		// 			DA FINIRE
-	}
-	
-	foreach($data as $attr => $val) {
-		switch($attr) {
-			case 'email':
-			  array_push($attr_list, Arg::Email);
-				array_push($val_list, $val);
-				break;
-			case 'password':
-			  array_push($attr_list, Arg::Password);
-				array_push($val_list, $val);
-				break;
-			case 'telefono':
-				array_push($attr_list, Arg::Telefono);
-				array_push($val_list, $val);
-				break;
-			case '2FA':
-				array_push($attr_list, Arg::TwoFA);
-				array_push($val_list, $val);
-				break;
-			case 'visualizzaEmail':
-				array_push($attr_list, Arg::VisualizzaMail);
-				array_push($val_list, $val);
-				break;
-			case 'visualizzaTelefono':
-				array_push($attr_list, Arg::VisualizzaTelefono);
-				array_push($val_list, $val);
-				break;
-			default:
-				$more_attr = true;
-				break;
-		}
-	}
 	
 	global $conn;
 	$conn->begin_transaction();
 	try {
-	  query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
-	  
+	  update_utente($id, $data);
 	  $conn->commit();
 	} catch (mysqli_sql_exception $e) {
 	  $conn->rollback();
+	}
+}
+
+function update_utente($id, $data) {
+	if($id != null) {
+		if(isset($data['password'])) {
+			if(!check_password($id, $password)) {
+				return false;
+			}
+		}
+	} else if(isset($_SESSION['id'])) {
+		$id = $_SESSION['id'];
+	}
+
+	$attr_list = [];
+	$var_list = [];
+	$more_attr = false;
+	foreach($data as $attr => $value) {
+		$arg = Arg::fromJson(Table::Utenti, $attr);
+		if($arg != null) {
+			$attr_list[] = $arg;
+			$var_list[] = $value;
+		} else {
+			$more_attr = true;
+		}
+	}
+	
+	query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
+	if($more_attr) {
+		$type = get_type($id);
+		if($type == 'studente') {
+			update_studente($id, $data);
+		} else if($type == 'azienda') {
+			update_azienda($id, $data);
+		}
 	}
 }
 
