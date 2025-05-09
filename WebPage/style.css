@@ -118,3 +118,15 @@ h1 {
     text-decoration: none;
     cursor: pointer;
 }
+
+.filtro{
+	display: none;
+	border: 1px solid #ccc;
+	padding: 10px;
+	background: white;
+	position: absolute;
+	top: 60px;
+	right: 20px;
+	z-index: 1000;
+	cursor:pointer;
+}
