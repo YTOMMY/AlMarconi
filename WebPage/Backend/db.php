@@ -75,20 +75,21 @@ function query_update(Table $table, array $update_args, array $update_values, ar
 	
 	$param_type = '';
 	$param_values = array_merge($update_values, $cond_values);
-	foreach($update_args as $arg) {
+	foreach($update_args as &$arg) {
 		$param_type .= $arg->getType();
+		$arg = $arg->value . ' = ?';
 	}
+	unset($arg);
 	foreach($cond_args as $arg) {
 		$cond[] = $arg->value . ' = ?';
 		$param_type .= $arg->getType();
 	}
 
-	$sql = 'UPDATE '. $table . 'SET ' . implode(' = ?, ', $update_args) . ' WHERE '. implode(' AND ', $cond) . ';';
+	$sql = 'UPDATE '. $table->value . ' SET ' . implode(', ', $update_args) . ' WHERE '. implode(' AND ', $cond) . ';';
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param($param_type, ...$param_values);
 	
-	$stmt->execute();
-	return $stmt->get_result();
+	return $stmt->execute();
 }
 
 /**  
@@ -265,11 +266,33 @@ enum Arg: string{
 				default: return null;
 			}
 			case Table::Studenti: switch($value) {
-				
+				case 'id': return Arg::IdUtente;
+				case 'cf': return Arg::CodiceFiscale;
+				case 'nome': return Arg::Nome;
+				case 'cognome': return Arg::Cognome;
+				case 'sesso': return Arg::Sesso;
+				case 'nascita': return Arg::DataNascita;
+				case 'nazionalita': return Arg::Nazionalita;
+				case 'indirizzo': return Arg::IndirizzoScolastico;
+				case 'voto': return Arg::Voto;
+				case 'descrizione': return Arg::Descrizione;
+				case 'residenza': return [Arg::ResidenzaCitta, Arg::ResidenzaVia, Arg::ResidenzaCivico];
+				case 'domicilio': return [Arg::DomicilioCitta, Arg::DomicilioVia, Arg::DomicilioCivico];
+				/*case '': return Arg::IdAbilita;
+				case '': return Arg::Studente;*/
 				default: return null;
 			}
 			case Table::Aziende: switch($value) {
-				
+				case 'id': return Arg::IdAnnuncio;
+				case 'iva': return Arg::IVA;
+				case 'nomeAzienda': return Arg::Nome;
+				case 'settore': return Arg::Settore;
+				case 'dipendenti': return Arg::NumeroDipendenti;
+				case 'link': return Arg::LinkEsterno;
+				case 'cf': return Arg::ReferenteCodiceFiscale;
+				case 'nome': return Arg::ReferenteNome;
+				case 'cognome': return Arg::ReferenteCognome;
+				case 'nascita': return Arg::ReferenteDataNascita;
 				default: return null;
 			}
 			case Table::Annunci: switch($value) {

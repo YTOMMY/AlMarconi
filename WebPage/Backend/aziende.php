@@ -58,5 +58,18 @@ function get_annuncio($id = null, $data = null) {
 }
 
 function update_azienda($id, $data) {
+	$attr_list = [];
+	$var_list = [];
+	foreach($data as $attr => $value) {
+		$arg = Arg::fromJson(Table::Aziende, $attr);
+		if($arg != null) {
+			if(!is_array($arg)) {
+				$attr_list[] = $arg;
+				$var_list[] = $value;
+			}
+		}
+	}
+	
+	return query_update(Table::Aziende, $attr_list, $var_list, [Arg::IdUtente], [$id]);
 }
 ?>

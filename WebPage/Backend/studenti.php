@@ -23,15 +23,23 @@ function getStudente($id = null) {
 	}
 }
 
-//		DA FINIRE
 function update_studente($id, $data) {
 	$attr_list = [];
 	$var_list = [];
 	foreach($data as $attr => $value) {
 		$arg = Arg::fromJson(Table::Studenti, $attr);
 		if($arg != null) {
-			$attr_list[] = $arg;
-			$var_list[] = $value;
+			if(!is_array($arg)) {
+				$attr_list[] = $arg;
+				$var_list[] = $value;
+			} else {
+				foreach($arg as $a) {
+					$attr_list[] = $a;
+				}
+				foreach($value as $v) {
+					$var_list[] = $v;
+				}
+			}
 		}
 	}
 	

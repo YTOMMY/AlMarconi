@@ -223,9 +223,11 @@ function update_account($id = null, $password, $data) {
 	global $conn;
 	$conn->begin_transaction();
 	try {
-	  $result = update_utente($id, $data);
+		$result = update_utente($id, $data);
+		echo $result;
 	} catch (mysqli_sql_exception $e) {
-	  $result = false;
+		$e->getMessage();
+		$result = false;
 	}
 	if($result) {
 		$conn->commit();
