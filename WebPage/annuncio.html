@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Annuncio - AlMarconi</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<div class="top-bar">
+		<div class="left">
+			<a href="index.html"><img src="logo.jpeg" alt="Logo" class="logo"></a>
+		</div>
+
+		<div class="center">
+			<h1>Annuncio</h1>
+		</div>
+
+		<div class="right">
+			<div id="account"></div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div id="pagina"></div>
+	</div>
+
+	<script>
+		const userId = sessionStorage.getItem("userId");
+		const verificato = sessionStorage.getItem("verificato");
+		const tipo = sessionStorage.getItem("tipo");
+
+		if (!userId || userId == 0) {
+			document.getElementById("account").innerHTML = `
+				<a href="login.html" class="menu">Accedi</a>
+			`;
+
+			document.getElementById("pagina").innerHTML = `
+				<h3>Benvenuto in AlMarconi</h3>
+				<p>Accedi per visualizzare le informazioni</p>
+			`;
+		} else {
+			document.getElementById("account").innerHTML = `
+				<a href="impostazioni.html" class="menu">Impostazioni</a>
+			`;
+
+			if (verificato != 1) {
+				document.getElementById("pagina").innerHTML = `
+					<p>Account in attesa di validazione</p>
+				`;
+			} else {
+				if (tipo === "studente" || tipo === "azienda") {
+					const params = new URLSearchParams(window.location.search);
+					const idAnnuncio = params.get("id");
+					
+					if(idAnnuncio == NULL){
+						pagina.innerHTML = "Errore: Annuncio non trovato";
+					}
+					else{
+						window.addEventListener('DOMContentLoaded', async function () {
+							try {
+								const response = await fetch('api.php/annuncio{idAnnuncio}', {
+									method: 'GET'
+								});
+
+								const responseData = await response.json();
+
+								if (response.ok) {									
+									const contratto = responseData.tipoContratto;
+									const mansione = responseData.mansione;
+									const descrizione = responseData.descrizione;
+									const areaDisciplinare = responseData.areaDisciplinare;
+									const abilitaRichieste = responseData.abilitaRichieste;
+									const dataPubblicazione = responseData.dataPubblicazione;
+									const dataScadenza = responseData.dataScadenza;
+									const maxIscrizioni = responseData.maxIscrizioni;
+									const postiDisponibili = responseData.maxIscrizioni - responseData.attualiIscrizioni;
+									const idAzienda = responseData.azienda;
+									const nomeAzienda = responseData.azienda.nomeAzienda;
+									const citta = responseData.sede.Citta;
+									const via = responseData.sede.via;
+									const civico = responseData.sede.civico;
+
+					
+
+									const pagina = document.getElementById("pagina");
+									pagina.innerHTML = `
+										<h3><a href="annuncio.html?id=${idAzienda}">${nomeAzienda}</a></h3>
+										Mansione: ${mansione}
+										Citta: ${citta}
+										Indirizzo: ${via}, ${civico}
+										Tipologia di contratto: ${contratto}
+										Area disciplinare: ${areaDisciplinare}
+										<p>Descrizione<br>${descrizione}</p>
+										<p>Abilità richieste<br>${abilitaRichieste}</p>
+										Data Pubblicazione: ${dataPubblicazione}
+										Data Scadenza: ${dataScadenza}
+										Numero massimo posti: ${maxIscrizioni}
+										Posti disponibili: ${postiDisponibili};
+									`;
+
+									
+									//se sono studente, posso candidarmi tramite il pulsante
+									if(tipo === "student+e"){
+										pagina.innerHTML+=`
+											<button id="candidamiBtn">Candidami</button>
+											
+										`;
+									
+										//se premo il pulsante per candidarmi
+										document.getElementById("candidamiBtn").addEventListener("click", function () {
+											
+											//invoco il web service per candidarmi
+											const responseCand = await fetch('api.php/annuncio{idAnnuncio}', {
+												method: 'POST'
+											});
+											
+											//se la candidatura è andata a buon fine
+											if (responseCand.ok) {
+												location.reload();
+											} else {
+												alert("Errore durante la candidatura.");
+											}
+																				
+										});
+							
+									}
+									
+									//se sono l'azienda creatrice dell'annuncio posso vedere la lista di tutti i candidati
+									if(tipo === "azienda" && userId == idAzienda){
+										pagina.innerHTML+=`
+											<button id="listaCandidatiBtn">Mostra la lista dei candidati</button>
+											
+										`;
+									
+										//se premo il pulsante per mostrare la lista dei candidati
+										document.getElementById("listaCandidatiBtn").addEventListener("click", function () {
+											//BANANAJOE NON SO COSA CHIAMARE E COSA RICEVERE PER MOSTRARE LA LISTA DEI CANDIDATI
+											const responseList = await fetch('api.php/annuncio{idAnnuncio}', {
+												method: 'PATCH'
+											});
+											
+											if (responseList.ok) {
+												const idStudente = responseList.idStudente;
+												
+												
+												//Mostra tutti i candidati
+												for (let i = 0; i < idStudente.length; i++) {
+													const riga = document.createElement('p');
+													riga.innerHTML = `<a href="annuncio.html?id=${idAnnunci[i]}"> ${nomiAziende[i]} ${citta[i]} ${vie[i]} ${civici[i]} ${contratti[i]} ${mansioni[i]}</a>`;
+													pagina.appendChild(riga);
+												}
+											
+												location.reload();
+											} else {
+												alert("Errore durante la candidatura.");
+											}
+																				
+										});
+									}
+									
+								}
+							} catch (error) {
+								document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+							}
+						});
+					}
+				} else {
+					document.getElementById("pagina").innerHTML = `
+						Errore: non è stato possibile recuperare i dati
+					`;
+				}
+			}
+		}
+	</script>
+
+</body>
+</html>

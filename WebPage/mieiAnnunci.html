@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>I miei annunci - AlMarconi</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<div class="top-bar">
+		<div class="left">
+			<a href="index.html"><img src="logo.jpeg" alt="Logo" class="logo"></a>
+		</div>
+
+		<div class="center">
+			<h1>I miei annunci</h1>
+		</div>
+
+		<div class="right">
+			<div id="account"></div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div id="pagina"></div>
+	</div>
+
+	<script>
+		const userId = sessionStorage.getItem("userId");
+		const verificato = sessionStorage.getItem("verificato");
+		const tipo = sessionStorage.getItem("tipo");
+
+		if (!userId || userId == 0) {
+			document.getElementById("account").innerHTML = `
+				<a href="login.html" class="menu">Accedi</a>
+			`;
+
+			document.getElementById("pagina").innerHTML = `
+				<h3>Benvenuto in AlMarconi</h3>
+				<p>Accedi per visualizzare le informazioni</p>
+			`;
+		} else {
+			document.getElementById("account").innerHTML = `
+				<a href="impostazioni.html" class="menu">Impostazioni</a>
+			`;
+
+			if (verificato != 1) {
+				document.getElementById("pagina").innerHTML = `
+					<p>Account in attesa di validazione</p>
+				`;
+			} else {
+				if (tipo === "studente") {
+					window.addEventListener('DOMContentLoaded', async function () {
+						try {
+							const response = await fetch('api.php/annunci', {
+								method: 'GET',
+							});
+
+							const responseData = await response.json();
+
+							if (response.ok) {
+								const idAnnunci = responseData.idAnnuncio;
+								const nomiAziende = responseData.azienda.nomeAzienda;
+								const citta = responseData.sede.Citta;
+								const vie = responseData.sede.via;
+								const civici = responseData.sede.civico;
+								const contratti = responseData.tipoContratto;
+								const mansioni = responseData.mansione;
+				
+
+								const pagina = document.getElementById("pagina");
+								
+								/*IMMAGINE DEL FILTRO E PARAMETRI A COMPARSA
+								//contenuto di un filtro
+								paginaFiltro=`
+									<img src="filtro.jpeg" id="filtroImg">
+									
+									<!--Form che viene a comparsa-->
+									
+									<div id="filtroParam" style="display:none;">
+										  
+										Tipo Contratto		<input type="text" id="TipoContratto"><br>
+										Mansione			<input type="text" id="Mansione"><br>
+										Area Disciplinare	<input type="text" id="AreaDisciplinare"><br>
+										Pubblicazione da	<input type="date" id="DataPubblicazioneDa"><br>
+										Pubblicazione a		<input type="date" id="DataPubblicazioneA"><br>
+										Scadenza da			<input type="date" id="DataScadenzaDa"><br>
+										Scadenza a			<input type="date" id="DataScadenzaA"><br>
+										Massimo Iscrizioni	<input type="number" id="MaxIscrizioni"><br>
+										Nome Azienda		<input type="text" id="NomeAzienda"><br>
+										Citta				<input type="text" id="Citta"><br><br>
+										Via					<input type="text" id="Via"><br><br>
+										Civico				<input type="text" id="Civico"><br><br>
+										  
+										<button id="filtroBtn">Filtra</button>
+										
+									</div>
+								`;
+								
+								
+								//la pagina che prima degli annunci visualizza il filtro
+								pagina.innerHTML = paginaFiltro;
+								*/
+								
+								pagina.innerHTML = "";
+								
+								//Mostra tutti gli annunci
+								for (let i = 0; i < idAnnunci.length; i++) {
+									const riga = document.createElement('p');
+									riga.innerHTML = `<a href="annuncio.html?id=${idAnnunci[i]}"> ${nomiAziende[i]} ${citta[i]} ${vie[i]} ${civici[i]} ${contratti[i]} ${mansioni[i]}</a>`;
+									pagina.appendChild(riga);
+								}
+								
+								
+							/*IMPLEMENTAZIONE FILTRO FRONT-END	
+							
+								
+								//Se clicco il l'immagine del filtro vengono mostrati i parametri
+								document.getElementById("filtroImg").addEventListener("click", function () {
+									document.getElementById("filtroParam".style.display = "none" ? "block" : "none";
+								});
+								
+								//Se clicco il bottone filtra dentro il form del filtro
+								document.getElementById("filtroBtn").addEventListener("click", function () {
+									
+									//Cancella tutti gli annunci precedentemente visualizzati
+									pagina.innerHTML= paginaFiltro;
+									
+									
+									//Richiede nuovamente gli annunci tramite JSON ma applicando i filtri
+									const dataFiltrato = {
+										TipoContratto : document.getElementById('TipoContratto').value,
+										Mansione : document.getElementById('Mansione').value,
+										AreaDisciplinare : document.getElementById('AreaDisciplinare').value,
+										DataPubblicazioneDa : document.getElementById('DataPubblicazioneDa').value,
+										DataPubblicazioneA : document.getElementById('DataPubblicazioneA').value,
+										DataScadenzaDa : document.getElementById('DataScadenzaDa').value,
+										DataScadenzaA : document.getElementById('DataScadenzaA').value,
+										MaxIscrizioni : document.getElementById('MaxIscrizioni').value,
+										NomeAzienda : document.getElementById('NomeAzienda').value,
+										Sede	
+									};
+								});
+
+
+							*/
+
+
+
+							}
+						} catch (error) {
+							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+						}
+					});
+				} else if (tipo === "azienda") {
+						document.getElementById("pagina").textContent ="Questa pagina è visualizzabile solo ad un account studente";
+				} else {
+					document.getElementById("pagina").innerHTML = `
+						Errore: non è stato possibile recuperare i dati
+					`;
+				}
+			}
+		}
+	</script>
+
+</body>
+</html>
