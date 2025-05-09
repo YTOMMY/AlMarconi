@@ -89,12 +89,12 @@ switch($uri[0]) {
 			case 'PATCH':
 				check_content($input);
 				$data = json_decode($input, true);
-				if(isset($uri[1])) {
-					$id = $uri[1];
-				} else {
-					$id = null;
+				if(!isset($uri[1])) {
+					return false;
 				}
-				update_account($id, $data);
+				$id = $uri[1];
+
+				$ouptut = ['esit' => update_account($id, $data['password'], $data['data'])];
 				break;
 			
 			// Elimina account
