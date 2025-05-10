@@ -85,16 +85,40 @@ switch($uri[0]) {
 				}
 				break;
 			
+			//Visualizza account
+			case 'GET':
+				check_content($input);
+				$data = json_decode($input, true);
+				if(isset($uri[1])) {
+					$id = $uri[1];
+				} else {
+					$id = null;
+				}
+				
+				$password = $data['password'] ?? null;
+				$data = $data['data'] ?? null;
+				
+				$output = get_account($id, $password, $data);
+				if($output == false) {
+					$output = ['esit' => false];
+				} else {
+					$output[] = 'esit' => true;
+				}
+				break;
+			
 			//Modifica account
 			case 'PATCH':
 				check_content($input);
 				$data = json_decode($input, true);
 				if(!isset($uri[1])) {
-					return false;
+					not_found_error();
 				}
 				$id = $uri[1];
-
-				$ouptut = ['esit' => update_account($id, $data['password'], $data['data'])];
+				
+				$password = $data['password'] ?? null;
+				$data = $data['data'];
+				
+				$ouptut = ['esit' => update_account($id, $password, $data)];
 				break;
 			
 			// Elimina account
@@ -107,7 +131,7 @@ switch($uri[0]) {
 				$output = ['delete' => delete_account($uri[1], $data['password'])];
 				break;
 			default:
-				method_error(['POST', 'PATCH', 'DELETE']);
+				method_error(['POST', 'GET', 'PATCH', 'DELETE']);
 		}
 		break;
 	case 'annuncio':

@@ -209,7 +209,31 @@ function check_password($id, $password) {
 	return password_verify($password, $hashed_password);
 }
 
-function update_account($id = null, $password, $data) {
+function get_account($id = null, $password = null, $data = null) {
+	$logged = false;
+	
+	if($id != null) {
+		if(isset('password')) {
+			if(check_password($id, $password))) {
+				$logged = true;
+			} else {
+				return false;
+			}
+		} else if (isset($_SESSION['id']) 
+			if ($id == $_SESSION['id']) {
+				$logged = true;
+			}
+		}
+	}
+	
+	get_utente($id, $logged, $data);
+}
+
+function get_utente($id = null, $logged = null, $data = null) {
+	//		DA FINIRE
+}
+
+function update_account($id = null, $password = null, $data) {
 	if($id != null) {
 		if(isset($data['password'])) {
 			if(!check_password($id, $password)) {
