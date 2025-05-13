@@ -213,13 +213,13 @@ function get_account($id = null, $password = null, $data = null) {
 	$logged = false;
 	
 	if($id != null) {
-		if(isset('password')) {
-			if(check_password($id, $password))) {
+		if(isset($password)) {
+			if(check_password($id, $password)) {
 				$logged = true;
 			} else {
 				return false;
 			}
-		} else if (isset($_SESSION['id']) 
+		} else if (isset($_SESSION['id'])) {
 			if ($id == $_SESSION['id']) {
 				$logged = true;
 			}

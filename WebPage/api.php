@@ -102,7 +102,7 @@ switch($uri[0]) {
 				if($output == false) {
 					$output = ['esit' => false];
 				} else {
-					$output[] = 'esit' => true;
+					$output['esit'] = true;
 				}
 				break;
 			
