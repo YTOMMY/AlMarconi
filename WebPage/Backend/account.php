@@ -230,7 +230,33 @@ function get_account($id = null, $password = null, $data = null) {
 }
 
 function get_utente($id = null, $logged = null, $data = null) {
-	//		DA FINIRE
+	$more_attr = false;
+	attr_list = null;
+	foreach($data as $attr) {
+		$arg = Arg::fromJson(Table::Utenti, $attr);
+		if($arg != null) {
+			if($arg != Arg::Password) {
+				$attr_list[] = $arg
+			}
+		} else {
+			$more_attr = true;
+		}
+	}
+	
+	if($more_attr) {
+		$type = get_type($id);
+		if($type == 'studente') {
+			return update_studente($id, $data);
+		} else if($type == 'azienda') {
+			return update_azienda($id, $data);
+		}
+	}
+	
+	if(isset($id)) {
+		return Query_select(Table::Utenti, $attr_list, [Arg::IdUtente, [$id]);
+	} else {
+		return Query_select(Table::Utenti, $attr_list);
+	}
 }
 
 function update_account($id = null, $password = null, $data) {

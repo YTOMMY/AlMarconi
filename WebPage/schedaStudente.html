@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Scheda Azienda - AlMarconi</title>
+	<title>Scheda Studente - AlMarconi</title>
 	<link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,7 +14,7 @@
 		</div>
 
 		<div class="center">
-			<h1>Scheda Azienda</h1>
+			<h1>Scheda Studente</h1>
 		</div>
 
 		<div class="right">
@@ -50,65 +50,67 @@
 					<p>Account in attesa di validazione</p>
 				`;
 			} else {
-				if (tipo === "studente") {
+				if (tipo === "azienda") {
 					const urlParams = new URLSearchParams(window.location.search);
-					const idAzienda = urlParams.get('id');
+					const idStudente = urlParams.get('id');
 
 					window.addEventListener('DOMContentLoaded', async function () {
 						try {
-							const response = await fetch(`api.php/azienda/${idAzienda}`, {
+							const response = await fetch(`api.php/studente/${idStudente}`, {
 								method: 'GET'
 							});
 
 							const responseData = await response.json();
 
 							if (response.ok) {
-								const nomeAzienda = responseData.nome;
-								const settore = responseData.settore;
-								const numDipendenti = responseData.num;
-								const sito = responseData.sito;
-								const descrizione = responseData.descrizione;
-								const stato = responseData.stato;
-								const provincia = responseData.provincia;
-								const comune = responseData.comune;
-								const indirizzo = responseData.indirizzo;
-								const cap = responseData.cap;
-								const altreSedi = responseData.sedi;
+								const nome = responseData.nome;
+								const cognome = responseData.cognome;
+								const votoDiploma = responseData.votoDiploma;
+								const certificazioni = responseData.certificazioni;
+								const competenze = responseData.competenze;
 
 								const pagina = document.getElementById("pagina");
 								pagina.innerHTML = "";
 
 								const info = document.createElement('p');
 								info.innerHTML = `
-									<strong>${nomeAzienda}</strong><br>
-									Settore: ${settore}<br>
-									Dipendenti: ${numDipendenti}<br>
-									Sito: <a href="${sito}" target="_blank">${sito}</a><br>
-									Descrizione: ${descrizione}<br>
-									Indirizzo: ${indirizzo}, ${cap}, ${comune}, ${provincia}, ${stato}
+									<strong>${nome} ${cognome}</strong><br>
+									Voto Diploma: ${votoDiploma}<br>
 								`;
 								pagina.appendChild(info);
 
-								if (altreSedi && altreSedi.length > 0) {
-									const titoloSedi = document.createElement('h4');
-									titoloSedi.textContent = "Altre sedi:";
-									pagina.appendChild(titoloSedi);
+								if (certificazioni && certificazioni.length > 0) {
+									const titolo = document.createElement('h4');
+									titolo.textContent = "Certificazioni:";
+									pagina.appendChild(titolo);
 
-									altreSedi.forEach(sede => {
-										const sedeEl = document.createElement('p');
-										sedeEl.textContent = sede;
-										pagina.appendChild(sedeEl);
+									certificazioni.forEach(certificazione => {
+										const certificazioneEl = document.createElement('p');
+										certificazioneEl.textContent = certificazione;
+										pagina.appendChild(certificazioneEl);
+									});
+								}
+
+								if (competenze && competenze.length > 0) {
+									const titolo = document.createElement('h4');
+									titolo.textContent = "Competenze:";
+									pagina.appendChild(titolo);
+
+									competenze.forEach(competenza => {
+										const competenzaEl = document.createElement('p');
+										competenzaEl.textContent = competenza;
+										pagina.appendChild(competenzaEl);
 									});
 								}
 							} else {
-								document.getElementById("pagina").textContent = 'Errore nel recupero dei dati aziendali.';
+								document.getElementById("pagina").textContent = 'Errore nel recupero dei dati dello studente.';
 							}
 						} catch (error) {
 							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
 						}
 					});
-				} else if (tipo === "azienda") {
-					document.getElementById("pagina").textContent = "Questa pagina è visualizzabile solo da un account studente.";
+				} else if (tipo === "studente") {
+					document.getElementById("pagina").textContent = "Questa pagina è visualizzabile solo da un account azienda.";
 				} else {
 					document.getElementById("pagina").innerHTML = `
 						Errore: non è stato possibile recuperare i dati
