@@ -56,8 +56,8 @@
 
 					window.addEventListener('DOMContentLoaded', async function () {
 						try {
-							const response = await fetch(`api.php/azienda?id=${idAzienda}`, {
-								method: 'GET',
+							const response = await fetch(`api.php/azienda/${idAzienda}`, {
+								method: 'GET'
 							});
 
 							const responseData = await response.json();
