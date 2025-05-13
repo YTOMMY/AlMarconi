@@ -13,10 +13,11 @@ if($conn->connect_errno) {
 $conn->set_charset('utf8');
 
 /**
- * @param Arg[]|null $select_args
- * @param Arg[]|null $cond_args
+ * @param Table[] $table
+ * @param array[Arg[]]|null $select_args
+ * @param array[Arg[]]|null $cond_args
 */
-function query_select(Table $table, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null) {
+function query_select(array $table, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null, array|null $join_conditions = null) {
 	global $conn;
 	
 	if(isset($select_args)) {
