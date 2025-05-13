@@ -230,7 +230,26 @@ function get_account($id = null, $password = null, $data = null) {
 }
 
 function get_utente($id = null, $logged = null, $data = null) {
-	//		DA FINIRE
+	$more_attr = false;
+	foreach($data as $attr) {
+		$arg = Arg::fromJson(Table::Utenti, $attr);
+		if($arg != null) {
+			if($arg != Arg::Password) {
+				$attr_list[] = $arg
+			}
+		} else {
+			$more_attr = true;
+		}
+	}
+	
+	if(isset($id)) {
+		Query_select(Table::Utenti, $attr_list, [Arg::IdUtente, [$id]);
+	} else {
+		Query_select(Table::Utenti, $attr_list);
+	}
+	
+	
+
 }
 
 function update_account($id = null, $password = null, $data) {
