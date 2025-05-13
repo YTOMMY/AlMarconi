@@ -231,12 +231,12 @@ function get_account($id = null, $password = null, $data = null) {
 
 function get_utente($id = null, $logged = null, $data = null) {
 	$more_attr = false;
-	attr_list = null;
+	$attr_list = null;
 	foreach($data as $attr) {
 		$arg = Arg::fromJson(Table::Utenti, $attr);
 		if($arg != null) {
 			if($arg != Arg::Password) {
-				$attr_list[] = $arg
+				$attr_list[] = $arg;
 			}
 		} else {
 			$more_attr = true;
@@ -253,7 +253,7 @@ function get_utente($id = null, $logged = null, $data = null) {
 	}
 	
 	if(isset($id)) {
-		return Query_select(Table::Utenti, $attr_list, [Arg::IdUtente, [$id]);
+		return Query_select(Table::Utenti, $attr_list, [Arg::IdUtente], [$id]);
 	} else {
 		return Query_select(Table::Utenti, $attr_list);
 	}
