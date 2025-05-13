@@ -53,20 +53,19 @@
 				if (tipo === "studente" || tipo === "azienda") {
 					const params = new URLSearchParams(window.location.search);
 					const idAnnuncio = params.get("id");
-					
-					if(idAnnuncio == NULL){
-						pagina.innerHTML = "Errore: Annuncio non trovato";
-					}
-					else{
+
+					if (!idAnnuncio) {
+						document.getElementById("pagina").innerHTML = "Errore: Annuncio non trovato";
+					} else {
 						window.addEventListener('DOMContentLoaded', async function () {
 							try {
-								const response = await fetch('api.php/annuncio{idAnnuncio}', {
+								const response = await fetch(`api.php/annuncio/${idAnnuncio}`, {
 									method: 'GET'
 								});
 
 								const responseData = await response.json();
 
-								if (response.ok) {									
+								if (response.ok) {
 									const contratto = responseData.tipoContratto;
 									const mansione = responseData.mansione;
 									const descrizione = responseData.descrizione;
@@ -75,91 +74,85 @@
 									const dataPubblicazione = responseData.dataPubblicazione;
 									const dataScadenza = responseData.dataScadenza;
 									const maxIscrizioni = responseData.maxIscrizioni;
-									const postiDisponibili = responseData.maxIscrizioni - responseData.attualiIscrizioni;
-									const idAzienda = responseData.azienda;
+									const postiDisponibili = maxIscrizioni - responseData.attualiIscrizioni;
+									const idAzienda = responseData.azienda.id;
 									const nomeAzienda = responseData.azienda.nomeAzienda;
 									const citta = responseData.sede.Citta;
 									const via = responseData.sede.via;
 									const civico = responseData.sede.civico;
 
-					
-
 									const pagina = document.getElementById("pagina");
 									pagina.innerHTML = `
-										<h3><a href="annuncio.html?id=${idAzienda}">${nomeAzienda}</a></h3>
-										Mansione: ${mansione}
-										Citta: ${citta}
-										Indirizzo: ${via}, ${civico}
-										Tipologia di contratto: ${contratto}
-										Area disciplinare: ${areaDisciplinare}
-										<p>Descrizione<br>${descrizione}</p>
-										<p>Abilità richieste<br>${abilitaRichieste}</p>
-										Data Pubblicazione: ${dataPubblicazione}
-										Data Scadenza: ${dataScadenza}
-										Numero massimo posti: ${maxIscrizioni}
-										Posti disponibili: ${postiDisponibili};
+										<h3><a href="azienda.html?id=${idAzienda}">${nomeAzienda}</a></h3>
+										<p>Mansione: ${mansione}</p>
+										<p>Città: ${citta}</p>
+										<p>Indirizzo: ${via}, ${civico}</p>
+										<p>Tipologia di contratto: ${contratto}</p>
+										<p>Area disciplinare: ${areaDisciplinare}</p>
+										<p><strong>Descrizione</strong><br>${descrizione}</p>
+										<p><strong>Abilità richieste</strong><br>${abilitaRichieste}</p>
+										<p>Data Pubblicazione: ${dataPubblicazione}</p>
+										<p>Data Scadenza: ${dataScadenza}</p>
+										<p>Numero massimo posti: ${maxIscrizioni}</p>
+										<p>Posti disponibili: ${postiDisponibili}</p>
 									`;
 
-									
-									//se sono studente, posso candidarmi tramite il pulsante
-									if(tipo === "student+e"){
-										pagina.innerHTML+=`
-											<button id="candidamiBtn">Candidami</button>
-											
+									if (tipo === "studente") {
+										pagina.innerHTML += `
+											<br><button id="candidamiBtn">Candidami</button>
+											<br><button id="annullaCandidaturaBtn">Annulla candidatura</button>
 										`;
-									
-										//se premo il pulsante per candidarmi
-										document.getElementById("candidamiBtn").addEventListener("click", function () {
-											
-											//invoco il web service per candidarmi
-											const responseCand = await fetch('api.php/annuncio{idAnnuncio}', {
+
+										document.getElementById("candidamiBtn").addEventListener("click", async function () {
+											const responseCand = await fetch(`api.php/annuncio/${idAnnuncio}/candidati`, {
 												method: 'POST'
 											});
-											
-											//se la candidatura è andata a buon fine
+
 											if (responseCand.ok) {
 												location.reload();
 											} else {
 												alert("Errore durante la candidatura.");
 											}
-																				
 										});
-							
-									}
-									
-									//se sono l'azienda creatrice dell'annuncio posso vedere la lista di tutti i candidati
-									if(tipo === "azienda" && userId == idAzienda){
-										pagina.innerHTML+=`
-											<button id="listaCandidatiBtn">Mostra la lista dei candidati</button>
-											
-										`;
-									
-										//se premo il pulsante per mostrare la lista dei candidati
-										document.getElementById("listaCandidatiBtn").addEventListener("click", function () {
-											//BANANAJOE NON SO COSA CHIAMARE E COSA RICEVERE PER MOSTRARE LA LISTA DEI CANDIDATI
-											const responseList = await fetch('api.php/annuncio{idAnnuncio}', {
-												method: 'PATCH'
+
+										document.getElementById("annullaCandidaturaBtn").addEventListener("click", async function () {
+											const responseCanc = await fetch(`api.php/annuncio/${idAnnuncio}/candidati/${userId}`, {
+												method: 'DELETE'
 											});
-											
-											if (responseList.ok) {
-												const idStudente = responseList.idStudente;
-												
-												
-												//Mostra tutti i candidati
-												for (let i = 0; i < idStudente.length; i++) {
-													const riga = document.createElement('p');
-													riga.innerHTML = `<a href="annuncio.html?id=${idAnnunci[i]}"> ${nomiAziende[i]} ${citta[i]} ${vie[i]} ${civici[i]} ${contratti[i]} ${mansioni[i]}</a>`;
-													pagina.appendChild(riga);
-												}
-											
+
+											if (responseCanc.ok) {
 												location.reload();
 											} else {
-												alert("Errore durante la candidatura.");
+												alert("Errore durante la rimozione della candidatura.");
 											}
-																				
 										});
 									}
-									
+
+									if (tipo === "azienda" && userId == idAzienda) {
+										pagina.innerHTML += `
+											<br><button id="listaCandidatiBtn">Mostra la lista dei candidati</button>
+										`;
+
+										document.getElementById("listaCandidatiBtn").addEventListener("click", async function () {
+											const responseList = await fetch(`api.php/annuncio/${idAnnuncio}/candidati`, {
+												method: 'GET'
+											});
+
+											if (responseList.ok) {
+												const candidati = await responseList.json();
+
+												if (candidati.length === 0) {
+													pagina.innerHTML += `<p>Al momento non sono presenti candidature</p>`;
+												} else {
+													for (const studente of candidati) {
+														pagina.innerHTML += `<br><a href="schedaStudente.html?id=${studente.id}">${studente.nome} ${studente.cognome}</a>`;
+													}
+												}
+											} else {
+												pagina.innerHTML += `<p>Non è stato possibile recuperare i dati.</p>`;
+											}
+										});
+									}
 								}
 							} catch (error) {
 								document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
