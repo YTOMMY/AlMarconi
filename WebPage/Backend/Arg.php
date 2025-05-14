@@ -248,32 +248,32 @@ enum Arg: array{
 				'dbName' => Table::Studenti . '.ResidenzaCitta', 
 				'table' => Table::Studenti,
 				'type' => 'i',
-				'jsonName' => 'residenza'];
+				'jsonName' => 'cittaResidenza'];
             case Arg::ResidenzaVia: return [
 				'dbName' => Table::Studenti . '.ResidenzaVia', 
 				'table' => Table::Studenti,
 				'type' => 's',
-				'jsonName' => 'residenza'];
+				'jsonName' => 'viaResidenza'];
             case Arg::ResidenzaCivico: return [
 				'dbName' => Table::Studenti . '.ResidenzaCivico', 
 				'table' => Table::Studenti,
 				'type' => 'i',
-				'jsonName' => 'residenza'];
+				'jsonName' => 'civicoResidenza'];
             case Arg::DomicilioCitta: return [
 				'dbName' => Table::Studenti . '.DomicilioCitta', 
 				'table' => Table::Studenti,
 				'type' => 'i',
-				'jsonName' => 'domicilio'];
+				'jsonName' => 'cittaDomicilio'];
             case Arg::DomicilioVia: return [
 				'dbName' => Table::Studenti . '.DomicilioVia', 
 				'table' => Table::Studenti,
 				'type' => 's',
-				'jsonName' => 'domicilio'];
+				'jsonName' => 'viaDomicilio'];
             case Arg::DomicilioCivico: return [
 				'dbName' => Table::Studenti . '.DomicilioCivico', 
 				'table' => Table::Studenti,
 				'type' => 'i',
-				'jsonName' => 'domicilio'];
+				'jsonName' => 'civicoDomicilio'];
            
             // Table::Abilita
            
@@ -468,15 +468,24 @@ enum Arg: array{
 	 * @return array{args: array<Arg>, values: array>|null
     */
 	public static function fromJsonArray(array $tables, array $jsonArgs): ?array {
-		$list = null;
+		$Args = null;
 		foreach($jsonArgs as $jsonArg => $jsonValue) {
 			if(gettype($jsonValue) == array) {
-				//			DA FINIRE
+				$jsonName = null;
+				switch($jsonArg) {
+					case 'residenza': $jsonName = $jsonName ?? 'Residenza';
+					case 'domicilio': $jsonName = $jsonName ?? 'Domicilio';
+						foreach($jsonValue as $arg => $value) {
+							$Args['args'][] = fromJson($tables, $jsonArg . $jsonName);
+							$Args['values'][] = $jsonValue;
+						}
+						break;
+				}
 			}
-			$list['args'][] = fromJson($tables, $jsonName);
-			$list['values'] = $jsonValue;
+			$Args['args'][] = fromJson($tables, $jsonArg);
+			$Args['values'][] = $jsonValue;
 		}
-		return $list;
+		return $Args;
 	}
 }
 
