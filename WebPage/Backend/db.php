@@ -16,14 +16,13 @@ if($conn->connect_errno) {
 $conn->set_charset('utf8');
 
 /**
- * @param Array<Table> $tables
- * @param Array<Arg>|null $select_args
- * @param Array<Arg>|null $cond_args
- * @param Array<Arg, Arg>|null $join_conditions
+ * @param array<Table> $tables
+ * @param array<Arg>|null $select_args
+ * @param array<Arg>|null $cond_args
+ * @param array<Arg, Arg>|null $join_args
 */
 function query_select(array $tables, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null, array|null $join_args = null) {
 	global $conn;
-	
 	
 	foreach($tables as &$table) {
 		$table = $table->value;
@@ -41,23 +40,23 @@ function query_select(array $tables, array|null $select_args = null, array|null 
 	
 	if(isset($join_args)) {
 		foreach($join_args as $arg1 => $arg2) {
-			$cond[] = $arg1.info()['dbName'] . ' = ' . $arg2.info()['dbName'];
+			$cond[] = $arg1->info()['dbName'] . ' = ' . $arg2->info()['dbName'];
 		}
 	}
 	
 	if(isset($cond_args)) {
 		$param_type = '';
 		foreach($cond_args as $arg) {
-			$cond[] = $arg->info['dbName'] . ' = ?';
+			$cond[] = $arg->info()['dbName'] . ' = ?';
 			$param_type .= $arg->info()['type'];
 		}
 
-		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . implode(', ', $table) . ' WHERE ' . implode(' AND ', $cond) . ';';
+		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . implode(', ', $tables) . ' WHERE ' . implode(' AND ', $cond) . ';';
 
 		$stmt = $conn->prepare($sql);
 		$stmt->bind_param($param_type, ...$cond_values);
 	} else {
-		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . implode(', ', $table);
+		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . implode(', ', $tables);
 		if(isset($cond)) {
 			$sql .= ' WHERE ' . implode(' AND ', $cond);
 		}
@@ -302,7 +301,7 @@ enum Arg: string{
 				case 'residenza': return [Arg::ResidenzaCitta, Arg::ResidenzaVia, Arg::ResidenzaCivico];
 				case 'domicilio': return [Arg::DomicilioCitta, Arg::DomicilioVia, Arg::DomicilioCivico];
 				/*case '': return Arg::IdAbilita;
-				case '': return Arg::Studente;*/
+				case '': return Arg::Studente;*//*
 				default: return null;
 			}
 			case Table::Aziende: switch($value) {
@@ -338,7 +337,7 @@ enum Arg: string{
 	
 	/**
 	 * @param Table $table
-	*/
+	*//*
 	public function jsonValue($table): string {
 		switch($table) {
 			case Table::Admin: switch($this) {

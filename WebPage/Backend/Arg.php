@@ -2,7 +2,7 @@
 
 require_once 'Table.php';
 
-enum Arg: array{
+enum Arg{
 
     // Table::Admin
 
@@ -464,26 +464,40 @@ enum Arg: array{
 	
 	/** 
      * @param array<table> $tables
-	 * @param array<string> $jsonNames
-	 * @return array{args: array<Arg>, values: array>|null
+	 * @param array<string, mixed>|array<string> $jsonArgs
+	 * @return array{args: array<Arg>, values: array}|null
     */
 	public static function fromJsonArray(array $tables, array $jsonArgs): ?array {
 		$Args = null;
-		foreach($jsonArgs as $jsonArg => $jsonValue) {
-			if(gettype($jsonValue) == array) {
+
+		if(is_numeric(array_keys($jsonArgs)[0])) {
+			foreach($jsonArgs as $jsonArg) {
 				$jsonName = null;
-				switch($jsonArg) {
+				switch ($jsonArg) {
 					case 'residenza': $jsonName = $jsonName ?? 'Residenza';
 					case 'domicilio': $jsonName = $jsonName ?? 'Domicilio';
-						foreach($jsonValue as $arg => $value) {
-							$Args['args'][] = fromJson($tables, $jsonArg . $jsonName);
-							$Args['values'][] = $jsonValue;
-						}
+						$Args['args'][] = Arg::fromJson($tables, $jsonArg . $jsonName);
 						break;
 				}
+				$Args['args'][] = Arg::fromJson($tables, $jsonArg);
 			}
-			$Args['args'][] = fromJson($tables, $jsonArg);
-			$Args['values'][] = $jsonValue;
+		} else {
+			foreach($jsonArgs as $jsonArg => $jsonValue) {
+				if(is_array($jsonValue)) {
+					$jsonName = null;
+					switch($jsonArg) {
+						case 'residenza': $jsonName = $jsonName ?? 'Residenza';
+						case 'domicilio': $jsonName = $jsonName ?? 'Domicilio';
+							foreach($jsonValue as $arg => $value) {
+								$Args['args'][] = Arg::fromJson($tables, $jsonArg . $jsonName);
+								$Args['values'][] = $jsonValue;
+							}
+							break;
+					}
+				}
+				$Args['args'][] = Arg::fromJson($tables, $jsonArg);
+				$Args['values'][] = $jsonValue;
+			}
 		}
 		return $Args;
 	}

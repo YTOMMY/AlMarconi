@@ -1,5 +1,7 @@
 <?php	// Per gestire le funzioni relative alle aziende
 require_once 'db.php';
+require_once 'Table.php';
+require_once 'Arg.php';
 
 function getStudente($id = null) {
 	global $conn;
@@ -27,7 +29,7 @@ function update_studente($id, $data) {
 	$attr_list = [];
 	$var_list = [];
 	foreach($data as $attr => $value) {
-		$arg = Arg::fromJson(Table::Studenti, $attr);
+		$arg = Arg::fromJson([Table::Studenti], $attr);
 		if($arg != null) {
 			if(!is_array($arg)) {
 				$attr_list[] = $arg;

@@ -1,6 +1,7 @@
 <?php	//Per gestire le funzioni relative alle aziende
 require_once 'db.php';
-
+require_once 'Table.php';
+require_once 'Arg.php';
 
 function get_azienda($id = null) {
 	global $conn;
@@ -26,7 +27,7 @@ function get_azienda($id = null) {
 
 
 function exists_annuncio($id) {
-	$result = query_select(Table::Annunci, null, [Arg::IdAnnuncio], [$id]);
+	$result = query_select([Table::Annunci], null, [Arg::IdAnnuncio], [$id]);
 	if ($result) {
 		return true;
 	} else {
@@ -37,7 +38,7 @@ function exists_annuncio($id) {
 function get_annuncio($id = null, $data = null) {
 	if(isset($data)) {
 		foreach($data as &$attr) {
-			$attr = Arg::fromJson(Table::Annunci, $attr);
+			$attr = Arg::fromJson([Table::Annunci], $attr);
 		}
 		unset($attr);
 	}
@@ -46,10 +47,10 @@ function get_annuncio($id = null, $data = null) {
 		if(!exists_annuncio($id)) {
 			return false;
 		}
-		$result = query_select(Table::Annunci, $data, [Arg::IdAnnuncio], [$id]);
+		$result = query_select([Table::Annunci], $data, [Arg::IdAnnuncio], [$id]);
 		return $result->fetch_assoc();
 	} else {
-		$result = query_select(Table::Annunci, $data, null, null);
+		$result = query_select([Table::Annunci], $data, null, null);
 		while($row = $result->fetch_assoc()) {
 			$output[] = $row;
 		}
@@ -61,7 +62,7 @@ function update_azienda($id, $data) {
 	$attr_list = [];
 	$var_list = [];
 	foreach($data as $attr => $value) {
-		$arg = Arg::fromJson(Table::Aziende, $attr);
+		$arg = Arg::fromJson([Table::Aziende], $attr);
 		if($arg != null) {
 			if(!is_array($arg)) {
 				$attr_list[] = $arg;

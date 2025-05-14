@@ -2,6 +2,8 @@
 require_once 'db.php';
 require_once 'studenti.php';
 require_once 'aziende.php';
+require_once 'Table.php';
+require_once 'Arg.php';
 
 // Controlla se un'email esiste
 function check_email($email) {
@@ -226,16 +228,20 @@ function get_account($id = null, $password = null, $data = null) {
 		}
 	}
 	
-	get_utente($id, $logged, $data);
+	return get_utente($id, $logged, $data);
 }
 
 function get_utente($id = null, $logged = null, $data = null) {
 	$more_attr = false;
+
 	$attr_list = null;
+	if(isset($data)) {
+		$attr_list = Arg::fromJsonArray([Table::Utenti], $data);
+	}
 	foreach($data as $attr) {
-		$arg = Arg::fromJson(Table::Utenti, $attr);
+		$arg = Arg::fromJson([Table::Utenti], $attr);
 		if($arg != null) {
-			if($arg != Arg::Password) {
+			if($arg != Arg::UtentePassword) {
 				$attr_list[] = $arg;
 			}
 		} else {
@@ -253,9 +259,43 @@ function get_utente($id = null, $logged = null, $data = null) {
 	}
 	
 	if(isset($id)) {
-		return Query_select(Table::Utenti, $attr_list, [Arg::IdUtente], [$id]);
+		$attr_list = null;
+		$tables = [Table::Utenti];
+		if(isset($data)) {
+			$type = get_type($id);
+			switch($type) {
+				case 'studente': 
+					$tables[] = Table::Studenti; 
+					$join_arg = Arg::IdStudente;
+					break;
+				case 'azienda': 
+					$tables[] = Table::Aziende;
+					$join_arg = Arg::IdAzienda; 
+					break;
+			}
+			$attr_list = Arg::fromJsonArray($tables, $data);
+			foreach($attr_list as $attr) {
+			
+				//	togli password...
+			
+			}
+		}
+		if(!isset($tables[1])) {
+			$result = Query_select($tables, $attr_list, [Arg::IdUtente], [$id]);
+			return Arg::toJsonArray($tables, $result);
+		} else {
+			$result = Query_select($tables, $attr_list, [Arg::IdUtente], [$id], [Arg::IdUtente => $join_arg]);
+			return Arg::toJsonArray($tables, $result);
+		}
 	} else {
-		return Query_select(Table::Utenti, $attr_list);
+		$result = Query_select([Table::Utenti], [Arg::IdUtente]);
+		while ($row = $result->fetch_assoc()) {
+			$ids[] = $row[Arg::IdUtente->info()['dbName']];
+		}
+		foreach ($ids as $id) {
+			$results = get_utente($id, $data);
+		}
+		return $results;
 	}
 }
 
@@ -290,7 +330,7 @@ function update_account($id = null, $password = null, $data) {
 function update_utente($id, $data) {
 	$more_attr = false;
 	foreach($data as $attr => $value) {
-		$arg = Arg::fromJson(Table::Utenti, $attr);
+		$arg = Arg::fromJson([Table::Utenti], $attr);
 		if($arg != null) {
 			$attr_list[] = $arg;
 			$var_list[] = $value;
