@@ -445,6 +445,23 @@ enum Arg{
         }
     }
 
+	/** 
+     * @param Table[] $tables
+    */
+	public static function fromDb(array $tables, string $dbName): ?Arg {
+		
+        foreach($tables as $table) {
+            $Args = Arg::cases();
+            foreach($Args as $Arg) {
+                $info = $Arg->info();
+                if($info['table'] == $table && $info['dbName'] == $dbName) {
+                    return $Arg;
+                }
+            }
+        }
+        return null;
+	}
+
     /** 
      * @param Table[] $tables
     */
@@ -476,7 +493,7 @@ enum Arg{
 				switch ($jsonArg) {
 					case 'residenza': $jsonName = $jsonName ?? 'Residenza';
 					case 'domicilio': $jsonName = $jsonName ?? 'Domicilio';
-						$Args['args'][] = Arg::fromJson($tables, $jsonArg . $jsonName);
+						$Args['args'][] = Arg::fromJson($tables, $jsonName . $jsonArg);
 						break;
 				}
 				$Args['args'][] = Arg::fromJson($tables, $jsonArg);
@@ -500,6 +517,32 @@ enum Arg{
 			}
 		}
 		return $Args;
+	}
+
+	/** 
+     * @param array<table> $tables
+	 * @param array<string, mixed> $args
+    */
+	public static function toJsonArray(array $tables, array $args): array|null {
+		$array = null;
+		foreach($args as $arg => $value) {
+			switch($arg) {
+				case Arg::ResidenzaCitta:
+				case Arg::ResidenzaVia:
+				case Arg::ResidenzaCivico:
+					$array['Residenza'][str_replace("Residenza", "", Arg::fromDb($tables, $arg)->info()['jsonName'])] = $value;
+					break;
+				case Arg::DomicilioCitta:
+				case Arg::DomicilioVia:
+				case Arg::DomicilioCivico:
+					$array['Domicilio'][str_replace("Domicilio", "", Arg::fromDb($tables, $arg)->info()['jsonName'])] = $value;
+					break;
+				default: 
+					$array[Arg::fromDb($tables, $arg)->info()['jsonName']] = $value; 
+					break;
+			}			
+		}
+		return $array;
 	}
 }
 

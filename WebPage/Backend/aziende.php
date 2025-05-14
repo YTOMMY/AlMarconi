@@ -73,4 +73,40 @@ function update_azienda($id, $data) {
 	
 	return query_update(Table::Aziende, $attr_list, $var_list, [Arg::IdUtente], [$id]);
 }
+
+/*
+<?php
+// ...existing code...
+
+function delete_annuncio($id) {
+    return query_delete(Table::Annunci, [Arg::IdAnnuncio], [$id]);
+}
+
+function update_annuncio($id, $data) {
+    $attr_list = [];
+    $var_list = [];
+    foreach($data as $attr => $value) {
+        $arg = Arg::fromJson([Table::Annunci], $attr);
+        if($arg != null) {
+            $attr_list[] = $arg;
+            $var_list[] = $value;
+        }
+    }
+    return query_update(Table::Annunci, $attr_list, $var_list, [Arg::IdAnnuncio], [$id]);
+}
+
+function create_annuncio($data) {
+    $attr_list = [];
+    $var_list = [];
+    foreach($data as $attr => $value) {
+        $arg = Arg::fromJson([Table::Annunci], $attr);
+        if($arg != null) {
+            $attr_list[] = $arg;
+            $var_list[] = $value;
+        }
+    }
+    return query_insert(Table::Annunci, $attr_list, $var_list);
+}
+// ...existing code...
+*/
 ?>

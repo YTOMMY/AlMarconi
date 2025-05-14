@@ -274,18 +274,36 @@ function get_utente($id = null, $logged = null, $data = null) {
 					break;
 			}
 			$attr_list = Arg::fromJsonArray($tables, $data);
-			foreach($attr_list as $attr) {
-			
-				//	togli password...
-			
+			$visualizza = query_select([Table::Utenti], [Arg::VisualizzaMail, Arg::VisualizzaTelefono], [Arg::IdUtente], [$id])->fetch_assoc();
+			foreach($attr_list as $key => $attr) {
+				switch($attr) {
+					case Arg::Email: 
+						if($visualizza[Arg::VisualizzaMail->info()['dbName']]) {
+							unset($attr_list[$key]);
+						} 
+						break;
+					case Arg::Telefono: 
+						if($visualizza[Arg::VisualizzaTelefono->info()['dbName']]) {
+							unset($attr_list[$key]);
+						} 
+						break;
+					case Arg::VisualizzaMail:
+					case Arg::VisualizzaTelefono:
+					case Arg::UtentePassword:
+						unset($attr_list[$key]);
+						break;
+				}
 			}
 		}
 		if(!isset($tables[1])) {
 			$result = Query_select($tables, $attr_list, [Arg::IdUtente], [$id]);
-			return Arg::toJsonArray($tables, $result);
 		} else {
 			$result = Query_select($tables, $attr_list, [Arg::IdUtente], [$id], [Arg::IdUtente => $join_arg]);
-			return Arg::toJsonArray($tables, $result);
+		}
+		if($result) {
+			return Arg::toJsonArray($tables, $result->fetch_assoc());
+		} else {
+			return false;
 		}
 	} else {
 		$result = Query_select([Table::Utenti], [Arg::IdUtente]);
@@ -293,7 +311,11 @@ function get_utente($id = null, $logged = null, $data = null) {
 			$ids[] = $row[Arg::IdUtente->info()['dbName']];
 		}
 		foreach ($ids as $id) {
-			$results = get_utente($id, $data);
+			$result = get_utente($id, $data);
+			if(!$result) {
+				return false;
+			}
+			$results[] = $result;
 		}
 		return $results;
 	}
@@ -355,38 +377,6 @@ function update_utente($id, $data) {
 		return false;
 	}
 }
-
-// Cambio password di un utente
-/*
-function change_password($old_password, $new_password) {
-	
-	// Verifica che l'utente sia loggato
-	if(!isset($_SESSION['id'])) {
-		return false;
-	}
-	
-	// Query per ottenere la vecchia password
-	global $conn;
-	$tabella = 'Utenti';
-	$sql = "SELECT HashPassword FROM $tabella WHERE IdUtente = {$_SESSION['id']}";
-	
-	$result = $conn->query($sql);
-	$result = $query->get_result();
-	$record = $result->fetch_assoc();
-	
-	// Controllo password
-	$hashed_password = $record['HashPassword'];
-	if (!password_verify($old_password, $hashed_password)) {
-		return false;
-	}
-	
-	// Update password
-	$sql = "UPDATE $tabella SET HashPassword = ? WHERE IdUtente = {$_SESSION['id']}";
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param('s', $email);
-	$stmt->execute();
-}
-*/
 
 // Logout dall'account
 function logout(){
