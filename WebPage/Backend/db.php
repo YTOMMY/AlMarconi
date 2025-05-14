@@ -1,4 +1,7 @@
 <?php	//Per connettersi al database
+require_once 'Arg.php';
+require_once 'Table.php';
+
 $host = 'localhost';
 $dbname = 'AlMarconi';
 $username = 'root';
@@ -13,34 +16,52 @@ if($conn->connect_errno) {
 $conn->set_charset('utf8');
 
 /**
- * @param Table[] $table
- * @param array[Arg[]]|null $select_args
- * @param array[Arg[]]|null $cond_args
+ * @param Array<Table> $tables
+ * @param Array<Arg>|null $select_args
+ * @param Array<Arg>|null $cond_args
+ * @param Array<Arg, Arg>|null $join_conditions
 */
-function query_select(array $table, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null, array|null $join_conditions = null) {
+function query_select(array $tables, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null, array|null $join_args = null) {
 	global $conn;
+	
+	
+	foreach($tables as &$table) {
+		$table = $table->value;
+	}
+	unset($table);
 	
 	if(isset($select_args)) {
 		foreach($select_args as &$arg) {
-			$arg = $arg->value;
+			$arg = $arg->info()['dbName'];
 		}
 		unset($arg);
 	} else {
 		$select_args = ['*'];
 	}
+	
+	if(isset($join_args)) {
+		foreach($join_args as $arg1 => $arg2) {
+			$cond[] = $arg1.info()['dbName'] . ' = ' . $arg2.info()['dbName'];
+		}
+	}
+	
 	if(isset($cond_args)) {
 		$param_type = '';
 		foreach($cond_args as $arg) {
-			$cond[] = $arg->value . ' = ?';
-			$param_type .= $arg->getType();
+			$cond[] = $arg->info['dbName'] . ' = ?';
+			$param_type .= $arg->info()['type'];
 		}
 
-		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . $table->value . ' WHERE ' . implode(' AND ', $cond) . ';';
+		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . implode(', ', $table) . ' WHERE ' . implode(' AND ', $cond) . ';';
 
 		$stmt = $conn->prepare($sql);
 		$stmt->bind_param($param_type, ...$cond_values);
 	} else {
-		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . $table->value . ';';
+		$sql = 'SELECT '. implode(', ', $select_args) . ' FROM ' . implode(', ', $table);
+		if(isset($cond)) {
+			$sql .= ' WHERE ' . implode(' AND ', $cond);
+		}
+		$sql .= ';';
 		$stmt = $conn->prepare($sql);
 	}
 	$stmt->execute();
@@ -56,10 +77,10 @@ function query_insert(Table $table, array $insert_args, array $insert_values) {
 	$param_type = '';
 	foreach($insert_args as $arg) {
 		$insert_placeholder[] = '?';
-		$param_type .= $arg->getType();
+		$param_type .= $arg->info()['type'];
 	}
 
-	$sql = 'INSERT INTO '. $table . '(' . implode(', ', $insert_args) . ') VALUES(' . implode(', ', $insert_placeholder) . ');'; 
+	$sql = 'INSERT INTO '. $table->value . '(' . implode(', ', $insert_args) . ') VALUES(' . implode(', ', $insert_placeholder) . ');'; 
 
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param($param_type, ...$insert_values);
@@ -77,13 +98,13 @@ function query_update(Table $table, array $update_args, array $update_values, ar
 	$param_type = '';
 	$param_values = array_merge($update_values, $cond_values);
 	foreach($update_args as &$arg) {
-		$param_type .= $arg->getType();
-		$arg = $arg->value . ' = ?';
+		$param_type .= $arg->info()['type'];
+		$arg = $arg->info()['dbName'] . ' = ?';
 	}
 	unset($arg);
 	foreach($cond_args as $arg) {
-		$cond[] = $arg->value . ' = ?';
-		$param_type .= $arg->getType();
+		$cond[] = $arg->info()['dbName'] . ' = ?';
+		$param_type .= $arg->info()['type'];
 	}
 
 	$sql = 'UPDATE '. $table->value . ' SET ' . implode(', ', $update_args) . ' WHERE '. implode(' AND ', $cond) . ';';
@@ -101,8 +122,8 @@ function query_delete(Table $table, array $cond_args, array $cond_values) {
 	
 	$param_type = '';
 	foreach($cond_args as $arg) {
-		$cond[] = $arg->value . ' = ?';
-		$param_type .= $arg->getType();
+		$cond[] = $arg->info()['dbName'] . ' = ?';
+		$param_type .= $arg->info()['type'];
 	}
 
 	$sql = 'DELETE  FROM ' . $table->value. ' WHERE ' . implode(' AND ', $cond) . ';';
@@ -113,6 +134,7 @@ function query_delete(Table $table, array $cond_args, array $cond_values) {
 	return $stmt->get_result();
 }
 
+/*
 enum Table: string{
 	case Admin = 'Admin';
 	case Utenti = 'Utenti';
@@ -245,7 +267,7 @@ enum Arg: string{
 	
 	/**
 	 * @param Table $table
-	*/
+	*//*
 	public static function fromJson($table, $value) {
 		switch ($table) {
 			case Table::Admin: switch($value) {
@@ -437,7 +459,7 @@ enum Arg: string{
 			case Arg::Sede: return 'sede';
 			default: return 's';
 		}
-		*/
+		
 	}
-}
+}*/
 ?>
