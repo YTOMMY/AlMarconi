@@ -139,4 +139,31 @@ function create_annuncio($data) {
     }
     return query_insert(Table::Annunci, $attr_list + [Arg::AziendaAnnuncio], $var_list + [$id]);
 }
+
+function candidarsi($idAnnuncio) {
+	if(!isset($_SESSION['id'])) {
+		unauthorized_error();
+	}
+	$id = $_SESSION['id'];
+	if(get_type($id) != 'studente') {
+		unauthorized_error();
+	}
+	if(!exists_annuncio($idAnnuncio)) {
+		not_found_error();
+	}
+	
+	return query_insert(Table::Candidarsi, [Arg::AnnuncioCandidatura, Arg::StudenteCandidatura], [$idAnnuncio, $id]);
+}
+
+function get_candidati($idAnnuncio) {
+	if(!exists_annuncio($idAnnuncio)) {
+		not_found_error();
+	}
+
+	$result = query_select([Table::Candidarsi], [Arg::StudenteCandidatura], [Arg::AnnuncioCandidatura], [$idAnnuncio]);
+	while($row = $result->fetch_assoc()) {
+		$idStudenti[] = $row[Arg::StudenteCandidatura->info()['dbName']];
+	}
+	return $idStudenti;
+}
 ?>

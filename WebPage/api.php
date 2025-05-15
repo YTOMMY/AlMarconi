@@ -63,120 +63,156 @@ switch($uri[0]) {
 	
 	// Gestione account
 	case 'account':
-		switch($request_method) {
+		if(!isset($uri[2])){
+			switch($request_method) {
 
-			// Registrazione
-			case 'POST':
-				check_content($input);
-				$data = json_decode($input, true);
+				// Registrazione
+				case 'POST':
+					check_content($input);
+					$data = json_decode($input, true);
+					
+					if(create_account($data)) {
+						$id = $_SESSION['id'];
+						$output = ['id' => $id, 'verificato' => is_verified($id), 'tipo' => get_type($id)];
+						if($output['tipo'] == 'studente') {
+							$datiStudente = getStudente();
+							$output['nome'] = $datiStudente['Nome'] . ' ' . $datiStudente['Cognome'];
+						}
+						if($output['tipo'] == 'azienda') {
+							$output['nome'] = get_azienda()['Nome'];
+						}
+					} else {
+						$output = ['id' => 'null'];
+					}
+					break;
 				
-				if(create_account($data)) {
-					$id = $_SESSION['id'];
-					$output = ['id' => $id, 'verificato' => is_verified($id), 'tipo' => get_type($id)];
-					if($output['tipo'] == 'studente') {
-						$datiStudente = getStudente();
-						$output['nome'] = $datiStudente['Nome'] . ' ' . $datiStudente['Cognome'];
+				//Visualizza account
+				case 'GET':
+					check_content($input);
+					$data = json_decode($input, true);
+					if(isset($uri[1])) {
+						$id = $uri[1];
+					} else {
+						$id = null;
 					}
-					if($output['tipo'] == 'azienda') {
-						$output['nome'] = get_azienda()['Nome'];
+					
+					$password = $data['password'] ?? null;
+					$data = $data['data'] ?? null;
+					
+					$output = get_account($id, $password, $data);
+					if($output == false) {
+						$output = ['esit' => false];
+					} else {
+						$output['esit'] = true;
 					}
-				} else {
-					$output = ['id' => 'null'];
-				}
-				break;
-			
-			//Visualizza account
-			case 'GET':
-				check_content($input);
-				$data = json_decode($input, true);
-				if(isset($uri[1])) {
+					break;
+				
+				//Modifica account
+				case 'PATCH':
+					check_content($input);
+					$data = json_decode($input, true);
+					if(!isset($uri[1])) {
+						not_found_error();
+					}
 					$id = $uri[1];
-				} else {
-					$id = null;
-				}
+					
+					$password = $data['password'] ?? null;
+					$data = $data['data'];
+					
+					$ouptut = ['esit' => update_account($id, $password, $data)];
+					break;
 				
-				$password = $data['password'] ?? null;
-				$data = $data['data'] ?? null;
+				// Elimina account
+				case 'DELETE':
+					if(!isset($uri[1])) {
+						not_found_error();
+					}
+					check_content($input);
+					$data = json_decode($input, true);
+					$output = ['delete' => delete_account($uri[1], $data['password'])];
+					break;
+				default:
+					method_error(['POST', 'GET', 'PATCH', 'DELETE']);
+			}
+		} else if($uri[2] == 'sede') {
+			switch($request_method) {
+				// Candidati
 				
-				$output = get_account($id, $password, $data);
-				if($output == false) {
-					$output = ['esit' => false];
-				} else {
-					$output['esit'] = true;
-				}
-				break;
-			
-			//Modifica account
-			case 'PATCH':
-				check_content($input);
-				$data = json_decode($input, true);
-				if(!isset($uri[1])) {
-					not_found_error();
-				}
-				$id = $uri[1];
-				
-				$password = $data['password'] ?? null;
-				$data = $data['data'];
-				
-				$ouptut = ['esit' => update_account($id, $password, $data)];
-				break;
-			
-			// Elimina account
-			case 'DELETE':
-				if(!isset($uri[1])) {
-					not_found_error();
-				}
-				check_content($input);
-				$data = json_decode($input, true);
-				$output = ['delete' => delete_account($uri[1], $data['password'])];
-				break;
-			default:
-				method_error(['POST', 'GET', 'PATCH', 'DELETE']);
+				default:
+					method_error(['POST']);
+			}
+		} else {
+			not_found_error();
 		}
 		break;
 	case 'annuncio':
-		switch($request_method) {
+		if(!isset($uri[2])){
+			switch($request_method) {
 
-			// Visualizza annuncio
-			case 'GET':
-				check_content($input);
-				$data = json_decode($input, true);
-				if(isset($uri[1])) {
+				// Visualizza annuncio
+				case 'GET':
+					check_content($input);
 					$id = $uri[1];
-				} else {
-					$id = null;
-				}
+					
+					$output = get_annuncio($id);
+					break;
+
+				// Crea annuncio
+				case 'POST':
+					check_content($input);
+					$data = json_decode($input, true);
+					$output = ['esit' => create_annuncio($data)];
+					break;
+
+				// Modifica annuncio
+				case 'PATCH':
+					check_content($input);
+					$data = json_decode($input, true);
+					if(!isset($uri[1])) {
+						not_found_error();
+					}
+					$id = $uri[1];
+					$output = ['esit' => update_annuncio($id, $data['password'], $data['data'])];
+					break;
+
+				// Elimina annuncio
+				case 'DELETE':
+					if(!isset($uri[1])) {
+						not_found_error();
+					}
+					$output = ['esit' => delete_annuncio($uri[1])];
+					break;
+				default:
+					method_error(['GET', 'POST', 'PATCH', 'DELETE']);
+			}
+	 	} else if($uri[2] == 'candidati') {
+			switch($request_method) {
+
+				// Visualizza candidati
+				case 'GET':
+					check_content($input);
+					$id = $uri[1];
+					
+					$output = get_candidati($id);
+					if($output == false) {
+						$output = ['esit' => false];
+					} else {
+						$output['esit'] = true;
+					}
+					break;
 				
-				$output = get_annuncio($id, $data['data']);
-				break;
-
-			// Crea annuncio
-			case 'POST':
-				check_content($input);
-				$data = json_decode($input, true);
-				$output = ['esit' => create_annuncio($data)];
-				break;
-
-			// Modifica annuncio
-			case 'PATCH':
-				check_content($input);
-				$data = json_decode($input, true);
-				if(!isset($uri[1])) {
-					not_found_error();
-				}
-				$id = $uri[1];
-				$output = ['esit' => update_annuncio($id, $data['password'], $data['data'])];
-				break;
-
-			// Elimina annuncio
-			case 'DELETE':
-				if(!isset($uri[1])) {
-					not_found_error();
-				}
-				$output = ['esit' => delete_annuncio($uri[1])];
-				break;
-			default:
-				method_error(['GET', 'POST', 'PATCH', 'DELETE']);
+				// Candidarsi
+				case 'POST':
+					check_content($input);
+					$id_annuncio = $uri[1];
+					
+					$output = ['esit' => candidarsi($id_annuncio)];
+					break;
+				default:
+					method_error(['GET', 'POST']);
+			}
+		} else {
+			not_found_error();
 		}
 		break;
 	// Web service non trovato

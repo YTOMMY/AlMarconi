@@ -92,6 +92,11 @@ enum Arg{
     case AziendaAnnuncio;
     case SedeAnnuncio;
 
+	// Table::Candidarsi
+
+	case AnnuncioCandidatura;
+	case StudenteCandidatura;
+
     /**
      * @return array{dbName: string, table: Table, type: string, jsonName: string}|null
      */
@@ -441,6 +446,19 @@ enum Arg{
 				'table' => Table::Annunci,
 				'type' => 'i',
 				'jsonName' => 'sede'];
+			
+			// Table::Candidarsi
+
+			case Arg::AnnuncioCandidatura: return [
+				'dbName' => 'IdAnnuncio',
+				'table' => Table::Candidarsi,
+				'type'=> 'i',
+				'jsonName' => 'idAnnuncio'];
+			case Arg::StudenteCandidatura: return [
+				'dbName' => 'IdStudente',
+				'table' => Table::Candidarsi,
+				'type'=> 'i',
+				'jsonName' => 'idStudente'];
             default: return null;
         }
     }
