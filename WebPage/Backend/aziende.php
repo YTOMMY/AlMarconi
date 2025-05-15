@@ -1,5 +1,6 @@
 <?php	//Per gestire le funzioni relative alle aziende
 require_once 'db.php';
+require_once 'accpunt.php';
 require_once 'Table.php';
 require_once 'Arg.php';
 
@@ -74,14 +75,25 @@ function update_azienda($id, $data) {
 	return query_update(Table::Aziende, $attr_list, $var_list, [Arg::IdUtente], [$id]);
 }
 
-/*
-<?php
-// ...existing code...
-
-function delete_annuncio($id) {
-    return query_delete(Table::Annunci, [Arg::IdAnnuncio], [$id]);
+function annuncio_owner($id_annuncio) {
+	$result = query_select([Table::Annunci], [Arg::AziendaAnnuncio], [Arg::IdAnnuncio], [$id_annuncio]);
+	return $result->fetch_assoc()[Arg::IdAnnuncio->info()['dbName']];
 }
 
+function delete_annuncio($id = null, $password = null) {
+	
+	$id_utente = annuncio_owner($id);
+	$id_utente = check_credentials($id_utente, $password);
+	if($id_utente == null) {
+		return false;
+	}
+	if(get_type($id_utente) != 'azienda') {
+		return false;
+	}
+  $result = query_delete(Table::Annunci, [Arg::IdAnnuncio], [$id]);
+   
+}
+/*
 function update_annuncio($id, $data) {
     $attr_list = [];
     $var_list = [];
@@ -107,6 +119,5 @@ function create_annuncio($data) {
     }
     return query_insert(Table::Annunci, $attr_list, $var_list);
 }
-// ...existing code...
 */
 ?>

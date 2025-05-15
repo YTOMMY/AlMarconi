@@ -211,52 +211,26 @@ function check_password($id, $password) {
 	return password_verify($password, $hashed_password);
 }
 
-function get_account($id = null, $password = null, $data = null) {
-	$logged = false;
-	
+function check_credentials($id = null, $password = null) {
 	if($id != null) {
-		if(isset($password)) {
-			if(check_password($id, $password)) {
-				$logged = true;
-			} else {
-				return false;
-			}
-		} else if (isset($_SESSION['id'])) {
-			if ($id == $_SESSION['id']) {
-				$logged = true;
+		if(isset($data['password'])) {
+			if(!check_password($id, $password)) {
+				return null;
 			}
 		}
+	} else if(isset($_SESSION['id'])) {
+		$id = $_SESSION['id'];
 	}
+	return $id;
+}
+
+function get_account($id = null, $password = null, $data = null) {
+	$logged = (check_credentials($id, $password) != null);
 	
 	return get_utente($id, $logged, $data);
 }
 
 function get_utente($id = null, $logged = null, $data = null) {
-	$more_attr = false;
-
-	$attr_list = null;
-	if(isset($data)) {
-		$attr_list = Arg::fromJsonArray([Table::Utenti], $data);
-	}
-	foreach($data as $attr) {
-		$arg = Arg::fromJson([Table::Utenti], $attr);
-		if($arg != null) {
-			if($arg != Arg::UtentePassword) {
-				$attr_list[] = $arg;
-			}
-		} else {
-			$more_attr = true;
-		}
-	}
-	
-	if($more_attr) {
-		$type = get_type($id);
-		if($type == 'studente') {
-			return update_studente($id, $data);
-		} else if($type == 'azienda') {
-			return update_azienda($id, $data);
-		}
-	}
 	
 	if(isset($id)) {
 		$attr_list = null;
@@ -278,12 +252,12 @@ function get_utente($id = null, $logged = null, $data = null) {
 			foreach($attr_list as $key => $attr) {
 				switch($attr) {
 					case Arg::Email: 
-						if($visualizza[Arg::VisualizzaMail->info()['dbName']]) {
+						if(!$logged || $visualizza[Arg::VisualizzaMail->info()['dbName']]) {
 							unset($attr_list[$key]);
 						} 
 						break;
 					case Arg::Telefono: 
-						if($visualizza[Arg::VisualizzaTelefono->info()['dbName']]) {
+						if(!$logged || $visualizza[Arg::VisualizzaTelefono->info()['dbName']]) {
 							unset($attr_list[$key]);
 						} 
 						break;
