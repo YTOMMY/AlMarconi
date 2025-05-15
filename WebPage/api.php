@@ -137,7 +137,7 @@ switch($uri[0]) {
 	case 'annuncio':
 		switch($request_method) {
 
-			// Registrazione
+			// Visualizza annuncio
 			case 'GET':
 				check_content($input);
 				$data = json_decode($input, true);
@@ -149,8 +149,34 @@ switch($uri[0]) {
 				
 				$output = get_annuncio($id, $data['data']);
 				break;
+
+			// Crea annuncio
+			case 'POST':
+				check_content($input);
+				$data = json_decode($input, true);
+				$output = ['esit' => create_annuncio($data)];
+				break;
+
+			// Modifica annuncio
+			case 'PATCH':
+				check_content($input);
+				$data = json_decode($input, true);
+				if(!isset($uri[1])) {
+					not_found_error();
+				}
+				$id = $uri[1];
+				$output = ['esit' => update_annuncio($id, $data['password'], $data['data'])];
+				break;
+
+			// Elimina annuncio
+			case 'DELETE':
+				if(!isset($uri[1])) {
+					not_found_error();
+				}
+				$output = ['esit' => delete_annuncio($uri[1])];
+				break;
 			default:
-				method_error(['GET']);
+				method_error(['GET', 'POST', 'PATCH', 'DELETE']);
 		}
 		break;
 	// Web service non trovato
@@ -193,42 +219,4 @@ function check_content($input) {
 		exit;
 	}
 }
-
-/*
-<?php
-// ...existing code...
-case 'annuncio':
-    switch($request_method) {
-        case 'GET':
-            check_content($input);
-            $data = json_decode($input, true);
-            $id = $uri[1] ?? null;
-            $output = get_annuncio($id, $data['data']);
-            break;
-        case 'POST':
-            check_content($input);
-            $data = json_decode($input, true);
-            $output = ['esit' => create_annuncio($data)];
-            break;
-        case 'PATCH':
-            check_content($input);
-            $data = json_decode($input, true);
-            if(!isset($uri[1])) {
-                not_found_error();
-            }
-            $id = $uri[1];
-            $output = ['esit' => update_annuncio($id, $data)];
-            break;
-        case 'DELETE':
-            if(!isset($uri[1])) {
-                not_found_error();
-            }
-            $output = ['delete' => delete_annuncio($uri[1])];
-            break;
-        default:
-            method_error(['GET', 'POST', 'PATCH', 'DELETE']);
-    }
-    break;
-// ...existing code...
-*/
 ?>

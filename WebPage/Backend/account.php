@@ -4,6 +4,7 @@ require_once 'studenti.php';
 require_once 'aziende.php';
 require_once 'Table.php';
 require_once 'Arg.php';
+require_once '../api.php';
 
 // Controlla se un'email esiste
 function check_email($email) {
@@ -211,17 +212,17 @@ function check_password($id, $password) {
 	return password_verify($password, $hashed_password);
 }
 
-function check_credentials($id = null, $password = null) {
-	if($id != null) {
-		if(isset($data['password'])) {
-			if(!check_password($id, $password)) {
-				return null;
+function check_credentials($id = null, $password = null): int {
+	if(isset($id)) {
+		if(isset($password)) {
+			if(check_password($id, $password)) {
+				return $id;
 			}
 		}
 	} else if(isset($_SESSION['id'])) {
-		$id = $_SESSION['id'];
+		return $_SESSION['id'];
 	}
-	return $id;
+	unauthorized_error();
 }
 
 function get_account($id = null, $password = null, $data = null) {

@@ -21,7 +21,7 @@ $conn->set_charset('utf8');
  * @param array<Arg>|null $cond_args
  * @param array<Arg, Arg>|null $join_args
 */
-function query_select(array $tables, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null, array|null $join_args = null) {
+function query_select(array $tables, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null, array|null $join_args = null): bool|mysqli_result {
 	global $conn;
 	
 	foreach($tables as &$table) {
@@ -70,7 +70,7 @@ function query_select(array $tables, array|null $select_args = null, array|null 
 /**  
  * @param Arg[] $insert_args
 */
-function query_insert(Table $table, array $insert_args, array $insert_values) {
+function query_insert(Table $table, array $insert_args, array $insert_values): bool {
 	global $conn;
 	
 	$param_type = '';
@@ -84,14 +84,15 @@ function query_insert(Table $table, array $insert_args, array $insert_values) {
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param($param_type, ...$insert_values);
 	$stmt->execute();
-	return $stmt->get_result();
+
+	return $stmt->affected_rows > 0;
 }
 
 /**  
  * @param Arg[] $update_args
  * @param Arg[]|null $cond_args
 */
-function query_update(Table $table, array $update_args, array $update_values, array $cond_args, array $cond_values) {
+function query_update(Table $table, array $update_args, array $update_values, array $cond_args, array $cond_values): bool {
 	global $conn;
 	
 	$param_type = '';
@@ -109,14 +110,15 @@ function query_update(Table $table, array $update_args, array $update_values, ar
 	$sql = 'UPDATE '. $table->value . ' SET ' . implode(', ', $update_args) . ' WHERE '. implode(' AND ', $cond) . ';';
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param($param_type, ...$param_values);
-	
-	return $stmt->execute();
+	$stmt->execute();
+
+	return $stmt->affected_rows > 0;
 }
 
 /**  
  * @param Arg[] $cond_args
 */
-function query_delete(Table $table, array $cond_args, array $cond_values) {
+function query_delete(Table $table, array $cond_args, array $cond_values): bool {
 	global $conn;
 	
 	$param_type = '';
@@ -130,6 +132,6 @@ function query_delete(Table $table, array $cond_args, array $cond_values) {
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param($param_type, ...$cond_values);
 	$stmt->execute();
-	return $stmt->get_result();
+	return $stmt->affected_rows > 0;
 }
 ?>

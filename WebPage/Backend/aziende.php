@@ -3,6 +3,7 @@ require_once 'db.php';
 require_once 'accpunt.php';
 require_once 'Table.php';
 require_once 'Arg.php';
+require_once '../api.php';
 
 function get_azienda($id = null) {
 	global $conn;
@@ -75,27 +76,38 @@ function update_azienda($id, $data) {
 	return query_update(Table::Aziende, $attr_list, $var_list, [Arg::IdUtente], [$id]);
 }
 
-function annuncio_owner($id_annuncio) {
+function get_annuncio_owner($id_annuncio) {
 	$result = query_select([Table::Annunci], [Arg::AziendaAnnuncio], [Arg::IdAnnuncio], [$id_annuncio]);
 	return $result->fetch_assoc()[Arg::IdAnnuncio->info()['dbName']];
 }
 
-function delete_annuncio($id = null, $password = null) {
-	
-	$id_utente = annuncio_owner($id);
+function is_owner($id_utente, $id_annuncio) {
+	if ($id_utente != get_annuncio_owner($id_annuncio)) {
+		unauthorized_error();
+	}
+	return true;
+}
+
+function delete_annuncio($id, $password = null) {
+		
+	$id_utente = get_annuncio_owner($id);
 	$id_utente = check_credentials($id_utente, $password);
+
 	if($id_utente == null) {
 		return false;
 	}
 	if(get_type($id_utente) != 'azienda') {
 		return false;
 	}
-  $result = query_delete(Table::Annunci, [Arg::IdAnnuncio], [$id]);
-   
+	return query_delete(Table::Annunci, [Arg::IdAnnuncio], [$id]);
 }
-/*
-function update_annuncio($id, $data) {
-    $attr_list = [];
+
+function update_annuncio($id, $password, $data) {
+    
+	$id_utente = get_annuncio_owner($id);
+	$id_utente = check_credentials($id_utente, $password);
+	
+	$attr_list = [];
     $var_list = [];
     foreach($data as $attr => $value) {
         $arg = Arg::fromJson([Table::Annunci], $attr);
@@ -108,6 +120,14 @@ function update_annuncio($id, $data) {
 }
 
 function create_annuncio($data) {
+	if(!isset($_SESSION['id']) || gettype($_SESSION['id']) != 'azienda') {
+		unauthorized_error();
+	}
+	$id = $_SESSION['id'];
+	if(get_type($id) != 'azienda') {
+		unauthorized_error();
+	}
+
     $attr_list = [];
     $var_list = [];
     foreach($data as $attr => $value) {
@@ -117,7 +137,6 @@ function create_annuncio($data) {
             $var_list[] = $value;
         }
     }
-    return query_insert(Table::Annunci, $attr_list, $var_list);
+    return query_insert(Table::Annunci, $attr_list + [Arg::AziendaAnnuncio], $var_list + [$id]);
 }
-*/
 ?>

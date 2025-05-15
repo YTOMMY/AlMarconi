@@ -89,8 +89,8 @@ enum Arg{
     case DataPubblicazione;
     case DataScadenza;
     case MaxIscrizioni;
-    case AziendaAnnucio;
-    case SedeAnnucio;
+    case AziendaAnnuncio;
+    case SedeAnnuncio;
 
     /**
      * @return array{dbName: string, table: Table, type: string, jsonName: string}|null
@@ -431,12 +431,12 @@ enum Arg{
 				'table' => Table::Annunci,
 				'type' => 'i',
 				'jsonName' => 'maxIscrizioni'];
-            case Arg::AziendaAnnucio : return [
+            case Arg::AziendaAnnuncio : return [
 				'dbName' => Table::Annunci . '.Azienda', 
 				'table' => Table::Annunci,
 				'type' => 'i',
 				'jsonName' => 'azienda'];
-            case Arg::SedeAnnucio : return [
+            case Arg::SedeAnnuncio : return [
 				'dbName' => Table::Annunci . '.Sede', 
 				'table' => Table::Annunci,
 				'type' => 'i',
