@@ -28,10 +28,9 @@
 
 	<script>
 		const userId = sessionStorage.getItem("userId");
-		const verificato = sessionStorage.getItem("verificato");
 		const tipo = sessionStorage.getItem("tipo");
 
-		if (!userId || userId == 0) {
+		if (!userId) {
 			document.getElementById("account").innerHTML = `
 				<a href="login.html" class="menu">Accedi</a>
 			`;
@@ -45,46 +44,40 @@
 				<a href="impostazioni.html" class="menu">Impostazioni</a>
 			`;
 
-			if (verificato != 1) {
-				document.getElementById("pagina").innerHTML = `
-					<p>Account in attesa di validazione</p>
-				`;
-			} else {
-				if (tipo === "azienda") {
-					window.addEventListener('DOMContentLoaded', async function () {
-						try {
-							const response = await fetch('api.php/tuttiStudenti', {
-								method: 'GET',
-							});
+			if (tipo === "azienda") {
+				window.addEventListener('DOMContentLoaded', async function () {
+					try {
+						const response = await fetch('api.php/tuttiStudenti', {
+							method: 'GET',
+						});
 
-							const responseData = await response.json();
+						const responseData = await response.json();
 
-							if (response.ok) {
-								const nomi = responseData.nomi;
-								const cognomi = responseData.cognomi;
-								const idStudenti = responseData.id;
+						if (response.ok) {
+							const nomi = responseData.nomi;
+							const cognomi = responseData.cognomi;
+							const idStudenti = responseData.id;
 
 
-								const pagina = document.getElementById("pagina");
-								pagina.innerHTML = "";
+							const pagina = document.getElementById("pagina");
+							pagina.innerHTML = "";
 
-								for (let i = 0; i < idStudenti.length; i++) {
-									const riga = document.createElement('p');
-									riga.innerHTML = `<a href="schedaStudente.html?id=${idStudenti[i]}">${nomi[i]} ${cognomi[i]}</a>`;
-									pagina.appendChild(riga);
-								}
+							for (let i = 0; i < idStudenti.length; i++) {
+								const riga = document.createElement('p');
+								riga.innerHTML = `<a href="schedaStudente.html?id=${idStudenti[i]}">${nomi[i]} ${cognomi[i]}</a>`;
+								pagina.appendChild(riga);
 							}
-						} catch (error) {
-							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
 						}
-					});
-				} else if (tipo === "studente") {
-					document.getElementById("pagina").textContent ="Questa pagina è visualizzabile solo ad un account azienda";
-				} else {
-					document.getElementById("pagina").innerHTML = `
-						Errore: non è stato possibile recuperare i dati
-					`;
-				}
+					} catch (error) {
+						document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+					}
+				});
+			} else if (tipo === "studente") {
+				document.getElementById("pagina").textContent ="Questa pagina è visualizzabile solo ad un account azienda";
+			} else {
+				document.getElementById("pagina").innerHTML = `
+					Errore: non è stato possibile recuperare i dati
+				`;
 			}
 		}
 	</script>
