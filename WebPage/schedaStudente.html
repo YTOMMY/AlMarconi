@@ -28,10 +28,9 @@
 
 	<script>
 		const userId = sessionStorage.getItem("userId");
-		const verificato = sessionStorage.getItem("verificato");
 		const tipo = sessionStorage.getItem("tipo");
 
-		if (!userId || userId == 0) {
+		if (!userId) {
 			document.getElementById("account").innerHTML = `
 				<a href="login.html" class="menu">Accedi</a>
 			`;
@@ -45,77 +44,71 @@
 				<a href="impostazioni.html" class="menu">Impostazioni</a>
 			`;
 
-			if (verificato != 1) {
-				document.getElementById("pagina").innerHTML = `
-					<p>Account in attesa di validazione</p>
-				`;
-			} else {
-				if (tipo === "azienda") {
-					const urlParams = new URLSearchParams(window.location.search);
-					const idStudente = urlParams.get('id');
+			if (tipo === "azienda") {
+				const urlParams = new URLSearchParams(window.location.search);
+				const idStudente = urlParams.get('id');
 
-					window.addEventListener('DOMContentLoaded', async function () {
-						try {
-							const response = await fetch(`api.php/studente/${idStudente}`, {
-								method: 'GET'
-							});
+				window.addEventListener('DOMContentLoaded', async function () {
+					try {
+						const response = await fetch(`api.php/studente/${idStudente}`, {
+							method: 'GET'
+						});
 
-							const responseData = await response.json();
+						const responseData = await response.json();
 
-							if (response.ok) {
-								const nome = responseData.nome;
-								const cognome = responseData.cognome;
-								const votoDiploma = responseData.votoDiploma;
-								const certificazioni = responseData.certificazioni;
-								const competenze = responseData.competenze;
+						if (response.ok) {
+							const nome = responseData.nome;
+							const cognome = responseData.cognome;
+							const votoDiploma = responseData.votoDiploma;
+							const certificazioni = responseData.certificazioni;
+							const competenze = responseData.competenze;
 
-								const pagina = document.getElementById("pagina");
-								pagina.innerHTML = "";
+							const pagina = document.getElementById("pagina");
+							pagina.innerHTML = "";
 
-								const info = document.createElement('p');
-								info.innerHTML = `
-									<strong>${nome} ${cognome}</strong><br>
-									Voto Diploma: ${votoDiploma}<br>
-								`;
-								pagina.appendChild(info);
+							const info = document.createElement('p');
+							info.innerHTML = `
+								<strong>${nome} ${cognome}</strong><br>
+								Voto Diploma: ${votoDiploma}<br>
+							`;
+							pagina.appendChild(info);
 
-								if (certificazioni && certificazioni.length > 0) {
-									const titolo = document.createElement('h4');
-									titolo.textContent = "Certificazioni:";
-									pagina.appendChild(titolo);
+							if (certificazioni && certificazioni.length > 0) {
+								const titolo = document.createElement('h4');
+								titolo.textContent = "Certificazioni:";
+								pagina.appendChild(titolo);
 
-									certificazioni.forEach(certificazione => {
-										const certificazioneEl = document.createElement('p');
-										certificazioneEl.textContent = certificazione;
-										pagina.appendChild(certificazioneEl);
-									});
-								}
-
-								if (competenze && competenze.length > 0) {
-									const titolo = document.createElement('h4');
-									titolo.textContent = "Competenze:";
-									pagina.appendChild(titolo);
-
-									competenze.forEach(competenza => {
-										const competenzaEl = document.createElement('p');
-										competenzaEl.textContent = competenza;
-										pagina.appendChild(competenzaEl);
-									});
-								}
-							} else {
-								document.getElementById("pagina").textContent = 'Errore nel recupero dei dati dello studente.';
+								certificazioni.forEach(certificazione => {
+									const certificazioneEl = document.createElement('p');
+									certificazioneEl.textContent = certificazione;
+									pagina.appendChild(certificazioneEl);
+								});
 							}
-						} catch (error) {
-							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+
+							if (competenze && competenze.length > 0) {
+								const titolo = document.createElement('h4');
+								titolo.textContent = "Competenze:";
+								pagina.appendChild(titolo);
+
+								competenze.forEach(competenza => {
+									const competenzaEl = document.createElement('p');
+									competenzaEl.textContent = competenza;
+									pagina.appendChild(competenzaEl);
+								});
+							}
+						} else {
+							document.getElementById("pagina").textContent = 'Errore nel recupero dei dati dello studente.';
 						}
-					});
-				} else if (tipo === "studente") {
-					document.getElementById("pagina").textContent = "Questa pagina è visualizzabile solo da un account azienda.";
-				} else {
-					document.getElementById("pagina").innerHTML = `
-						Errore: non è stato possibile recuperare i dati
-					`;
-				}
+					} catch (error) {
+						document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+					}
+				});
+			} else if (tipo === "studente") {
+				document.getElementById("pagina").textContent = "Questa pagina è visualizzabile solo da un account azienda.";
+			} else {
+				document.getElementById("pagina").innerHTML = `
+					Errore: non è stato possibile recuperare i dati
+				`;
 			}
 		}
 	</script>
