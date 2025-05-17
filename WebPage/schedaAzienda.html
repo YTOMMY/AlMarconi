@@ -28,10 +28,9 @@
 
 	<script>
 		const userId = sessionStorage.getItem("userId");
-		const verificato = sessionStorage.getItem("verificato");
 		const tipo = sessionStorage.getItem("tipo");
 
-		if (!userId || userId == 0) {
+		if (!userId) {
 			document.getElementById("account").innerHTML = `
 				<a href="login.html" class="menu">Accedi</a>
 			`;
@@ -45,11 +44,6 @@
 				<a href="impostazioni.html" class="menu">Impostazioni</a>
 			`;
 
-			if (verificato != 1) {
-				document.getElementById("pagina").innerHTML = `
-					<p>Account in attesa di validazione</p>
-				`;
-			} else {
 				if (tipo === "studente") {
 					const urlParams = new URLSearchParams(window.location.search);
 					const idAzienda = urlParams.get('id');
@@ -70,11 +64,10 @@
 								const descrizione = responseData.descrizione;
 								const stato = responseData.stato;
 								const provincia = responseData.provincia;
-								const comune = responseData.comune;
-								const indirizzo = responseData.indirizzo;
-								const cap = responseData.cap;
-								const altreSedi = responseData.sedi;
-
+								const comune = responseData.sede.città;
+								const indirizzo = responseData.sede.via;
+								const civico = responseData.sede.civico;
+								
 								const pagina = document.getElementById("pagina");
 								pagina.innerHTML = "";
 
@@ -85,21 +78,10 @@
 									Dipendenti: ${numDipendenti}<br>
 									Sito: <a href="${sito}" target="_blank">${sito}</a><br>
 									Descrizione: ${descrizione}<br>
-									Indirizzo: ${indirizzo}, ${cap}, ${comune}, ${provincia}, ${stato}
+									Indirizzo: ${indirizzo}, ${civico}, ${comune}, ${provincia}, ${stato}
 								`;
 								pagina.appendChild(info);
 
-								if (altreSedi && altreSedi.length > 0) {
-									const titoloSedi = document.createElement('h4');
-									titoloSedi.textContent = "Altre sedi:";
-									pagina.appendChild(titoloSedi);
-
-									altreSedi.forEach(sede => {
-										const sedeEl = document.createElement('p');
-										sedeEl.textContent = sede;
-										pagina.appendChild(sedeEl);
-									});
-								}
 							} else {
 								document.getElementById("pagina").textContent = 'Errore nel recupero dei dati aziendali.';
 							}
@@ -114,7 +96,7 @@
 						Errore: non è stato possibile recuperare i dati
 					`;
 				}
-			}
+			
 		}
 	</script>
 
