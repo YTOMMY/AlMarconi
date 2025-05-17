@@ -20,22 +20,77 @@
 
 	<div class="container">
 		<div id="pagina">
+
+			<!--Cambiare email-->
 			<p class="clickable-text" onclick="email()">Cambia email</p>
+			<div id="emailForm" style="display: none">
+				<br><label for="nuovaEmail">Nuova Email*</label>
+				<input type="email" id="nuovaEmail" required>
+
+				<br><label for="passwordEmail">Password*</label>
+				<input type="password" id="passwordEmail" required>
+
+				<br><input type="submit" content="Cambia l'email" id="emailBtn">
+
+				<br><div id="esitoEmail"></div>
+			</div>
+
+			<!--Cambiare numero di telefono-->
 			<p class="clickable-text" onclick="telefono()">Cambia numero di telefono</p>
+			<div id="telefonoForm" style="display: none">
+				<br><label for="nuovoTelefono">Nuovo Telefono*</label>
+				<input type="tel" id="nuovoTelefono" required>
+
+				<br><label for="passwordTelefono">Password*</label>
+				<input type="password" id="passwordTelefono" required>
+
+				<br><input type="submit" content="Cambia il numero" id="telefonoBtn">
+
+				<br><div id="esitoTelefono"></div>
+			</div>
+
+			<!--Cambiare la password-->
 			<p class="clickable-text" onclick="password()">Cambia password</p>
+			<div id="passwordForm" style="display: none">
+				<br><label for="vecchiaPassword">Vecchia Password*</label>
+				<input type="password" id="vecchiaPassword" required>
+
+				<br><label for="nuovaPassword">Nuova Password*</label>
+				<input type="password" id="nuovaPassword" required>
+
+				<br><label for="confermaPassword">Conferma Nuova Password*</label>
+				<input type="password" id="confermaPassword" required>
+
+				<br><input type="submit" content="Cambia la password" id="passwordBtn">
+
+				<br><div id="esitoPassword"></div>
+			</div>
+
+			<!--Attivare la verifica a due fattori-->
 			<p class="clickable-text" onclick="twoFA()">Abilita 2FA</p>
+			<div id="twoFAForm" style="display: none">
+				<div id="twoFACorrente"></div>
+
+				<br><label for="passwordtwoFA">Password*</label>
+				<input type="password" id="passwordtwoFA" required>
+
+				<input type="submit" content="Cambia lo stato" id="twoFABtn">
+				<br><div id="esitotwoFA"></div>
+			</div>
+
+			<!--Uscire dall'account-->
 			<p class="clickable-text" onclick="esci()">Esci dall'account</p>
+
+			<!--Eliminare l'account-->
 			<p class="clickable-text" onclick="elimina()" style="color:red">Elimina account</p>
 		</div>
 	</div>
 
 	<script>
-		// Recupera i valori dal sessionStorage
-		const userId = 1;//sessionStorage.getItem("userId");
-		const tipo = 'studente';//sessionStorage.getItem("tipo");
-		const userName = 'tom bas';//sessionStorage.getItem("userName");
+		const userId = 1;
+		const tipo = 'studente';
+		const userName = 'tom bas';
 
-		// Se userId NON esiste, mostra il messaggio di accesso
 		if (!userId) {
 			document.getElementById("pagina").innerHTML = `
 				<h3>Benvenuto in AlMarconi</h3>
@@ -47,55 +102,186 @@
 		} else {
 			document.getElementById("center").innerHTML = userName;
 
-			// Se è uno studente
 			if (tipo == "studente") {
-				document.getElementById("pagina").innerHTML += `
-					
-				`;
+				document.getElementById("pagina").innerHTML += ``;
 			} else {
-				
-				// Se è un'azienda
 				if (tipo == "azienda") {
-					document.getElementById("pagina").innerHTML += `
-					`;
+					document.getElementById("pagina").innerHTML += ``;
 				} else {
-					document.getElementById("pagina").innerHTML = `
-						Errore: non è stato possibile recuperare i dati
-					`;
+					document.getElementById("pagina").innerHTML = `Errore: non è stato possibile recuperare i dati`;
 				}
 			}
 		}
 
-		function email() {
+		async function email() {
+			document.getElementById("emailForm").style.display = "block";
+			document.getElementById("telefonoForm").style.display = "none";
+			document.getElementById("passwordForm").style.display = "none";
+			document.getElementById("twoFAForm").style.display = "none";
 
-		}
-		function telefono() {
+			document.getElementById("emailBtn").addEventListener("click", async function () {
+				const emailData = {
+					password: document.getElementById("passwordEmail").value,
+					data: [{ email: document.getElementById("nuovaEmail").value }]
+				};
 
+				try {
+					const response = await fetch(`api.php/account/${userId}`, {
+						method: 'PATCH',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(emailData)
+					});
+
+					const responseData = await response.json();
+
+					if (response.ok) {
+						const esito = responseData.esit;
+						document.getElementById("esitoEmail").textContent = esito
+							? "Email cambiata con successo"
+							: "Non è stato possibile cambiare l'email";
+					} else {
+						document.getElementById("esitoEmail").textContent = "Errore nella comunicazione con il server";
+					}
+				} catch (error) {
+					document.getElementById("esitoEmail").textContent = "Errore nella comunicazione con il server";
+				}
+			});
 		}
-		function password() {
-			
+
+		async function telefono() {
+			document.getElementById("telefonoForm").style.display = "block";
+			document.getElementById("emailForm").style.display = "none";
+			document.getElementById("passwordForm").style.display = "none";
+			document.getElementById("twoFAForm").style.display = "none";
+
+			document.getElementById("telefonoBtn").addEventListener("click", async function () {
+				const telefonoData = {
+					password: document.getElementById("passwordTelefono").value,
+					data: [{ telefono: document.getElementById("nuovoTelefono").value }]
+				};
+
+				try {
+					const response = await fetch(`api.php/account/${userId}`, {
+						method: 'PATCH',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(telefonoData)
+					});
+
+					const responseData = await response.json();
+
+					if (response.ok) {
+						const esito = responseData.esit;
+						document.getElementById("esitoTelefono").textContent = esito
+							? "Numero di telefono cambiato con successo"
+							: "Non è stato possibile cambiare il numero di telefono";
+					} else {
+						document.getElementById("esitoTelefono").textContent = "Errore nella comunicazione con il server";
+					}
+				} catch (error) {
+					document.getElementById("esitoTelefono").textContent = "Errore nella comunicazione con il server";
+				}
+			});
 		}
-		function twoFA() {
-			
+
+		async function password() {
+			document.getElementById("passwordForm").style.display = "block";
+			document.getElementById("emailForm").style.display = "none";
+			document.getElementById("telefonoForm").style.display = "none";
+			document.getElementById("twoFAForm").style.display = "none";
+
+			document.getElementById("passwordBtn").addEventListener("click", async function () {
+				if (document.getElementById("nuovaPassword").value !== document.getElementById("confermaPassword").value) {
+					document.getElementById("esitoPassword").textContent = "Le password non coincidono.";
+					return;
+				}
+
+				const passwordData = {
+					password: document.getElementById("vecchiaPassword").value,
+					data: [{ password: document.getElementById("nuovaPassword").value }]
+				};
+
+				try {
+					const response = await fetch(`api.php/account/${userId}`, {
+						method: 'PATCH',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(passwordData)
+					});
+
+					const responseData = await response.json();
+
+					if (response.ok) {
+						const esito = responseData.esit;
+						document.getElementById("esitoPassword").textContent = esito
+							? "Password cambiata con successo"
+							: "Non è stato possibile cambiare la password";
+					} else {
+						document.getElementById("esitoPassword").textContent = "Errore nella comunicazione con il server";
+					}
+				} catch (error) {
+					document.getElementById("esitoPassword").textContent = "Errore nella comunicazione con il server";
+				}
+			});
 		}
-		async function esci() {
+
+		async function twoFA() {
+			document.getElementById("twoFAForm").style.display = "block";
+			document.getElementById("passwordForm").style.display = "none";
+			document.getElementById("emailForm").style.display = "none";
+			document.getElementById("telefonoForm").style.display = "none";
+
 			try {
-				const response = await fetch('api.php/logout', {
-					method: 'POST'
-				});
-				
+				const response = await fetch(`api.php/account/${userId}`, { method: 'GET' });
 				const responseData = await response.json();
 
 				if (response.ok) {
-					if(responseData.logout == true) {
-						sessionStorage.clear();
-						window.location.href = "index.html";
-					}
+					const abilitazione = responseData.twoFa;
+					document.getElementById("twoFACorrente").textContent = abilitazione ? "Abilitato" : "Disabilitato";
 				}
-
 			} catch (error) {
+				document.getElementById("esitotwoFA").textContent = 'Errore nella comunicazione con il server.';
 			}
+
+			document.getElementById("twoFABtn").addEventListener("click", async function () {
+				const twoFAData = {
+					password: document.getElementById("passwordtwoFA").value,
+					data: [{ twoFA: document.getElementById("twoFACorrente").textContent }]
+				};
+
+				try {
+					const response = await fetch(`api.php/account/${userId}`, {
+						method: 'PATCH',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(twoFAData)
+					});
+
+					const responseData = await response.json();
+
+					if (response.ok) {
+						const esito = responseData.esit;
+						document.getElementById("esitotwoFA").textContent = esito
+							? "twoFA cambiata con successo"
+							: "Non è stato possibile cambiare la twoFA";
+					} else {
+						document.getElementById("esitotwoFA").textContent = "Errore nella comunicazione con il server";
+					}
+				} catch (error) {
+					document.getElementById("esitotwoFA").textContent = "Errore nella comunicazione con il server";
+				}
+			});
 		}
+
+		async function esci() {
+			try {
+				const response = await fetch('api.php/logout', { method: 'POST' });
+				const responseData = await response.json();
+
+				if (response.ok && responseData.logout == true) {
+					sessionStorage.clear();
+					window.location.href = "index.html";
+				}
+			} catch (error) {}
+		}
+
 		function elimina() {
 			if (confirm("Sei sicuro di voler eliminare l'account?")) {
 				document.getElementById("pagina").innerHTML += `
@@ -107,33 +293,26 @@
 						</form>
 					</p>
 				`;
-				
-				document.getElementById('form-elimina').addEventListener('submit', async function(e) {
+
+				document.getElementById('form-elimina').addEventListener('submit', async function (e) {
 					e.preventDefault();
 
-					const data = {
-						password: document.getElementById('password').value
-					};
+					const data = { password: document.getElementById('password').value };
 
 					try {
 						const response = await fetch('api.php/account/' + sessionStorage.getItem("userId"), {
 							method: 'DELETE',
-							headers: {
-								'Content-Type': 'application/json'
-							},
+							headers: { 'Content-Type': 'application/json' },
 							body: JSON.stringify(data)
 						});
-						
+
 						const responseData = await response.json();
 
-						if (response.ok) {
-							if(responseData.delete == true) {
-								sessionStorage.clear();
-								window.location.href = "index.html";
-							}
+						if (response.ok && responseData.delete == true) {
+							sessionStorage.clear();
+							window.location.href = "index.html";
 						}
-					} catch (error) {
-					}
+					} catch (error) {}
 				});
 			}
 		}
