@@ -28,10 +28,9 @@
 
 	<script>
 		const userId = 1;//sessionStorage.getItem("userId");
-		const verificato =1;//= sessionStorage.getItem("verificato");
 		const tipo = "azienda";//sessionStorage.getItem("tipo");
 
-		if (!userId || userId == 0) {
+		if (!userId) {
 			document.getElementById("account").innerHTML = `
 				<a href="login.html" class="menu">Accedi</a>
 			`;
@@ -45,45 +44,39 @@
 				<a href="impostazioni.html" class="menu">Impostazioni</a>
 			`;
 
-			if (verificato != 1) {
-				document.getElementById("pagina").innerHTML = `
-					<p>Account in attesa di validazione</p>
-				`;
-			} else {
-				if (tipo === "studente") {
-					window.addEventListener('DOMContentLoaded', async function () {
-						try {
-							const response = await fetch('api.php/tutteAziende', {
-								method: 'GET',
-							});
+			if (tipo === "studente") {
+				window.addEventListener('DOMContentLoaded', async function () {
+					try {
+						const response = await fetch('api.php/tutteAziende', {
+							method: 'GET',
+						});
 
-							const responseData = await response.json();
+						const responseData = await response.json();
 
-							if (response.ok) {
-								const nomiAziende = responseData.nomi;
-								const settori = responseData.settori;
-								const idAziende = responseData.id;
+						if (response.ok) {
+							const nomiAziende = responseData.nomi;
+							const settori = responseData.settori;
+							const idAziende = responseData.id;
 
-								const pagina = document.getElementById("pagina");
-								pagina.innerHTML = "";
+							const pagina = document.getElementById("pagina");
+							pagina.innerHTML = "";
 
-								for (let i = 0; i < idAziende.length; i++) {
-									const riga = document.createElement('p');
-									riga.innerHTML = `<a href="schedaAzienda.html?id=${idAziende[i]}">${nomiAziende[i]} ${settori[i]}</a>`;
-									pagina.appendChild(riga);
-								}
+							for (let i = 0; i < idAziende.length; i++) {
+								const riga = document.createElement('p');
+								riga.innerHTML = `<a href="schedaAzienda.html?id=${idAziende[i]}">${nomiAziende[i]} ${settori[i]}</a>`;
+								pagina.appendChild(riga);
 							}
-						} catch (error) {
-							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
 						}
-					});
-				} else if (tipo === "azienda") {
-						document.getElementById("pagina").textContent ="Questa pagina è visualizzabile solo ad un account studente";
-				} else {
-					document.getElementById("pagina").innerHTML = `
-						Errore: non è stato possibile recuperare i dati
-					`;
-				}
+					} catch (error) {
+						document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+					}
+				});
+			} else if (tipo === "azienda") {
+					document.getElementById("pagina").textContent ="Questa pagina è visualizzabile solo ad un account studente";
+			} else {
+				document.getElementById("pagina").innerHTML = `
+					Errore: non è stato possibile recuperare i dati
+				`;
 			}
 		}
 	</script>
