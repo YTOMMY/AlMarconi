@@ -48,82 +48,81 @@
 				const urlParams = new URLSearchParams(window.location.search);
 				const idStudente = urlParams.get('id');
 
-					window.addEventListener('DOMContentLoaded', async function () {
-						try {
-							const response = await fetch(`api.php/account/${idStudente}`, {
-								method: 'GET'
-							});
+				window.addEventListener('DOMContentLoaded', async function () {
+					try {
+						const response = await fetch(`api.php/account/${idStudente}`, {
+							method: 'GET'
+						});
 
-							const responseData = await response.json();
+						const responseData = await response.json();
+						
+						if (response.ok) {
+							const nome = responseData.nome;
+							const cognome = responseData.cognome;
+							const email = responseData.email;
+							const telefono = responseData.telefono;
+							const genere = responseData.sesso;
+							const dataNascita = responseData.nascita;
+							const nazionalita = responseData.nazionalita;
+							const indirizzoScolastico = responseData.indirizzo;
+							const votoDiploma = responseData.voto;
+							const descrizione = responseData.descrizione;
 							
-							if (response.ok) {
-								const nome = responseData.nome;
-								const cognome = responseData.cognome;
-								const email = responseData.email;
-								const telefono = responseData.telefono;
-								const genere = responseData.sesso;
-								const dataNascita = responseData.nascita;
-								const nazionalita = responseData.nazionalita;
-								const indirizzoScolastico = responseData.indirizzo;
-								const votoDiploma = responseData.voto;
-								const descrizione = responseData.descrizione;
-								
-								const pagina = document.getElementById("pagina");
-								pagina.innerHTML = "";
-								const info = document.createElement('p');
-								info.innerHTML = `<strong>${nome} ${cognome}</strong>`;
-								if (email !== undefined) {
-									info.innerHTML += `<br><strong>Email:</strong> ${email}`;
-								}
-								if (telefono !== undefined) {
-									info.innerHTML += `<br><strong>Telefono:</strong> ${telefono}`;
-								}
-								if (genere !== null) {
-									switch (genere) {
-										case 'M':
-											info.innerHTML += `<br><strong>Genere:</strong> Maschio`;
-											break;
-										case 'F':
-											info.innerHTML += `<br><strong>Genere:</strong> Femmina`;
-											break;
-										default:
-											info.innerHTML += `<br><strong>Genere:</strong> Altro`;
-									}
-								}
-								if (dataNascita !== null) {
-									const data = new Date(dataNascita);
-									const eta = new Date().getFullYear() - data.getFullYear();
-									info.innerHTML += `<br><strong>Eta:</strong> ${eta} anni`;
-								}
-								if (nazionalita !== null) {
-									info.innerHTML += `<br><strong>Nazionalità:</strong> ${nazionalita}`;
-								}
-								if (indirizzoScolastico !== null) {
-									info.innerHTML += `<br><strong>Indirizzo scolastico seguito:</strong> ${indirizzoScolastico}`;
-								}
-								if (votoDiploma !== null) {
-									info.innerHTML += `<br><strong>Voto diploma:</strong> ${votoDiploma}`;
-								}
-								pagina.appendChild(info);
-								if (descrizione !== null) {
-									const info = document.createElement('p');
-									info.innerHTML = `<strong>Descrizione</strong><br> ${descrizione}`;
-									pagina.appendChild(info);
-								}
-							} else {
-								document.getElementById("pagina").textContent = 'Errore nel recupero dei dati dello studente.';
+							const pagina = document.getElementById("pagina");
+							pagina.innerHTML = "";
+							const info = document.createElement('p');
+							info.innerHTML = `<strong>${nome} ${cognome}</strong>`;
+							if (email !== undefined) {
+								info.innerHTML += `<br><strong>Email:</strong> ${email}`;
 							}
-						} catch (error) {
-							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+							if (telefono !== undefined) {
+								info.innerHTML += `<br><strong>Telefono:</strong> ${telefono}`;
+							}
+							if (genere !== null) {
+								switch (genere) {
+									case 'M':
+										info.innerHTML += `<br><strong>Genere:</strong> Maschio`;
+										break;
+									case 'F':
+										info.innerHTML += `<br><strong>Genere:</strong> Femmina`;
+										break;
+									default:
+										info.innerHTML += `<br><strong>Genere:</strong> Altro`;
+								}
+							}
+							if (dataNascita !== null) {
+								const data = new Date(dataNascita);
+								const eta = new Date().getFullYear() - data.getFullYear();
+								info.innerHTML += `<br><strong>Eta:</strong> ${eta} anni`;
+							}
+							if (nazionalita !== null) {
+								info.innerHTML += `<br><strong>Nazionalità:</strong> ${nazionalita}`;
+							}
+							if (indirizzoScolastico !== null) {
+								info.innerHTML += `<br><strong>Indirizzo scolastico seguito:</strong> ${indirizzoScolastico}`;
+							}
+							if (votoDiploma !== null) {
+								info.innerHTML += `<br><strong>Voto diploma:</strong> ${votoDiploma}`;
+							}
+							pagina.appendChild(info);
+							if (descrizione !== null) {
+								const info = document.createElement('p');
+								info.innerHTML = `<strong>Descrizione</strong><br> ${descrizione}`;
+								pagina.appendChild(info);
+							}
+						} else {
+							document.getElementById("pagina").textContent = 'Errore nel recupero dei dati dello studente.';
 						}
-					});
-				} else if (tipo === "studente") {
-					document.getElementById("pagina").textContent = "Questa pagina è visualizzabile solo da un account azienda.";
-				} else {
-					document.getElementById("pagina").innerHTML = `
-						Errore: non è stato possibile recuperare i dati
-					`;
-				}
+					} catch (error) {
+						document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+					}
+				});
+			} else if (tipo === "studente") {
+				document.getElementById("pagina").textContent = "Questa pagina è visualizzabile solo da un account azienda.";
+			} else {
+				document.getElementById("pagina").innerHTML = `
+					Errore: non è stato possibile recuperare i dati
+				`;
 			}
 		}
 	</script>

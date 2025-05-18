@@ -319,6 +319,9 @@ function update_utente($id, $data) {
 	foreach($data as $attr => $value) {
 		$arg = Arg::fromJson([Table::Utenti], $attr);
 		if($arg != null) {
+			if($arg == Arg::UtentePassword) {
+				$value = password_hash($value, PASSWORD_DEFAULT);
+			}
 			$attr_list[] = $arg;
 			$var_list[] = $value;
 		} else {
@@ -327,10 +330,12 @@ function update_utente($id, $data) {
 	}
 	
 	if(isset($attr_list)) {
-		if(!query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id])) {
+		$result = query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
+		if(!$result) {
 			return false;
 		}
 	}
+	
 	if($more_attr) {
 		$type = get_type($id);
 		if($type == 'studente') {
@@ -338,6 +343,8 @@ function update_utente($id, $data) {
 		} else if($type == 'azienda') {
 			return update_azienda($id, $data);
 		}
+	} else {
+		return $result;
 	}
 }
 

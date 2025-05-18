@@ -41,9 +41,6 @@
 				<br><label for="nuovoTelefono">Nuovo Telefono*</label>
 				<input type="tel" id="nuovoTelefono" required>
 
-				<br><label for="passwordTelefono">Password*</label>
-				<input type="password" id="passwordTelefono" required>
-
 				<br><input type="submit" content="Cambia il numero" id="telefonoBtn">
 
 				<br><div id="esitoTelefono"></div>
@@ -66,18 +63,6 @@
 				<br><div id="esitoPassword"></div>
 			</div>
 
-			<!--Attivare la verifica a due fattori-->
-			<p class="clickable-text" onclick="twoFA()">Abilita 2FA</p>
-			<div id="twoFAForm" style="display: none">
-				<div id="twoFACorrente"></div>
-
-				<br><label for="passwordtwoFA">Password*</label>
-				<input type="password" id="passwordtwoFA" required>
-
-				<input type="submit" content="Cambia lo stato" id="twoFABtn">
-				<br><div id="esitotwoFA"></div>
-			</div>
-
 			<!--Uscire dall'account-->
 			<p class="clickable-text" onclick="esci()">Esci dall'account</p>
 
@@ -87,9 +72,9 @@
 	</div>
 
 	<script>
-		const userId = 1;
-		const tipo = 'studente';
-		const userName = 'tom bas';
+		const userId = sessionStorage.getItem("userId");
+		const tipo = sessionStorage.getItem("tipo");
+		const userName = sessionStorage.getItem("userName");
 
 		if (!userId) {
 			document.getElementById("pagina").innerHTML = `
@@ -117,12 +102,11 @@
 			document.getElementById("emailForm").style.display = "block";
 			document.getElementById("telefonoForm").style.display = "none";
 			document.getElementById("passwordForm").style.display = "none";
-			document.getElementById("twoFAForm").style.display = "none";
 
 			document.getElementById("emailBtn").addEventListener("click", async function () {
 				const emailData = {
 					password: document.getElementById("passwordEmail").value,
-					data: [{ email: document.getElementById("nuovaEmail").value }]
+					data: { email: document.getElementById("nuovaEmail").value }
 				};
 
 				try {
@@ -152,12 +136,10 @@
 			document.getElementById("telefonoForm").style.display = "block";
 			document.getElementById("emailForm").style.display = "none";
 			document.getElementById("passwordForm").style.display = "none";
-			document.getElementById("twoFAForm").style.display = "none";
 
 			document.getElementById("telefonoBtn").addEventListener("click", async function () {
 				const telefonoData = {
-					password: document.getElementById("passwordTelefono").value,
-					data: [{ telefono: document.getElementById("nuovoTelefono").value }]
+					data: { telefono: document.getElementById("nuovoTelefono").value }
 				};
 
 				try {
@@ -168,7 +150,7 @@
 					});
 
 					const responseData = await response.json();
-
+					console.log(responseData);
 					if (response.ok) {
 						const esito = responseData.esit;
 						document.getElementById("esitoTelefono").textContent = esito
@@ -187,7 +169,6 @@
 			document.getElementById("passwordForm").style.display = "block";
 			document.getElementById("emailForm").style.display = "none";
 			document.getElementById("telefonoForm").style.display = "none";
-			document.getElementById("twoFAForm").style.display = "none";
 
 			document.getElementById("passwordBtn").addEventListener("click", async function () {
 				if (document.getElementById("nuovaPassword").value !== document.getElementById("confermaPassword").value) {
@@ -197,7 +178,7 @@
 
 				const passwordData = {
 					password: document.getElementById("vecchiaPassword").value,
-					data: [{ password: document.getElementById("nuovaPassword").value }]
+					data: { password: document.getElementById("nuovaPassword").value }
 				};
 
 				try {
@@ -206,7 +187,6 @@
 						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify(passwordData)
 					});
-
 					const responseData = await response.json();
 
 					if (response.ok) {
@@ -219,53 +199,6 @@
 					}
 				} catch (error) {
 					document.getElementById("esitoPassword").textContent = "Errore nella comunicazione con il server";
-				}
-			});
-		}
-
-		async function twoFA() {
-			document.getElementById("twoFAForm").style.display = "block";
-			document.getElementById("passwordForm").style.display = "none";
-			document.getElementById("emailForm").style.display = "none";
-			document.getElementById("telefonoForm").style.display = "none";
-
-			try {
-				const response = await fetch(`api.php/account/${userId}`, { method: 'GET' });
-				const responseData = await response.json();
-
-				if (response.ok) {
-					const abilitazione = responseData.twoFa;
-					document.getElementById("twoFACorrente").textContent = abilitazione ? "Abilitato" : "Disabilitato";
-				}
-			} catch (error) {
-				document.getElementById("esitotwoFA").textContent = 'Errore nella comunicazione con il server.';
-			}
-
-			document.getElementById("twoFABtn").addEventListener("click", async function () {
-				const twoFAData = {
-					password: document.getElementById("passwordtwoFA").value,
-					data: [{ twoFA: document.getElementById("twoFACorrente").textContent }]
-				};
-
-				try {
-					const response = await fetch(`api.php/account/${userId}`, {
-						method: 'PATCH',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify(twoFAData)
-					});
-
-					const responseData = await response.json();
-
-					if (response.ok) {
-						const esito = responseData.esit;
-						document.getElementById("esitotwoFA").textContent = esito
-							? "twoFA cambiata con successo"
-							: "Non è stato possibile cambiare la twoFA";
-					} else {
-						document.getElementById("esitotwoFA").textContent = "Errore nella comunicazione con il server";
-					}
-				} catch (error) {
-					document.getElementById("esitotwoFA").textContent = "Errore nella comunicazione con il server";
 				}
 			});
 		}

@@ -23,8 +23,6 @@ function getStudente($id = null) {
 }
 
 function update_studente($id, $data) {
-	$attr_list = [];
-	$var_list = [];
 	foreach($data as $attr => $value) {
 		$arg = Arg::fromJson([Table::Studenti], $attr);
 		if($arg != null) {
@@ -42,6 +40,10 @@ function update_studente($id, $data) {
 		}
 	}
 	
-	return query_update(Table::Studenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
+	if($attr_list != null) {
+		return query_update(Table::Studenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
+	} else {
+		return true;
+	}
 }
 ?>

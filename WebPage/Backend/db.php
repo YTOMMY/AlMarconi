@@ -110,7 +110,7 @@ function query_update(Table $table, array $update_args, array $update_values, ar
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param($param_type, ...$param_values);
 	$stmt->execute();
-
+	
 	return $stmt->affected_rows > 0;
 }
 

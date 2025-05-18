@@ -6,14 +6,12 @@
   <h3>Risposta:</h3>
   <pre id="response"></pre>
   <script>
-/*
-    const service = 'account/89';
+
+    const service = 'account/88';
     const method = 'PATCH';
     const data = {
         data: {
-            nome: 'ktjhyvytkljunvgyjktdun',
-            descrizione: 'Descrizione',
-            voto: 60
+            telefono: '7777777777'
         }        
     };
 
@@ -28,7 +26,7 @@
             descrizione: 'Descrizione'
         }        
     };
-*/
+*//*
     const service = 'account/1';
     const method = 'GET';
     const data = { 
@@ -84,7 +82,7 @@
     headers: {
         'Content-Type': 'application/json'
     },
-    //body: JSON.stringify(data)
+    body: JSON.stringify(data)
     })
     .then(response => response.text())
     .then(result => {

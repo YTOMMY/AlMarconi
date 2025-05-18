@@ -43,46 +43,39 @@
 			document.getElementById("account").innerHTML = `
 				<a href="account.html" class="menu">Account</a>
 			`;
-
-			if (verificato != 1) {
-				document.getElementById("pagina").innerHTML = `
-					<p>Account in attesa di validazione</p>
-				`;
-			} else {
-				if (tipo === "azienda") {
-					window.addEventListener('DOMContentLoaded', async function () {
-						try {
-							const response = await fetch('api.php/account', {
-								method: 'GET',
-							});
+			if (tipo === "azienda") {
+				window.addEventListener('DOMContentLoaded', async function () {
+					try {
+						const response = await fetch('api.php/account', {
+							method: 'GET',
+						});
 
 						const responseData = await response.json();
 
-							if (response.ok) {
-								const account = responseData.account;
-
+						if (response.ok) {
+							const account = responseData.account;
+							
 							const pagina = document.getElementById("pagina");
 							pagina.innerHTML = "";
 
-								for (let i = 0; i < account.length; i++) {
-									if(account[i].tipo === "studente") {
-										const riga = document.createElement('p');
-										riga.innerHTML = `<a href="schedaStudente.html?id=${account[i].id}">${account[i].nome} ${account[i].cognome}</a>`;
-										pagina.appendChild(riga);
-									}
+							for (let i = 0; i < account.length; i++) {
+								if(account[i].tipo === "studente") {
+									const riga = document.createElement('p');
+									riga.innerHTML += `<a href="schedaStudente.html?id=${account[i].id}">${account[i].nome} ${account[i].cognome}</a>`;
+									pagina.appendChild(riga);
 								}
 							}
-						} catch (error) {
-							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
 						}
-					});
-				} else if (tipo === "studente") {
-					document.getElementById("pagina").textContent ="Questa pagina è visualizzabile solo ad un account azienda";
-				} else {
-					document.getElementById("pagina").innerHTML = `
-						Errore: non è stato possibile recuperare i dati
-					`;
-				}
+					} catch (error) {
+						document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+					}
+				});
+			} else if (tipo === "studente") {
+				document.getElementById("pagina").textContent ="Questa pagina è visualizzabile solo ad un account azienda";
+			} else {
+				document.getElementById("pagina").innerHTML = `
+					Errore: non è stato possibile recuperare i dati
+				`;
 			}
 		}
 	</script>

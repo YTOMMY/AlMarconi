@@ -27,8 +27,8 @@
 	</div>
 
 	<script>
-		const userId = 1;//sessionStorage.getItem("userId");
-		const tipo = "azienda";//sessionStorage.getItem("tipo");
+		const userId = sessionStorage.getItem("userId");
+		const tipo = sessionStorage.getItem("tipo");
 
 		if (!userId) {
 			document.getElementById("account").innerHTML = `
@@ -47,24 +47,24 @@
 			if (tipo === "studente") {
 				window.addEventListener('DOMContentLoaded', async function () {
 					try {
-						const response = await fetch('api.php/tutteAziende', {
+						const response = await fetch('api.php/account', {
 							method: 'GET',
 						});
 
 						const responseData = await response.json();
 
 						if (response.ok) {
-							const nomiAziende = responseData.nomi;
-							const settori = responseData.settori;
-							const idAziende = responseData.id;
-
+							const account = responseData.account;
+							
 							const pagina = document.getElementById("pagina");
 							pagina.innerHTML = "";
 
-							for (let i = 0; i < idAziende.length; i++) {
-								const riga = document.createElement('p');
-								riga.innerHTML = `<a href="schedaAzienda.html?id=${idAziende[i]}">${nomiAziende[i]} ${settori[i]}</a>`;
-								pagina.appendChild(riga);
+							for (let i = 0; i < account.length; i++) {
+								if(account[i].tipo === "azienda") {
+									const riga = document.createElement('p');
+									riga.innerHTML = `<a href="schedaAzienda.html?id=${account[i].id}">${account[i].nomeAzienda} | ${account[i].settore}</a>`;
+									pagina.appendChild(riga);
+								}
 							}
 						}
 					} catch (error) {
