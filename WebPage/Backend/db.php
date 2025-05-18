@@ -1,6 +1,4 @@
-<?php	//Per connettersi al database
-require_once 'Arg.php';
-require_once 'Table.php';
+<?php	//Per connettersi al databases
 
 $host = 'localhost';
 $dbname = 'AlMarconi';
@@ -19,9 +17,10 @@ $conn->set_charset('utf8');
  * @param array<Table> $tables
  * @param array<Arg>|null $select_args
  * @param array<Arg>|null $cond_args
- * @param array<Arg, Arg>|null $join_args
+ * @param array<Arg>|null $left_join_args
+ * @param array<Arg>|null $right_join_args
 */
-function query_select(array $tables, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null, array|null $join_args = null): bool|mysqli_result {
+function query_select(array $tables, array|null $select_args = null, array|null $cond_args = null, array|null $cond_values = null, array|null $left_join_args = null, $right_join_args = null): bool|mysqli_result {
 	global $conn;
 	
 	foreach($tables as &$table) {
@@ -31,23 +30,23 @@ function query_select(array $tables, array|null $select_args = null, array|null 
 	
 	if(isset($select_args)) {
 		foreach($select_args as &$arg) {
-			$arg = $arg->info()['dbName'];
+			$arg = $arg->toQuery();
 		}
 		unset($arg);
 	} else {
 		$select_args = ['*'];
 	}
 	
-	if(isset($join_args)) {
-		foreach($join_args as $arg1 => $arg2) {
-			$cond[] = $arg1->info()['dbName'] . ' = ' . $arg2->info()['dbName'];
+	if(isset($left_join_args) && isset($right_join_args)) {
+		for ($i = 0; $i < count($left_join_args); $i++) {
+			$cond[] = $left_join_args[$i]->toQuery() . ' = ' . $right_join_args[$i]->toQuery();
 		}
 	}
 	
 	if(isset($cond_args)) {
 		$param_type = '';
 		foreach($cond_args as $arg) {
-			$cond[] = $arg->info()['dbName'] . ' = ?';
+			$cond[] = $arg->toQuery() . ' = ?';
 			$param_type .= $arg->info()['type'];
 		}
 

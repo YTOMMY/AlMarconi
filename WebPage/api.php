@@ -3,6 +3,9 @@
 require_once 'backend/account.php';
 require_once 'backend/studenti.php';
 require_once 'backend/aziende.php';
+require_once 'backend/db.php';
+require_once 'backend/Table.php';
+require_once 'backend/Arg.php';
 
 
 // Avvio della sessione
@@ -20,6 +23,13 @@ while($uri[0] != 'api.php') {
 	array_shift($uri);
 }
 array_shift($uri);
+/*
+print_r($uri);	
+echo $request_method . '
+';
+if(isset($data)) {
+	print_r($data);
+}*/
 
 // scelta del web service
 switch($uri[0]) {
@@ -88,18 +98,18 @@ switch($uri[0]) {
 				
 				//Visualizza account
 				case 'GET':
-					check_content($input);
-					$data = json_decode($input, true);
 					if(isset($uri[1])) {
 						$id = $uri[1];
 					} else {
 						$id = null;
 					}
 					
-					$password = $data['password'] ?? null;
-					$data = $data['data'] ?? null;
-					
-					$output = get_account($id, $password, $data);
+					$result = get_account($id);
+					if(isset($id)) {
+						$output = $result;
+					} else {
+						$output['account'] = $result;
+					}
 					if($output == false) {
 						$output = ['esit' => false];
 					} else {
@@ -119,7 +129,7 @@ switch($uri[0]) {
 					$password = $data['password'] ?? null;
 					$data = $data['data'];
 					
-					$ouptut = ['esit' => update_account($id, $password, $data)];
+					$output = ['esit' => update_account($id, $password, $data)];
 					break;
 				
 				// Elimina account
@@ -252,6 +262,7 @@ function check_content($input) {
 	$content_type = $_SERVER['CONTENT_TYPE'] ?? null;
 	if ($content_type != 'application/json' || $input == null) {
 		header("HTTP/1.1 415 Unsupported Media Type");
+		echo "Formato non supportato. Inviare i dati in formato JSON.";
 		exit;
 	}
 }

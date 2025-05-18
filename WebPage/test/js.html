@@ -1,0 +1,131 @@
+<html>
+<body>
+   <h3>Richiesta:</h3>
+  <pre id="request"></pre>
+
+  <h3>Risposta:</h3>
+  <pre id="response"></pre>
+  <script>
+/*
+    const service = 'account/89';
+    const method = 'PATCH';
+    const data = {
+        data: {
+            nome: 'ktjhyvytkljunvgyjktdun',
+            descrizione: 'Descrizione',
+            voto: 60
+        }        
+    };
+
+/*
+    const service = 'account/94';
+    const method = 'PATCH';
+    const data = {
+        data: {
+            visualizzaEmail: 1,
+            visualizzaTelefono: 1,
+            link: 'http://www.google.com',
+            descrizione: 'Descrizione'
+        }        
+    };
+*/
+    const service = 'account/1';
+    const method = 'GET';
+    const data = { 
+    };
+/*
+    const service = 'account';
+    const method = 'GET';
+    const data = { 
+    };
+/*
+    const service = 'logout';
+    const method = 'POST';
+    const data = {
+    };*/
+/*
+    const service = 'account';
+    const method = 'POST';
+    const data = {
+        email: 'azienda@gmail.com',
+        password: 'azienda',
+        telefono: '0987654321',
+        tipo: 'azienda',
+        cf: 'AZNDNL99A01H501Z',
+        nome: 'Nome',
+        cognome: 'Cognome',
+        nascita: '1990-01-01',
+        sesso: 'F',
+        residenza: {
+            citta: 1,
+            via: 'Via',
+            civico: 1,
+        },
+        domicilio: {
+            citta: 1,
+            via: 'Via',
+            civico: 1,
+        },
+        settore: 'Informatica',
+        iva: 1232788273,
+        nomeAzienda: 'Nome Azienda',
+        sede: {
+            citta: 1,
+            via: 'Via',
+            civico: 2,
+        }
+    };*/
+
+    const jsonData = JSON.stringify(data, null, 2);
+    document.getElementById('request').textContent = "service: " + service + "<br>method: " + method + "<br>data:<br>" + jsonData;
+
+    fetch('http://localhost/AlMarconi/WebPage/api.php/' + service, {
+    method: method,
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    //body: JSON.stringify(data)
+    })
+    .then(response => response.text())
+    .then(result => {
+    const jsonFormattati = trovaJSONAnnidati(result);
+    const output = jsonFormattati.join('\n\n');
+    document.getElementById('response').textContent = result + '\n\n\n\nJson:\n' + output;
+    })
+    .catch(error => {
+    document.getElementById('response').textContent = 'Errore: ' + error;
+    });
+
+
+    function trovaJSONAnnidati(str) {
+  const risultati = [];
+  let inizio = -1;
+  let livello = 0;
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+
+    if (char === '{') {
+      if (livello === 0) inizio = i;
+      livello++;
+    } else if (char === '}') {
+      livello--;
+      if (livello === 0 && inizio !== -1) {
+        const possibileJSON = str.slice(inizio, i + 1);
+        try {
+          const oggetto = JSON.parse(possibileJSON);
+          const formattato = JSON.stringify(oggetto, null, 2); // pretty-print
+          risultati.push(formattato);
+        } catch (e) {
+          // JSON non valido, ignorato
+        }
+        inizio = -1;
+      }
+    }
+  }
+
+  return risultati;
+}
+  </script>
+</body>
+</html>

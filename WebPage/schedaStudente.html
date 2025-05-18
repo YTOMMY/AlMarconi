@@ -56,51 +56,65 @@
 
 					window.addEventListener('DOMContentLoaded', async function () {
 						try {
-							const response = await fetch(`api.php/studente/${idStudente}`, {
+							const response = await fetch(`api.php/account/${idStudente}`, {
 								method: 'GET'
 							});
 
 							const responseData = await response.json();
-
+							
 							if (response.ok) {
 								const nome = responseData.nome;
 								const cognome = responseData.cognome;
-								const votoDiploma = responseData.votoDiploma;
-								const certificazioni = responseData.certificazioni;
-								const competenze = responseData.competenze;
-
+								const email = responseData.email;
+								const telefono = responseData.telefono;
+								const genere = responseData.sesso;
+								const dataNascita = responseData.nascita;
+								const nazionalita = responseData.nazionalita;
+								const indirizzoScolastico = responseData.indirizzo;
+								const votoDiploma = responseData.voto;
+								const descrizione = responseData.descrizione;
+								
 								const pagina = document.getElementById("pagina");
 								pagina.innerHTML = "";
-
 								const info = document.createElement('p');
-								info.innerHTML = `
-									<strong>${nome} ${cognome}</strong><br>
-									Voto Diploma: ${votoDiploma}<br>
-								`;
-								pagina.appendChild(info);
-
-								if (certificazioni && certificazioni.length > 0) {
-									const titolo = document.createElement('h4');
-									titolo.textContent = "Certificazioni:";
-									pagina.appendChild(titolo);
-
-									certificazioni.forEach(certificazione => {
-										const certificazioneEl = document.createElement('p');
-										certificazioneEl.textContent = certificazione;
-										pagina.appendChild(certificazioneEl);
-									});
+								info.innerHTML = `<strong>${nome} ${cognome}</strong>`;
+								if (email !== undefined) {
+									info.innerHTML += `<br><strong>Email:</strong> ${email}`;
 								}
-
-								if (competenze && competenze.length > 0) {
-									const titolo = document.createElement('h4');
-									titolo.textContent = "Competenze:";
-									pagina.appendChild(titolo);
-
-									competenze.forEach(competenza => {
-										const competenzaEl = document.createElement('p');
-										competenzaEl.textContent = competenza;
-										pagina.appendChild(competenzaEl);
-									});
+								if (telefono !== undefined) {
+									info.innerHTML += `<br><strong>Telefono:</strong> ${telefono}`;
+								}
+								if (genere !== null) {
+									switch (genere) {
+										case 'M':
+											info.innerHTML += `<br><strong>Genere:</strong> Maschio`;
+											break;
+										case 'F':
+											info.innerHTML += `<br><strong>Genere:</strong> Femmina`;
+											break;
+										default:
+											info.innerHTML += `<br><strong>Genere:</strong> Altro`;
+									}
+								}
+								if (dataNascita !== null) {
+									const data = new Date(dataNascita);
+									const eta = new Date().getFullYear() - data.getFullYear();
+									info.innerHTML += `<br><strong>Eta:</strong> ${eta} anni`;
+								}
+								if (nazionalita !== null) {
+									info.innerHTML += `<br><strong>Nazionalità:</strong> ${nazionalita}`;
+								}
+								if (indirizzoScolastico !== null) {
+									info.innerHTML += `<br><strong>Indirizzo scolastico seguito:</strong> ${indirizzoScolastico}`;
+								}
+								if (votoDiploma !== null) {
+									info.innerHTML += `<br><strong>Voto diploma:</strong> ${votoDiploma}`;
+								}
+								pagina.appendChild(info);
+								if (descrizione !== null) {
+									const info = document.createElement('p');
+									info.innerHTML = `<strong>Descrizione</strong><br> ${descrizione}`;
+									pagina.appendChild(info);
 								}
 							} else {
 								document.getElementById("pagina").textContent = 'Errore nel recupero dei dati dello studente.';

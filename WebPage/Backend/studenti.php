@@ -1,9 +1,4 @@
 <?php	// Per gestire le funzioni relative alle aziende
-require_once 'db.php';
-require_once 'Table.php';
-require_once 'Arg.php';
-require_once 'aziende.php';
-require_once '../api.php';
 
 function getStudente($id = null) {
 	global $conn;

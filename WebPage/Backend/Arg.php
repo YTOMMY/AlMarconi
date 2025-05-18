@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Table.php';
-
 enum Arg{
 
     // Table::Admin
@@ -106,17 +104,17 @@ enum Arg{
             // Table::Admin
 
             case Arg::IdAdmin: return [
-				'dbName' => Table::Admin->value . '.IdAdmin', 
+				'dbName' => 'IdAdmin', 
 				'table' => Table::Admin,
 				'type' => 'i',
 				'jsonName' => ''];
             case Arg::UsernameAdmin: return [
-				'dbName' => Table::Admin->value . '.Username', 
+				'dbName' => 'Username', 
 				'table' => Table::Admin,
 				'type' => 's',
 				'jsonName' => ''];
             case Arg::AdminPassword: return [
-				'dbName' => Table::Admin->value . '.HashPassword', 
+				'dbName' => 'HashPassword', 
 				'table' => Table::Admin,
 				'type' => 's',
 				'jsonName' => ''];
@@ -124,75 +122,75 @@ enum Arg{
             // Table::Utenti
 
             case Arg::IdUtente: return [
-				'dbName' => Table::Utenti . '.IdUtente', 
+				'dbName' => 'IdUtente', 
 				'table' => Table::Utenti,
 				'type' => 'i',
 				'jsonName' => 'id'];
             case Arg::Email: return [
-				'dbName' => Table::Utenti . '.Mail', 
+				'dbName' => 'Mail', 
 				'table' => Table::Utenti,
 				'type' => 's',
 				'jsonName' => 'email'];
             case Arg::Telefono: return [
-				'dbName' => Table::Utenti . '.Telefono', 
+				'dbName' => 'Telefono', 
 				'table' => Table::Utenti,
 				'type' => 's',
 				'jsonName' => 'telefono'];
             case Arg::UtentePassword: return [
-				'dbName' => Table::Utenti . '.HashPassword', 
+				'dbName' => 'HashPassword', 
 				'table' => Table::Utenti,
 				'type' => 's',
 				'jsonName' => 'password'];
             case Arg::TwoFA: return [
-				'dbName' => Table::Utenti . '.2FA', 
+				'dbName' => '2FA', 
 				'table' => Table::Utenti,
 				'type' => 's',
 				'jsonName' => '2FA'];
             case Arg::Verificato: return [
-				'dbName' => Table::Utenti . '.Verificato', 
+				'dbName' => 'Verificato', 
 				'table' => Table::Utenti,
 				'type' => 's',
 				'jsonName' => ''];
             case Arg::DataCreazione: return [
-				'dbName' => Table::Utenti . '.DataCreazione', 
+				'dbName' => 'DataCreazione', 
 				'table' => Table::Utenti,
 				'type' => 's',
 				'jsonName' => ''];
             case Arg::VisualizzaMail: return [
-				'dbName' => Table::Utenti . '.VisualizzaMail', 
+				'dbName' => 'VisualizzaMail', 
 				'table' => Table::Utenti,
 				'type' => 's',
-				'jsonName' => 'VisualizzaEmail'];
+				'jsonName' => 'visualizzaEmail'];
             case Arg::VisualizzaTelefono: return [
-				'dbName' => Table::Utenti . '.VisualizzaTelefono', 
+				'dbName' => 'VisualizzaTelefono', 
 				'table' => Table::Utenti,
 				'type' => 's',
-				'jsonName' => 'VisualizzaTelefono'];
+				'jsonName' => 'visualizzaTelefono'];
             
             // Table::Citta
             
             case Arg::IdCitta: return [
-				'dbName' => Table::Citta . '.IdCitta', 
+				'dbName' => 'IdCitta', 
 				'table' => Table::Citta,
 				'type' => 'i',
 				'jsonName' => ''];
             case Arg::Cap: return [
-				'dbName' => Table::Citta . '.Cap', 
+				'dbName' => 'Cap', 
 				'table' => Table::Citta,
 				'type' => 's',
 				'jsonName' => ''];
             case Arg::NomeCitta: return [
-				'dbName' => Table::Citta . '.Nome', 
+				'dbName' => 'Nome', 
 				'table' => Table::Citta,
 				'type' => 's',
 				'jsonName' => ''];
             case Arg::Provincia: return [
-				'dbName' => Table::Citta . '.Provincia', 
+				'dbName' => 'Provincia', 
 				'table' => Table::Citta,
 				'type' => 's',
 				'jsonName' => ''];
             case Arg::Paese: return [
-				'dbName' => Table::Citta . '.Paese', 
+				'dbName' => 'Paese', 
 				'table' => Table::Citta,
 				'type' => 's',
 				'jsonName' => ''];
@@ -200,82 +198,82 @@ enum Arg{
             // Table::Studenti
             
             case Arg::IdStudente: return [
-				'dbName' => Table::Studenti . '.IdUtente', 
+				'dbName' => 'IdUtente', 
 				'table' => Table::Studenti,
 				'type' => 'i',
 				'jsonName' => 'id'];
             case Arg::CodiceFiscale: return [
-				'dbName' => Table::Studenti . '.CodiceFiscale', 
+				'dbName' => 'CodiceFiscale', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'cf'];
             case Arg::NomeStudente: return [
-				'dbName' => Table::Studenti . '.Nome', 
+				'dbName' => 'Nome', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'nome'];
             case Arg::Cognome: return [
-				'dbName' => Table::Studenti . '.Cognome', 
+				'dbName' => 'Cognome', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'cognome'];
             case Arg::Sesso: return [
-				'dbName' => Table::Studenti . '.Sesso', 
+				'dbName' => 'Sesso', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'sesso'];
             case Arg::DataNascita: return [
-				'dbName' => Table::Studenti . '.DataNascita', 
+				'dbName' => 'DataNascita', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'nascita'];
             case Arg::Nazionalita: return [
-				'dbName' => Table::Studenti . '.Nazionalita', 
+				'dbName' => 'Nazionalita', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'nazionalita'];
             case Arg::IndirizzoScolastico: return [
-				'dbName' => Table::Studenti . '.IndirizzoScolastico', 
+				'dbName' => 'IndirizzoScolastico', 
 				'table' => Table::Studenti,
 				'type' => 's',
-				'jsonName' => ''];
+				'jsonName' => 'indirizzo'];
             case Arg::Voto: return [
-				'dbName' => Table::Studenti . '.Voto', 
+				'dbName' => 'Voto', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'voto'];
             case Arg::DescrizioneStudente: return [
-				'dbName' => Table::Studenti . '.Descrizione', 
+				'dbName' => 'Descrizione', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'descrizione'];
             case Arg::ResidenzaCitta: return [
-				'dbName' => Table::Studenti . '.ResidenzaCitta', 
+				'dbName' => 'ResidenzaCitta', 
 				'table' => Table::Studenti,
 				'type' => 'i',
 				'jsonName' => 'cittaResidenza'];
             case Arg::ResidenzaVia: return [
-				'dbName' => Table::Studenti . '.ResidenzaVia', 
+				'dbName' => 'ResidenzaVia', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'viaResidenza'];
             case Arg::ResidenzaCivico: return [
-				'dbName' => Table::Studenti . '.ResidenzaCivico', 
+				'dbName' => 'ResidenzaCivico', 
 				'table' => Table::Studenti,
 				'type' => 'i',
 				'jsonName' => 'civicoResidenza'];
             case Arg::DomicilioCitta: return [
-				'dbName' => Table::Studenti . '.DomicilioCitta', 
+				'dbName' => 'DomicilioCitta', 
 				'table' => Table::Studenti,
 				'type' => 'i',
 				'jsonName' => 'cittaDomicilio'];
             case Arg::DomicilioVia: return [
-				'dbName' => Table::Studenti . '.DomicilioVia', 
+				'dbName' => 'DomicilioVia', 
 				'table' => Table::Studenti,
 				'type' => 's',
 				'jsonName' => 'viaDomicilio'];
             case Arg::DomicilioCivico: return [
-				'dbName' => Table::Studenti . '.DomicilioCivico', 
+				'dbName' => 'DomicilioCivico', 
 				'table' => Table::Studenti,
 				'type' => 'i',
 				'jsonName' => 'civicoDomicilio'];
@@ -283,17 +281,17 @@ enum Arg{
             // Table::Abilita
            
             case Arg::IdAbilita: return [
-				'dbName' => Table::Abilita . '.IdAbilita', 
+				'dbName' => 'IdAbilita', 
 				'table' => Table::Abilita,
 				'type' => 'i',
 				'jsonName' => '']; 
             case Arg::DescrizioneAbilita: return [
-				'dbName' => Table::Abilita . '.Descrizione', 
+				'dbName' => 'Descrizione', 
 				'table' => Table::Abilita,
 				'type' => 'i',
 				'jsonName' => ''];       
             case Arg::Studente: return [
-				'dbName' => Table::Abilita . '.Studente', 
+				'dbName' => 'Studente', 
 				'table' => Table::Abilita,
 				'type' => 'i',
 				'jsonName' => ''];
@@ -301,57 +299,57 @@ enum Arg{
             // Table::Aziende
 
             case Arg::IdAzienda: return [
-				'dbName' => Table::Aziende . '.IdUtente', 
+				'dbName' => 'IdUtente', 
 				'table' => Table::Aziende,
 				'type' => 'i',
 				'jsonName' => 'id'];
             case Arg::IVA: return [
-				'dbName' => Table::Aziende . '.IVA', 
+				'dbName' => 'IVA', 
 				'table' => Table::Aziende,
 				'type' => 'i',
 				'jsonName' => 'iva'];
             case Arg::NomeAzienda: return [
-				'dbName' => Table::Aziende . '.Nome', 
+				'dbName' => 'Nome', 
 				'table' => Table::Aziende,
 				'type' => 'i',
 				'jsonName' => 'nomeAzienda'];
             case Arg::Settore: return [
-				'dbName' => Table::Aziende . '.Settore', 
+				'dbName' => 'Settore', 
 				'table' => Table::Aziende,
 				'type' => 's',
 				'jsonName' => 'settore'];
             case Arg::NumeroDipendenti: return [
-				'dbName' => Table::Aziende . '.NumeroDipendenti', 
+				'dbName' => 'NumeroDipendenti', 
 				'table' => Table::Aziende,
 				'type' => 'i',
 				'jsonName' => 'dipendenti'];
             case Arg::LinkEsterno: return [
-				'dbName' => Table::Aziende . '.Link', 
+				'dbName' => 'Link', 
 				'table' => Table::Aziende,
 				'type' => 's',
 				'jsonName' => 'link'];
             case Arg::DescrizioneAzienda: return [
-				'dbName' => Table::Aziende . '.Descrizione', 
+				'dbName' => 'Descrizione', 
 				'table' => Table::Aziende,
 				'type' => 's',
 				'jsonName' => 'descrizione'];
             case Arg::ReferenteCodiceFiscale: return [
-				'dbName' => Table::Aziende . '.ReferenteCodiceFiscale', 
+				'dbName' => 'ReferenteCodiceFiscale', 
 				'table' => Table::Aziende,
 				'type' => 's',
 				'jsonName' => 'cf'];
             case Arg::ReferenteNome: return [
-				'dbName' => Table::Aziende . '.ReferenteNome', 
+				'dbName' => 'ReferenteNome', 
 				'table' => Table::Aziende,
 				'type' => 's',
 				'jsonName' => 'nome'];
             case Arg::ReferenteCognome: return [
-				'dbName' => Table::Aziende . '.ReferenteCognome', 
+				'dbName' => 'ReferenteCognome', 
 				'table' => Table::Aziende,
 				'type' => 's',
 				'jsonName' => 'cognome'];
             case Arg::ReferenteDataNascita: return [
-				'dbName' => Table::Aziende . '.ReferenteDataNascita', 
+				'dbName' => 'ReferenteDataNascita', 
 				'table' => Table::Aziende,
 				'type' => 's',
 				'jsonName' => 'nascita'];
@@ -359,32 +357,32 @@ enum Arg{
             // Table::Sedi
 
             case Arg::IdSede: return [
-				'dbName' => Table::Aziende . '.IdSede', 
+				'dbName' => 'IdSede', 
 				'table' => Table::Sedi,
 				'type' => 'i',
 				'jsonName' => ''];
             case Arg::AziendaSede: return [
-				'dbName' => Table::Sedi . '.Azienda', 
+				'dbName' => 'Azienda', 
 				'table' => Table::Sedi,
 				'type' => 'i',
 				'jsonName' => ''];
             case Arg::CittaSede: return [
-				'dbName' => Table::Sedi . '.Citta', 
+				'dbName' => 'Citta', 
 				'table' => Table::Sedi,
 				'type' => 'i',
 				'jsonName' => ''];
             case Arg::ViaSede: return [
-				'dbName' => Table::Sedi . '.Via', 
+				'dbName' => 'Via', 
 				'table' => Table::Sedi,
 				'type' => 's',
 				'jsonName' => ''];
             case Arg::CivicoSede: return [
-				'dbName' => Table::Sedi . '.Civico', 
+				'dbName' => 'Civico', 
 				'table' => Table::Sedi,
 				'type' => 'i',
 				'jsonName' => ''];
             case Arg::SedeLegale: return [
-				'dbName' => Table::Sedi . '.Legale', 
+				'dbName' => 'Legale', 
 				'table' => Table::Sedi,
 				'type' => 's',
 				'jsonName' => ''];
@@ -392,57 +390,57 @@ enum Arg{
             // Table::Annunci
 
             case Arg::IdAnnuncio: return [
-				'dbName' => Table::Annunci . '.IdAnnuncio', 
+				'dbName' => 'IdAnnuncio', 
 				'table' => Table::Annunci,
 				'type' => 'i',
 				'jsonName' => 'id'];
             case Arg::TipoContratto: return [
-				'dbName' => Table::Annunci . '.TipoContratto', 
+				'dbName' => 'TipoContratto', 
 				'table' => Table::Annunci,
 				'type' => 's',
 				'jsonName' => 'tipo'];
             case Arg::Mansione: return [
-				'dbName' => Table::Annunci . '.Mansione', 
+				'dbName' => 'Mansione', 
 				'table' => Table::Annunci,
 				'type' => 's',
 				'jsonName' => 'mansione'];
             case Arg::DescrizioneAnnuncio: return [
-				'dbName' => Table::Annunci . '.Descrizione', 
+				'dbName' => 'Descrizione', 
 				'table' => Table::Annunci,
 				'type' => 's',
 				'jsonName' => 'descrizione'];
             case Arg::AreaDisciplinare: return [
-				'dbName' => Table::Annunci . '.AreaDisciplinare', 
+				'dbName' => 'AreaDisciplinare', 
 				'table' => Table::Annunci,
 				'type' => 's',
 				'jsonName' => 'areaDisciplinare'];
             case Arg::AbilitaRichieste: return [
-				'dbName' => Table::Annunci . '.AbilitaRichieste', 
+				'dbName' => 'AbilitaRichieste', 
 				'table' => Table::Annunci,
 				'type' => 's',
 				'jsonName' => 'abilita'];
             case Arg::DataPubblicazione: return [
-				'dbName' => Table::Annunci . '.DataPubblicazione', 
+				'dbName' => 'DataPubblicazione', 
 				'table' => Table::Annunci,
 				'type' => 's',
 				'jsonName' => 'pubblicazione'];
             case Arg::DataScadenza: return [
-				'dbName' => Table::Annunci . '.DataScadenza', 
+				'dbName' => 'DataScadenza', 
 				'table' => Table::Annunci,
 				'type' => 's',
 				'jsonName' => 'scadenza'];
             case Arg::MaxIscrizioni: return [
-				'dbName' => Table::Annunci . '.MaxIscrizioni', 
+				'dbName' => 'MaxIscrizioni', 
 				'table' => Table::Annunci,
 				'type' => 'i',
 				'jsonName' => 'maxIscrizioni'];
             case Arg::AziendaAnnuncio : return [
-				'dbName' => Table::Annunci . '.Azienda', 
+				'dbName' => 'Azienda', 
 				'table' => Table::Annunci,
 				'type' => 'i',
 				'jsonName' => 'azienda'];
             case Arg::SedeAnnuncio : return [
-				'dbName' => Table::Annunci . '.Sede', 
+				'dbName' => 'Sede', 
 				'table' => Table::Annunci,
 				'type' => 'i',
 				'jsonName' => 'sede'];
@@ -489,7 +487,7 @@ enum Arg{
             $Args = Arg::cases();
             foreach($Args as $Arg) {
                 $info = $Arg->info();
-                if($info['table'] == $table && $info['json'] == $jsonName) {
+                if($info['table'] == $table && $info['jsonName'] == $jsonName) {
                     return $Arg;
                 }
             }
@@ -561,6 +559,10 @@ enum Arg{
 			}			
 		}
 		return $array;
+	}
+
+	public function toQuery() {
+		return $this->info()['table']->value . '.' . $this->info()['dbName'];
 	}
 }
 

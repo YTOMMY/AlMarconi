@@ -1,4 +1,5 @@
 <?php
+
 enum Table: string{
 	case Admin = 'Admin';
 	case Utenti = 'Utenti';
@@ -10,5 +11,6 @@ enum Table: string{
 	case Annunci = 'Annunci';
 	case Candidarsi = 'Candidarsi';
 }
+
 
 ?>

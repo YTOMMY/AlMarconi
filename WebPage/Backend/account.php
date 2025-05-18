@@ -1,10 +1,4 @@
 <?php	//Per gestire le funzioni relative agli utenti in generale
-require_once 'db.php';
-require_once 'studenti.php';
-require_once 'aziende.php';
-require_once 'Table.php';
-require_once 'Arg.php';
-require_once '../api.php';
 
 // Controlla se un'email esiste
 function check_email($email) {
@@ -43,8 +37,8 @@ function create_account($data) {
 		}
 		
 		// Creazione in tabella 'Utenti'
-		$sql = 'INSERT INTO Utenti(Mail, ' . ($data['telefono'] != null ? 'Telefono, ' : '') . 'HashPassword) ' .
-			   'VALUES(?, ?, ' . ($data['telefono'] != null ? '?' : '') . ');';
+		$sql = 'INSERT INTO Utenti(Verificato, Mail, ' . ($data['telefono'] != null ? 'Telefono, ' : '') . 'HashPassword) ' .
+			   'VALUES(true, ?, ?, ' . ($data['telefono'] != null ? '?' : '') . ');';
 		$hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
 		
 		$stmt = $conn->prepare($sql);
@@ -107,7 +101,6 @@ function create_account($data) {
 		} catch(Exception  $e) {
 			$sql = "DELETE FROM Utenti WHERE IdUtente = $id";
 			$conn->query($sql);
-			echo $e;
 			return false;
 		}
 	} else {
@@ -212,71 +205,75 @@ function check_password($id, $password) {
 	return password_verify($password, $hashed_password);
 }
 
-function check_credentials($id = null, $password = null): int {
+function check_credentials($id = null, $password = null) {
 	if(isset($id)) {
 		if(isset($password)) {
 			if(check_password($id, $password)) {
+				return $id;
+			}
+		} else {
+			if($id == $_SESSION['id']) {
 				return $id;
 			}
 		}
 	} else if(isset($_SESSION['id'])) {
 		return $_SESSION['id'];
 	}
-	unauthorized_error();
+	return null;
 }
 
-function get_account($id = null, $password = null, $data = null) {
-	$logged = (check_credentials($id, $password) != null);
-	
-	return get_utente($id, $logged, $data);
+function get_account($id = null) {
+	if($id == null) {
+		$logged = false;
+	} else {
+		$logged = check_credentials($id, null) != null;
+	}
+
+	return get_utente($id, $logged);
 }
 
-function get_utente($id = null, $logged = null, $data = null) {
+function get_utente($id = null, $logged = null) {
 	
 	if(isset($id)) {
-		$attr_list = null;
 		$tables = [Table::Utenti];
-		if(isset($data)) {
-			$type = get_type($id);
-			switch($type) {
-				case 'studente': 
-					$tables[] = Table::Studenti; 
-					$join_arg = Arg::IdStudente;
-					break;
-				case 'azienda': 
-					$tables[] = Table::Aziende;
-					$join_arg = Arg::IdAzienda; 
-					break;
-			}
-			$attr_list = Arg::fromJsonArray($tables, $data);
+		$type = get_type($id);
+		switch($type) {
+			case 'studente': 
+				$tables[] = Table::Studenti; 
+				$join_arg = Arg::IdStudente;
+				break;
+			case 'azienda': 
+				$tables[] = Table::Aziende;
+				$join_arg = Arg::IdAzienda; 
+				break;
+		}
+
+		$result = Query_select($tables, null, [Arg::IdUtente], [$id], [Arg::IdUtente], [$join_arg]);
+		if($result) {
 			$visualizza = query_select([Table::Utenti], [Arg::VisualizzaMail, Arg::VisualizzaTelefono], [Arg::IdUtente], [$id])->fetch_assoc();
-			foreach($attr_list as $key => $attr) {
-				switch($attr) {
+			$record = $result->fetch_assoc();
+			foreach($record as $attr => $value) {
+				switch(Arg::fromDb($tables, $attr)) {
 					case Arg::Email: 
-						if(!$logged || $visualizza[Arg::VisualizzaMail->info()['dbName']]) {
-							unset($attr_list[$key]);
+						if(!$logged && $visualizza[Arg::VisualizzaMail->info()['dbName']] == 0) {
+							unset($record[$attr]);
 						} 
 						break;
 					case Arg::Telefono: 
-						if(!$logged || $visualizza[Arg::VisualizzaTelefono->info()['dbName']]) {
-							unset($attr_list[$key]);
+						if(!$logged && $visualizza[Arg::VisualizzaTelefono->info()['dbName']] == 0) {
+							unset($record[$attr]);
 						} 
 						break;
 					case Arg::VisualizzaMail:
 					case Arg::VisualizzaTelefono:
 					case Arg::UtentePassword:
-						unset($attr_list[$key]);
+						unset($record[$attr]);
 						break;
 				}
 			}
-		}
-		if(!isset($tables[1])) {
-			$result = Query_select($tables, $attr_list, [Arg::IdUtente], [$id]);
-		} else {
-			$result = Query_select($tables, $attr_list, [Arg::IdUtente], [$id], [Arg::IdUtente => $join_arg]);
-		}
-		if($result) {
-			return Arg::toJsonArray($tables, $result->fetch_assoc());
+			$jsonArray = Arg::toJsonArray($tables, $record);
+			$jsonArray['tipo'] = $type;
+			return $jsonArray;
 		} else {
 			return false;
 		}
@@ -286,7 +283,7 @@ function get_utente($id = null, $logged = null, $data = null) {
 			$ids[] = $row[Arg::IdUtente->info()['dbName']];
 		}
 		foreach ($ids as $id) {
-			$result = get_utente($id, $data);
+			$result = get_utente($id, $logged);
 			if(!$result) {
 				return false;
 			}
@@ -297,21 +294,14 @@ function get_utente($id = null, $logged = null, $data = null) {
 }
 
 function update_account($id = null, $password = null, $data) {
-	if($id != null) {
-		if(isset($data['password'])) {
-			if(!check_password($id, $password)) {
-				return false;
-			}
-		}
-	} else if(isset($_SESSION['id'])) {
-		$id = $_SESSION['id'];
+	if(check_credentials($id, $password) == null) {
+		unauthorized_error();
 	}
 	
 	global $conn;
 	$conn->begin_transaction();
 	try {
 		$result = update_utente($id, $data);
-		echo $result;
 	} catch (mysqli_sql_exception $e) {
 		$e->getMessage();
 		$result = false;
@@ -337,19 +327,17 @@ function update_utente($id, $data) {
 	}
 	
 	if(isset($attr_list)) {
-		if(query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id])) {
-			if($more_attr) {
-				$type = get_type($id);
-				if($type == 'studente') {
-					return update_studente($id, $data);
-				} else if($type == 'azienda') {
-					return update_azienda($id, $data);
-				}
-			}
+		if(!query_update(Table::Utenti, $attr_list, $var_list, [Arg::IdUtente], [$id])) {
+			return false;
 		}
-		return false;
-	} else {
-		return false;
+	}
+	if($more_attr) {
+		$type = get_type($id);
+		if($type == 'studente') {
+			return update_studente($id, $data);
+		} else if($type == 'azienda') {
+			return update_azienda($id, $data);
+		}
 	}
 }
 

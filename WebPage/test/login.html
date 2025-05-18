@@ -34,7 +34,7 @@
       const jsonData = JSON.stringify(data, null, 2);
       document.getElementById('sentJson').textContent = jsonData;
 
-      fetch('http://localhost/AlMarconi/WebPage/api.php/login', {
+      fetch('api.php/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

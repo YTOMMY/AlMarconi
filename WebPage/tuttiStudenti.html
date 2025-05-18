@@ -14,7 +14,7 @@
 		</div>
 
 		<div class="center">
-			<h1>Tutte gli studenti</h1>
+			<h1>Tutti gli studenti</h1>
 		</div>
 
 		<div class="right">
@@ -42,7 +42,7 @@
 			`;
 		} else {
 			document.getElementById("account").innerHTML = `
-				<a href="impostazioni.html" class="menu">Impostazioni</a>
+				<a href="account.html" class="menu">Account</a>
 			`;
 
 			if (verificato != 1) {
@@ -53,25 +53,24 @@
 				if (tipo === "azienda") {
 					window.addEventListener('DOMContentLoaded', async function () {
 						try {
-							const response = await fetch('api.php/tuttiStudenti', {
+							const response = await fetch('api.php/account', {
 								method: 'GET',
 							});
 
 							const responseData = await response.json();
 
 							if (response.ok) {
-								const nomi = responseData.nomi;
-								const cognomi = responseData.cognomi;
-								const idStudenti = responseData.id;
-
+								const account = responseData.account;
 
 								const pagina = document.getElementById("pagina");
 								pagina.innerHTML = "";
 
-								for (let i = 0; i < idStudenti.length; i++) {
-									const riga = document.createElement('p');
-									riga.innerHTML = `<a href="schedaStudente.html?id=${idStudenti[i]}">${nomi[i]} ${cognomi[i]}</a>`;
-									pagina.appendChild(riga);
+								for (let i = 0; i < account.length; i++) {
+									if(account[i].tipo === "studente") {
+										const riga = document.createElement('p');
+										riga.innerHTML = `<a href="schedaStudente.html?id=${account[i].id}">${account[i].nome} ${account[i].cognome}</a>`;
+										pagina.appendChild(riga);
+									}
 								}
 							}
 						} catch (error) {

@@ -1,9 +1,4 @@
 <?php	//Per gestire le funzioni relative alle aziende
-require_once 'db.php';
-require_once 'accpunt.php';
-require_once 'Table.php';
-require_once 'Arg.php';
-require_once '../api.php';
 
 function get_azienda($id = null) {
 	global $conn;
@@ -72,7 +67,6 @@ function update_azienda($id, $data) {
 			}
 		}
 	}
-	
 	return query_update(Table::Aziende, $attr_list, $var_list, [Arg::IdUtente], [$id]);
 }
 
