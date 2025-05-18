@@ -28,10 +28,9 @@
 
 	<script>
 		const userId = sessionStorage.getItem("userId");
-		const verificato = sessionStorage.getItem("verificato");
 		const tipo = sessionStorage.getItem("tipo");
 
-		if (!userId || userId == 0) {
+		if (!userId) {
 			document.getElementById("account").innerHTML = `
 				<a href="login.html" class="menu">Accedi</a>
 			`;
@@ -45,14 +44,9 @@
 				<a href="impostazioni.html" class="menu">Impostazioni</a>
 			`;
 
-			if (verificato != 1) {
-				document.getElementById("pagina").innerHTML = `
-					<p>Account in attesa di validazione</p>
-				`;
-			} else {
-				if (tipo === "azienda") {
-					const urlParams = new URLSearchParams(window.location.search);
-					const idStudente = urlParams.get('id');
+			if (tipo === "azienda") {
+				const urlParams = new URLSearchParams(window.location.search);
+				const idStudente = urlParams.get('id');
 
 					window.addEventListener('DOMContentLoaded', async function () {
 						try {

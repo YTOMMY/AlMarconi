@@ -30,7 +30,6 @@
 	<script>
 		// Recupera i valori dal sessionStorage
 		const userId = sessionStorage.getItem("userId");
-		const verificato = sessionStorage.getItem("verificato");
 		const tipo = sessionStorage.getItem("tipo");
 		const userName = sessionStorage.getItem("userName");
 
@@ -50,31 +49,24 @@
 				<a href="account.html" class="menu">Account</a>
 			`;
 
-			// Se l'utente esiste ma è non verificato
-			if (!verificato) {
+			// Se è uno studente
+			if (tipo == "studente") {
 				document.getElementById("pagina").innerHTML = `
-					<p>Account in attesa di validazione</p>
+					<a href="tutteAziende.html" class="btn">Tutte le aziende</a>
+					<br><a href="annunci.html" class="btn">Annunci</a>
 				`;
 			} else {
-				// Se è uno studente
-				if (tipo == "studente") {
+				// Se è un'azienda
+				if (tipo == "azienda") {
 					document.getElementById("pagina").innerHTML = `
-						<a href="tutteAziende.html" class="btn">Tutte le aziende</a>
-						<br><a href="annunci.html" class="btn">Annunci</a>
+						<a href="tuttiStudenti.html" class="btn">Tutti gli studenti</a>
+						<br><a href="nuovoAnnuncio.html" class="btn">Nuovo annuncio</a>
+						<br><a href="mieiAnnunci.html" class="btn">I miei annunci</a>
 					`;
 				} else {
-					// Se è un'azienda
-					if (tipo == "azienda") {
-						document.getElementById("pagina").innerHTML = `
-							<a href="tuttiStudenti.html" class="btn">Tutti gli studenti</a>
-							<br><a href="nuovoAnnuncio.html" class="btn">Nuovo annuncio</a>
-							<br><a href="mieiAnnunci.html" class="btn">I miei annunci</a>
-						`;
-					} else {
-						document.getElementById("pagina").innerHTML = `
-							Errore: non è stato possibile recuperare i dati
-						`;
-					}
+					document.getElementById("pagina").innerHTML = `
+						Errore: non è stato possibile recuperare i dati
+					`;
 				}
 			}
 		}

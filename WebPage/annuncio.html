@@ -31,7 +31,7 @@
 		const verificato = sessionStorage.getItem("verificato");
 		const tipo = sessionStorage.getItem("tipo");
 
-		if (!userId || userId == 0) {
+		if (!userId) {
 			document.getElementById("account").innerHTML = `
 				<a href="login.html" class="menu">Accedi</a>
 			`;
