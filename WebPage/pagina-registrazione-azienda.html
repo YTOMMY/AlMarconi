@@ -200,7 +200,7 @@
 					civico: document.getElementById('civico').value
 				}
 			};
-			
+			console.log(data);
 			try {
 				const response = await fetch('api.php/account', {
 					method: 'POST',
@@ -211,17 +211,18 @@
 				});
 
 				const responseData = await response.json();
-				
+				console.log(responseData);
 				if (response.ok) {
 					if(responseData.id != 'null') {
 						// Salvo i dati nel sessionStorage
-						localStorage.setItem('userId', sessionStorage.id);
-						localStorage.setItem('tipo', sessionStorage.tipo);
+						sessionStorage.setItem('userId', responseData.id);
+						sessionStorage.setItem('tipo', responseData.tipo);
 						sessionStorage.setItem('userName', responseData.nome);
 						window.location.href = "index.html";
 					}
 				}
 			} catch (error) {
+				console.error(error);
 			}
 		});
 	</script>

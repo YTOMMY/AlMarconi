@@ -161,8 +161,11 @@ switch($uri[0]) {
 
 				// Visualizza annuncio
 				case 'GET':
-					check_content($input);
-					$id = $uri[1];
+					if(isset($uri[1])) {
+						$id = $uri[1];
+					} else {
+						$id = null;
+					}
 					
 					$output = get_annuncio($id);
 					break;

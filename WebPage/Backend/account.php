@@ -88,14 +88,9 @@ function create_account($data) {
 				
 			} else if ($data['tipo'] == 'azienda'){
 				//Creazione in tabella 'Aziende'
-				$sql = "INSERT INTO Aziende(IdUtente, IVA, Nome, Settore, ReferenteCodiceFiscale, ReferenteNome, ReferenteCognome, ReferenteDataNascita) VALUES($id, ?, ?, ?, ?, ?, ?, ?);";
+				$sql = "INSERT INTO Aziende(IdUtente, IVA, Nome, Settore, ReferenteCodiceFiscale, ReferenteNome, ReferenteCognome, ReferenteDataNascita, SedeCitta, SedeVia, SedeCivico) VALUES($id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 				$stmt = $conn->prepare($sql);
-				$stmt->bind_param('issssss', $data['iva'], $data['nomeAzienda'], $data['settore'], $data['cf'], $data['nome'], $data['cognome'], $data['nascita']);
-				$stmt->execute();
-				
-				$sql = "INSERT INTO Sedi(Azienda, Citta, Via, Civico, Legale) VALUES($id, ?, ?, ?, 1)";
-				$stmt = $conn->prepare($sql);
-				$stmt->bind_param('isi', $data['sede']['citta'], $data['sede']['via'], $data['sede']['civico']);
+				$stmt->bind_param('issssssisi', $data['iva'], $data['nomeAzienda'], $data['settore'], $data['cf'], $data['nome'], $data['cognome'], $data['nascita'], $data['sede']['citta'], $data['sede']['via'], $data['sede']['civico']);
 				$stmt->execute();
 			}
 		} catch(Exception  $e) {

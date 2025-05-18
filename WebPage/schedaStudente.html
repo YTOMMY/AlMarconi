@@ -41,7 +41,7 @@
 			`;
 		} else {
 			document.getElementById("account").innerHTML = `
-				<a href="impostazioni.html" class="menu">Impostazioni</a>
+				<a href="account.html" class="menu">account</a>
 			`;
 
 			if (tipo === "azienda") {
@@ -73,10 +73,10 @@
 							const info = document.createElement('p');
 							info.innerHTML = `<strong>${nome} ${cognome}</strong>`;
 							if (email !== undefined) {
-								info.innerHTML += `<br><strong>Email:</strong> ${email}`;
+									info.innerHTML += `<br><strong>Indirizzo email:</strong> ${email}`;
 							}
 							if (telefono !== undefined) {
-								info.innerHTML += `<br><strong>Telefono:</strong> ${telefono}`;
+								info.innerHTML += `<br><strong>Numero di telefono:</strong> ${telefono}`;
 							}
 							if (genere !== null) {
 								switch (genere) {

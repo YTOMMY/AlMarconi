@@ -41,7 +41,7 @@
 			`;
 		} else {
 			document.getElementById("account").innerHTML = `
-				<a href="impostazioni.html" class="menu">Impostazioni</a>
+				<a href="account.html" class="menu">account</a>
 			`;
 
 				if (tipo === "studente") {
@@ -50,7 +50,7 @@
 
 					window.addEventListener('DOMContentLoaded', async function () {
 						try {
-							const response = await fetch(`api.php/azienda/${idAzienda}`, {
+							const response = await fetch(`api.php/account/${idAzienda}`, {
 								method: 'GET'
 							});
 
@@ -58,35 +58,50 @@
 
 							if (response.ok) {
 								const nomeAzienda = responseData.nome;
+								const email = responseData.email;
+								const telefono = responseData.telefono;
+								const sito = responseData.link;
 								const settore = responseData.settore;
-								const numDipendenti = responseData.num;
-								const sito = responseData.sito;
+								const numDipendenti = responseData.dipendenti;
+								const sede = responseData.sede;
 								const descrizione = responseData.descrizione;
-								const stato = responseData.stato;
-								const provincia = responseData.provincia;
-								const comune = responseData.sede.città;
-								const indirizzo = responseData.sede.via;
-								const civico = responseData.sede.civico;
 								
 								const pagina = document.getElementById("pagina");
 								pagina.innerHTML = "";
 
 								const info = document.createElement('p');
-								info.innerHTML = `
-									<strong>${nomeAzienda}</strong><br>
-									Settore: ${settore}<br>
-									Dipendenti: ${numDipendenti}<br>
-									Sito: <a href="${sito}" target="_blank">${sito}</a><br>
-									Descrizione: ${descrizione}<br>
-									Indirizzo: ${indirizzo}, ${civico}, ${comune}, ${provincia}, ${stato}
-								`;
+								info.innerHTML = ` <strong>${nomeAzienda}</strong><br>`;
+								if (sito !== null) {
+									info.innerHTML += `<br><strong>Pagina web azienda:</strong> ${sito}`;
+								}
+								if (email !== undefined) {
+									info.innerHTML += `<br><strong>Indirizzo email:</strong> ${email}`;
+								}
+								if (telefono !== undefined) {
+									info.innerHTML += `<br><strong>Numero di telefono:</strong> ${telefono}`;
+								}
+								if (settore !== null) {
+									info.innerHTML += `<br><strong>Settore:</strong> ${settore}`;
+								}
+								if (numDipendenti !== null) {
+									info.innerHTML += `<br><strong>Numero di dipendenti:</strong> ${numDipendenti}`;
+								}
+								if (sede !== null && sede !== undefined) {
+									info.innerHTML += `<br><strong>Sede:</strong> ${sede.citta}, ${sede.via}, ${sede.civico}`;
+								}
 								pagina.appendChild(info);
+								if (descrizione !== null) {
+									const info = document.createElement('p');
+									info.innerHTML = `<strong>Descrizione</strong><br> ${descrizione}`;
+									pagina.appendChild(info);
+								}
 
 							} else {
 								document.getElementById("pagina").textContent = 'Errore nel recupero dei dati aziendali.';
 							}
 						} catch (error) {
 							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+							console.error(error);
 						}
 					});
 				} else if (tipo === "azienda") {

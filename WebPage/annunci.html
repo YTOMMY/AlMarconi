@@ -28,7 +28,6 @@
 
 	<script>
 		const userId = sessionStorage.getItem("userId");
-		const verificato = sessionStorage.getItem("verificato");
 		const tipo = sessionStorage.getItem("tipo");
 
 		if (!userId) {
@@ -45,107 +44,103 @@
 				<a href="impostazioni.html" class="menu">Impostazioni</a>
 			`;
 
-			if (verificato != 1) {
-				document.getElementById("pagina").innerHTML = `
-					<p>Account in attesa di validazione</p>
-				`;
-			} else {
-				if (tipo === "studente" || tipo === "aziende") {
-					window.addEventListener('DOMContentLoaded', async function () {
-						try {
-							const response = await fetch('api.php/annuncio', {
-								method: 'GET',
+			
+			if (tipo === "studente" || tipo === "aziende") {
+				window.addEventListener('DOMContentLoaded', async function () {
+					try {
+						const response = await fetch('api.php/annuncio', {
+							method: 'GET',
+						});
+
+						const responseData = await response.json();
+
+						if (response.ok) {
+							const idAnnunci = responseData.idAnnuncio;
+							const nomiAziende = responseData.nomeAzienda;
+							const citta = responseData.sede.Citta;
+							const vie = responseData.sede.via;
+							const civici = responseData.sede.civico;
+							const contratti = responseData.tipoContratto;
+							const mansioni = responseData.mansione;
+
+							const pagina = document.getElementById("pagina");
+
+							// paginaFiltro = `
+							// 	<img src="filtro.jpeg" id="filtroImg">
+							// 	<div id="filtroParam" style="display:none;">
+							// 		Tipo Contratto <input type="text" id="TipoContratto"><br>
+							// 		Mansione <input type="text" id="Mansione"><br>
+							// 		Area Disciplinare <input type="text" id="AreaDisciplinare"><br>
+							// 		Pubblicazione da <input type="date" id="DataPubblicazioneDa"><br>
+							// 		Pubblicazione a <input type="date" id="DataPubblicazioneA"><br>
+							// 		Scadenza da <input type="date" id="DataScadenzaDa"><br>
+							// 		Scadenza a <input type="date" id="DataScadenzaA"><br>
+							// 		Massimo Iscrizioni <input type="number" id="MaxIscrizioni"><br>
+							// 		Nome Azienda <input type="text" id="NomeAzienda"><br>
+							// 		Citta <input type="text" id="Citta"><br>
+							// 		Via <input type="text" id="Via"><br>
+							// 		Civico <input type="text" id="Civico"><br><br>
+							// 		<button id="filtroBtn">Filtra</button>
+							// 	</div>
+							// `;
+
+							// pagina.innerHTML = paginaFiltro;
+							pagina.innerHTML = "";
+
+							// Mostra tutti gli annunci
+							for (let i = 0; i < idAnnunci.length; i++) {
+								const riga = document.createElement('p');
+								riga.innerHTML = `
+									<br><hr>
+									<a href="annuncio.html?id=${idAnnunci[i]}"> 
+										<br>${nomiAziende[i]} 
+										<br>Luogo: ${vie[i]} ${civici[i]}, ${citta[i]}
+										<br>${contratti[i]} 
+										<br>${mansioni[i]}
+									</a>
+									<br>`;
+								pagina.appendChild(riga);
+							}
+
+							/* IMPLEMENTAZIONE FILTRO (commentato per ora)
+							document.getElementById("filtroImg").addEventListener("click", function () {
+								const filtroParam = document.getElementById("filtroParam");
+								filtroParam.style.display = filtroParam.style.display === "none" ? "block" : "none";
 							});
 
-							const responseData = await response.json();
+							document.getElementById("filtroBtn").addEventListener("click", function () {
+								pagina.innerHTML = paginaFiltro;
 
-							if (response.ok) {
-								const idAnnunci = responseData.idAnnuncio;
-								const nomiAziende = responseData.nomeAzienda;
-								const citta = responseData.sede.Citta;
-								const vie = responseData.sede.via;
-								const civici = responseData.sede.civico;
-								const contratti = responseData.tipoContratto;
-								const mansioni = responseData.mansione;
+								const dataFiltrato = {
+									TipoContratto: document.getElementById('TipoContratto').value,
+									Mansione: document.getElementById('Mansione').value,
+									AreaDisciplinare: document.getElementById('AreaDisciplinare').value,
+									DataPubblicazioneDa: document.getElementById('DataPubblicazioneDa').value,
+									DataPubblicazioneA: document.getElementById('DataPubblicazioneA').value,
+									DataScadenzaDa: document.getElementById('DataScadenzaDa').value,
+									DataScadenzaA: document.getElementById('DataScadenzaA').value,
+									MaxIscrizioni: document.getElementById('MaxIscrizioni').value,
+									NomeAzienda: document.getElementById('NomeAzienda').value,
+									Sede: {
+										Citta: document.getElementById('Citta').value,
+										Via: document.getElementById('Via').value,
+										Civico: document.getElementById('Civico').value
+									}
+								};
 
-								const pagina = document.getElementById("pagina");
-
-								// paginaFiltro = `
-								// 	<img src="filtro.jpeg" id="filtroImg">
-								// 	<div id="filtroParam" style="display:none;">
-								// 		Tipo Contratto <input type="text" id="TipoContratto"><br>
-								// 		Mansione <input type="text" id="Mansione"><br>
-								// 		Area Disciplinare <input type="text" id="AreaDisciplinare"><br>
-								// 		Pubblicazione da <input type="date" id="DataPubblicazioneDa"><br>
-								// 		Pubblicazione a <input type="date" id="DataPubblicazioneA"><br>
-								// 		Scadenza da <input type="date" id="DataScadenzaDa"><br>
-								// 		Scadenza a <input type="date" id="DataScadenzaA"><br>
-								// 		Massimo Iscrizioni <input type="number" id="MaxIscrizioni"><br>
-								// 		Nome Azienda <input type="text" id="NomeAzienda"><br>
-								// 		Citta <input type="text" id="Citta"><br>
-								// 		Via <input type="text" id="Via"><br>
-								// 		Civico <input type="text" id="Civico"><br><br>
-								// 		<button id="filtroBtn">Filtra</button>
-								// 	</div>
-								// `;
-
-								// pagina.innerHTML = paginaFiltro;
-								pagina.innerHTML = "";
-
-								// Mostra tutti gli annunci
-								for (let i = 0; i < idAnnunci.length; i++) {
-									const riga = document.createElement('p');
-									riga.innerHTML = `
-										<br><hr>
-										<a href="annuncio.html?id=${idAnnunci[i]}"> 
-											<br>${nomiAziende[i]} 
-											<br>Luogo: ${vie[i]} ${civici[i]}, ${citta[i]}
-											<br>${contratti[i]} 
-											<br>${mansioni[i]}
-										</a>
-										<br>`;
-									pagina.appendChild(riga);
-								}
-
-								/* IMPLEMENTAZIONE FILTRO (commentato per ora)
-								document.getElementById("filtroImg").addEventListener("click", function () {
-									const filtroParam = document.getElementById("filtroParam");
-									filtroParam.style.display = filtroParam.style.display === "none" ? "block" : "none";
-								});
-
-								document.getElementById("filtroBtn").addEventListener("click", function () {
-									pagina.innerHTML = paginaFiltro;
-
-									const dataFiltrato = {
-										TipoContratto: document.getElementById('TipoContratto').value,
-										Mansione: document.getElementById('Mansione').value,
-										AreaDisciplinare: document.getElementById('AreaDisciplinare').value,
-										DataPubblicazioneDa: document.getElementById('DataPubblicazioneDa').value,
-										DataPubblicazioneA: document.getElementById('DataPubblicazioneA').value,
-										DataScadenzaDa: document.getElementById('DataScadenzaDa').value,
-										DataScadenzaA: document.getElementById('DataScadenzaA').value,
-										MaxIscrizioni: document.getElementById('MaxIscrizioni').value,
-										NomeAzienda: document.getElementById('NomeAzienda').value,
-										Sede: {
-											Citta: document.getElementById('Citta').value,
-											Via: document.getElementById('Via').value,
-											Civico: document.getElementById('Civico').value
-										}
-									};
-
-									// Esegui nuova richiesta con i filtri
-								});
-								*/
-							}
-						} catch (error) {
-							document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+								// Esegui nuova richiesta con i filtri
+							});
+							*/
 						}
-					});
-				} else {
-					document.getElementById("pagina").innerHTML = `
-						Errore: non è stato possibile recuperare i dati
-					`;
-				}
+					} catch (error) {
+						console.error('Errore:', error);
+						document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
+					}
+				});
+			} else {
+				document.getElementById("pagina").innerHTML = `
+					Errore: non è stato possibile recuperare i dati
+				`;
 			}
 		}
 	</script>

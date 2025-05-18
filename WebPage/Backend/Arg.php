@@ -66,15 +66,9 @@ enum Arg{
     case ReferenteNome;
     case ReferenteCognome;
     case ReferenteDataNascita;
-    case IdSede;
-
-    // Table::Sedi
-
-    case AziendaSede;
-    case CittaSede;
-    case ViaSede;
-    case CivicoSede;
-    case SedeLegale;
+    case SedeCitta;
+    case SedeVia;
+    case SedeCivico;
 
     // Table::Annunci
 
@@ -88,7 +82,6 @@ enum Arg{
     case DataScadenza;
     case MaxIscrizioni;
     case AziendaAnnuncio;
-    case SedeAnnuncio;
 
 	// Table::Candidarsi
 
@@ -353,39 +346,21 @@ enum Arg{
 				'table' => Table::Aziende,
 				'type' => 's',
 				'jsonName' => 'nascita'];
-
-            // Table::Sedi
-
-            case Arg::IdSede: return [
-				'dbName' => 'IdSede', 
-				'table' => Table::Sedi,
+            case Arg::SedeCitta: return [
+				'dbName' => 'SedeCitta', 
+				'table' => Table::Aziende,
 				'type' => 'i',
-				'jsonName' => ''];
-            case Arg::AziendaSede: return [
-				'dbName' => 'Azienda', 
-				'table' => Table::Sedi,
-				'type' => 'i',
-				'jsonName' => ''];
-            case Arg::CittaSede: return [
-				'dbName' => 'Citta', 
-				'table' => Table::Sedi,
-				'type' => 'i',
-				'jsonName' => ''];
-            case Arg::ViaSede: return [
-				'dbName' => 'Via', 
-				'table' => Table::Sedi,
+				'jsonName' => 'cittaSede'];
+            case Arg::SedeVia: return [
+				'dbName' => 'SedeVia', 
+				'table' => Table::Aziende,
 				'type' => 's',
-				'jsonName' => ''];
-            case Arg::CivicoSede: return [
-				'dbName' => 'Civico', 
-				'table' => Table::Sedi,
+				'jsonName' => 'viaSede'];
+            case Arg::SedeCivico: return [
+				'dbName' => 'SedeCivico', 
+				'table' => Table::Aziende,
 				'type' => 'i',
-				'jsonName' => ''];
-            case Arg::SedeLegale: return [
-				'dbName' => 'Legale', 
-				'table' => Table::Sedi,
-				'type' => 's',
-				'jsonName' => ''];
+				'jsonName' => 'civicoSede'];
 
             // Table::Annunci
 
@@ -439,11 +414,6 @@ enum Arg{
 				'table' => Table::Annunci,
 				'type' => 'i',
 				'jsonName' => 'azienda'];
-            case Arg::SedeAnnuncio : return [
-				'dbName' => 'Sede', 
-				'table' => Table::Annunci,
-				'type' => 'i',
-				'jsonName' => 'sede'];
 			
 			// Table::Candidarsi
 
@@ -509,6 +479,7 @@ enum Arg{
 				switch ($jsonArg) {
 					case 'residenza': $jsonName = $jsonName ?? 'Residenza';
 					case 'domicilio': $jsonName = $jsonName ?? 'Domicilio';
+					case 'sede': $jsonName = $jsonName ?? 'Sede';
 						$Args['args'][] = Arg::fromJson($tables, $jsonName . $jsonArg);
 						break;
 				}
@@ -521,6 +492,7 @@ enum Arg{
 					switch($jsonArg) {
 						case 'residenza': $jsonName = $jsonName ?? 'Residenza';
 						case 'domicilio': $jsonName = $jsonName ?? 'Domicilio';
+						case 'sede': $jsonName = $jsonName ?? 'Sede';
 							foreach($jsonValue as $arg => $value) {
 								$Args['args'][] = Arg::fromJson($tables, $jsonArg . $jsonName);
 								$Args['values'][] = $jsonValue;
@@ -552,6 +524,11 @@ enum Arg{
 				case Arg::DomicilioVia:
 				case Arg::DomicilioCivico:
 					$array['Domicilio'][str_replace("Domicilio", "", Arg::fromDb($tables, $arg)->info()['jsonName'])] = $value;
+					break;
+				case Arg::SedeCitta:
+				case Arg::SedeVia:
+				case Arg::SedeCivico:
+					$array['Sede'][str_replace("Sede", "", Arg::fromDb($tables, $arg)->info()['jsonName'])] = $value;
 					break;
 				default: 
 					$array[Arg::fromDb($tables, $arg)->info()['jsonName']] = $value; 
