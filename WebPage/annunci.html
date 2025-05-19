@@ -55,13 +55,7 @@
 						const responseData = await response.json();
 
 						if (response.ok) {
-							const idAnnunci = responseData.idAnnuncio;
-							const nomiAziende = responseData.nomeAzienda;
-							const citta = responseData.sede.Citta;
-							const vie = responseData.sede.via;
-							const civici = responseData.sede.civico;
-							const contratti = responseData.tipoContratto;
-							const mansioni = responseData.mansione;
+							const annunci = responseData.annunci;
 
 							const pagina = document.getElementById("pagina");
 
@@ -88,7 +82,7 @@
 							pagina.innerHTML = "";
 
 							// Mostra tutti gli annunci
-							for (let i = 0; i < idAnnunci.length; i++) {
+							for (let i = 0; i < annunci.length; i++) {
 								const riga = document.createElement('p');
 								riga.innerHTML = `
 									<br><hr>

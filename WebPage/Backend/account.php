@@ -64,7 +64,7 @@ function create_account($data) {
 				// Creazione in tabella 'Studenti'
 				$attr = ['IdUtente', 'CodiceFiscale', 'Nome', 'Cognome', 'DataNascita', 'Nazionalita', 'ResidenzaCitta', 'ResidenzaVia', 'ResidenzaCivico'];
 				$values = [$id, $data['cf'], $data['nome'], $data['cognome'], $data['nascita'], $data['nazionalita'], $data['residenza']['citta'], $data['residenza']['via'], $data['residenza']['civico']];
-				$values_type = 'isssssisi';
+				$values_type = 'isssssssi';
 				if(isset($data['sesso'])) {
 					array_push($values, $data['sesso']);
 					$values_type .= 's';
@@ -72,7 +72,7 @@ function create_account($data) {
 				}
 				if(isset($data['domicilio']) && isset($data['domicilio']['citta'])) {
 					array_push($values, $data['domicilio']['citta'], $data['domicilio']['via'], $data['domicilio']['civico']);
-					$values_type .= 'isi';
+					$values_type .= 'ssi';
 					array_push($attr, 'DomicilioCitta', 'DomicilioVia', 'DomicilioCivico');
 				}
 				if(isset($data['indirizzoScolastico'])) {
@@ -90,7 +90,7 @@ function create_account($data) {
 				//Creazione in tabella 'Aziende'
 				$sql = "INSERT INTO Aziende(IdUtente, IVA, Nome, Settore, ReferenteCodiceFiscale, ReferenteNome, ReferenteCognome, ReferenteDataNascita, SedeCitta, SedeVia, SedeCivico) VALUES($id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 				$stmt = $conn->prepare($sql);
-				$stmt->bind_param('issssssisi', $data['iva'], $data['nomeAzienda'], $data['settore'], $data['cf'], $data['nome'], $data['cognome'], $data['nascita'], $data['sede']['citta'], $data['sede']['via'], $data['sede']['civico']);
+				$stmt->bind_param('issssssssi', $data['iva'], $data['nomeAzienda'], $data['settore'], $data['cf'], $data['nome'], $data['cognome'], $data['nascita'], $data['sede']['citta'], $data['sede']['via'], $data['sede']['civico']);
 				$stmt->execute();
 			}
 		} catch(Exception  $e) {

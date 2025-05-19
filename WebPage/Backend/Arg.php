@@ -243,7 +243,7 @@ enum Arg{
             case Arg::ResidenzaCitta: return [
 				'dbName' => 'ResidenzaCitta', 
 				'table' => Table::Studenti,
-				'type' => 'i',
+				'type' => 's',
 				'jsonName' => 'cittaResidenza'];
             case Arg::ResidenzaVia: return [
 				'dbName' => 'ResidenzaVia', 
@@ -258,7 +258,7 @@ enum Arg{
             case Arg::DomicilioCitta: return [
 				'dbName' => 'DomicilioCitta', 
 				'table' => Table::Studenti,
-				'type' => 'i',
+				'type' => 's',
 				'jsonName' => 'cittaDomicilio'];
             case Arg::DomicilioVia: return [
 				'dbName' => 'DomicilioVia', 
@@ -349,7 +349,7 @@ enum Arg{
             case Arg::SedeCitta: return [
 				'dbName' => 'SedeCitta', 
 				'table' => Table::Aziende,
-				'type' => 'i',
+				'type' => 's',
 				'jsonName' => 'cittaSede'];
             case Arg::SedeVia: return [
 				'dbName' => 'SedeVia', 

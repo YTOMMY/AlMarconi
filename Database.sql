@@ -21,15 +21,6 @@ CREATE TABLE Utenti(
 
 	PRIMARY KEY(IdUtente)
 );
-CREATE TABLE Citta(
-	IdCitta INT(5) AUTO_INCREMENT NOT NULL,
-	Cap INT(5) NOT NULL,
-	Nome VARCHAR(50) NOT NULL,
-	Provincia VARCHAR(2) NOT NULL,
-	Paese VARCHAR(30) NOT NULL,
-
-	PRIMARY KEY(IdCitta)
-);
 CREATE TABLE Studenti(
 	IdUtente INT(6) NOT NULL,
 	CodiceFiscale VARCHAR(16) NOT NULL UNIQUE,
@@ -41,17 +32,15 @@ CREATE TABLE Studenti(
 	IndirizzoScolastico VARCHAR(30) NOT NULL,
 	Voto INT(3) NOT NULL,
 	Descrizione TEXT,
-	ResidenzaCitta INT(5) NOT NULL,
+	ResidenzaCitta VARCHAR(50) NOT NULL,
 	ResidenzaVia VARCHAR(50) NOT NULL,
 	ResidenzaCivico INT(7) NOT NULL,
-	DomicilioCitta INT(5),
+	DomicilioCitta VARCHAR(50),
 	DomicilioVia VARCHAR(50),
 	DomicilioCivico INT(7),
 	
 	PRIMARY KEY(IdUtente),
-	FOREIGN KEY(IdUtente) REFERENCES Utenti(IdUtente) ON DELETE CASCADE,
-	FOREIGN KEY(ResidenzaCitta) REFERENCES Citta(IdCitta) ON DELETE RESTRICT,
-	FOREIGN KEY(DomicilioCitta) REFERENCES Citta(IdCitta) ON DELETE RESTRICT
+	FOREIGN KEY(IdUtente) REFERENCES Utenti(IdUtente) ON DELETE CASCADE
 );
 CREATE TABLE Abilita(
 	IdAbilita INT(7) AUTO_INCREMENT NOT NULL,
@@ -73,7 +62,7 @@ CREATE TABLE Aziende(
 	ReferenteNome VARCHAR(50) NOT NULL,
 	ReferenteCognome VARCHAR(50) NOT NULL,
 	ReferenteDataNascita DATE NOT NULL,
-	SedeCitta INT(5) NOT NULL,
+	SedeCitta VARCHAR(50) NOT NULL,
 	SedeVia VARCHAR(50) NOT NULL,
 	SedeCivico INT(7) NOT NULL,
 
