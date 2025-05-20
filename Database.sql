@@ -82,7 +82,7 @@ CREATE TABLE Annunci(
 	Azienda INT(6) NOT NULL,
 
 	PRIMARY KEY(IdAnnuncio),
-	FOREIGN KEY(Azienda) REFERENCES Aziende(IdUtente) ON DELETE CASCADE,
+	FOREIGN KEY(Azienda) REFERENCES Aziende(IdUtente) ON DELETE CASCADE
 );
 CREATE TABLE Candidarsi(
 	IdStudente INT(6) NOT NULL,
@@ -93,5 +93,3 @@ CREATE TABLE Candidarsi(
 	FOREIGN KEY (IdStudente) REFERENCES Studenti(IdUtente) ON DELETE CASCADE,
 	FOREIGN KEY (IdAnnuncio) REFERENCES Annunci(IdAnnuncio) ON DELETE CASCADE
 );
-
-INSERT INTO citta(Cap, Nome, Provincia, Paese) VALUES(56025, "Pontedera", "PI", "Italia");
