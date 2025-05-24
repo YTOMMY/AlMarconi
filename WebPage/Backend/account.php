@@ -9,20 +9,9 @@ function check_email($email) {
 		// Controllo dell'esistenza del dominio
 		$domain = substr(strrchr($email, "@"), 1);
 		if (checkdnsrr($domain, "MX")) {
-			return 'valid';
-		} else {
-			return 'invalid';
+			return true;
 		}
-		
-	// Potrebbe essere un admin
-	} else {
-		$domain = substr(strrchr($email, "@"), 1);
-		if(ctype_digit($domain)) {
-			return 'admin';
-		} else {
-			return 'invalid';
-		}
-	}
+	return false;
 }
 
 // Creazione di un account
@@ -112,14 +101,6 @@ function create_account($data) {
 	return true;		
 }
 
-function OTP() {
-	// codice OTP via mail (per registrazione e 2FA)
-}
-
-function verify() {
-	// verifica un account aziendale da parte della scuola
-}
-
 // Login nell'account
 function login($email, $password) {
 	global $conn;
@@ -144,28 +125,6 @@ function login($email, $password) {
 	
 	return true;
 	// da aggiungere 2FA
-}
-
-// Controllo se un utente è stato verificato
-function is_verified($id) {
-	global $conn;
-	$tabella = 'Utenti';
-	$sql = "SELECT Verificato FROM $tabella WHERE IdUtente = ?";
-	
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param('i', $id);
-	$stmt->execute();
-	$result = $stmt->get_result();
-	
-	if (!$result) {
-		return null;
-	}
-	$record = $result->fetch_assoc();
-	if($record['Verificato'] == 1) {
-		return true;
-	} else {
-		return false;
-	}
 }
 
 // Controllo del tipo dell'utente ('studente', 'azienda', 'admin'
