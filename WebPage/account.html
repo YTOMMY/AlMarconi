@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Account-AlMarconi</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -63,6 +64,9 @@
 				<br><div id="esitoPassword"></div>
 			</div>
 
+			<!--Eliminare l'account-->
+			<p class="clickable-text" onclick="modifica()">Modifica profilo</p>
+			
 			<!--Uscire dall'account-->
 			<p class="clickable-text" onclick="esci()">Esci dall'account</p>
 
@@ -201,6 +205,14 @@
 					document.getElementById("esitoPassword").textContent = "Errore nella comunicazione con il server";
 				}
 			});
+		}
+
+		function modifica() {
+			if(tipo == "azienda") {
+				window.location.href = "modifica-profilo-azienda.html";
+			} else if(tipo == "studente") {
+				window.location.href = "modifica-profilo-studente.html";
+			}
 		}
 
 		async function esci() {

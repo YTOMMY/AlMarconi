@@ -72,6 +72,7 @@ enum Arg{
 
     // Table::Annunci
 
+    case AnnuncioAll;
     case IdAnnuncio;
     case TipoContratto;
     case Mansione;
@@ -363,7 +364,11 @@ enum Arg{
 				'jsonName' => 'civicoSede'];
 
             // Table::Annunci
-
+			case Arg::AnnuncioAll: return [
+				'dbName' => '*', 
+				'table' => Table::Annunci,
+				'type' => null,
+				'jsonName' => null];
             case Arg::IdAnnuncio: return [
 				'dbName' => 'IdAnnuncio', 
 				'table' => Table::Annunci,

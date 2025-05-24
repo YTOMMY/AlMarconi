@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Annuncio - AlMarconi</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -28,7 +29,7 @@
 
 	<script>
 		const userId = sessionStorage.getItem("userId");
-		const verificato = sessionStorage.getItem("verificato");
+		const verificato = 1;
 		const tipo = sessionStorage.getItem("tipo");
 
 		if (!userId) {
@@ -42,7 +43,7 @@
 			`;
 		} else {
 			document.getElementById("account").innerHTML = `
-				<a href="impostazioni.html" class="menu">Impostazioni</a>
+				<a href="account.html" class="menu">Account</a>
 			`;
 
 			if (verificato != 1) {
@@ -66,24 +67,24 @@
 								const responseData = await response.json();
 
 								if (response.ok) {
-									const contratto = responseData.tipoContratto;
+									const contratto = responseData.tipo;
 									const mansione = responseData.mansione;
 									const descrizione = responseData.descrizione;
 									const areaDisciplinare = responseData.areaDisciplinare;
 									const abilitaRichieste = responseData.abilitaRichieste;
-									const dataPubblicazione = responseData.dataPubblicazione;
-									const dataScadenza = responseData.dataScadenza;
+									const dataPubblicazione = responseData.pubblicazione;
+									/*const dataScadenza = responseData.dataScadenza;
 									const maxIscrizioni = responseData.maxIscrizioni;
-									const postiDisponibili = maxIscrizioni - responseData.attualiIscrizioni;
-									const idAzienda = responseData.azienda.id;
-									const nomeAzienda = responseData.azienda.nomeAzienda;
-									const citta = responseData.sede.Citta;
-									const via = responseData.sede.via;
-									const civico = responseData.sede.civico;
+									const postiDisponibili = maxIscrizioni - responseData.attualiIscrizioni;*/
+									const idAzienda = responseData.azienda;
+									const nomeAzienda = responseData.nomeAzienda;
+									const citta = responseData.cittaSede;
+									const via = responseData.viaSede;
+									const civico = responseData.civicoSede;
 
 									const pagina = document.getElementById("pagina");
 									pagina.innerHTML = `
-										<h3><a href="azienda.html?id=${idAzienda}">${nomeAzienda}</a></h3>
+										<h3><a href="schedaAzienda.html?id=${idAzienda}">${nomeAzienda}</a></h3>
 										<p>Mansione: ${mansione}</p>
 										<p>Città: ${citta}</p>
 										<p>Indirizzo: ${via}, ${civico}</p>
@@ -92,16 +93,18 @@
 										<p><strong>Descrizione</strong><br>${descrizione}</p>
 										<p><strong>Abilità richieste</strong><br>${abilitaRichieste}</p>
 										<p>Data Pubblicazione: ${dataPubblicazione}</p>
+									`/*
 										<p>Data Scadenza: ${dataScadenza}</p>
 										<p>Numero massimo posti: ${maxIscrizioni}</p>
-										<p>Posti disponibili: ${postiDisponibili}</p>
-									`;
+										<p>Posti disponibili: ${postiDisponibili}</p>*/
+									;
 
 									if (tipo === "studente") {
+										
 										pagina.innerHTML += `
-											<br><button id="candidamiBtn">Candidami</button>
-											<br><button id="annullaCandidaturaBtn">Annulla candidatura</button>
-										`;
+											<br><button id="candidamiBtn">Candidati</button>
+										`//	<br><button id="annullaCandidaturaBtn">Annulla candidatura</button>
+										;
 
 										document.getElementById("candidamiBtn").addEventListener("click", async function () {
 											const responseCand = await fetch(`api.php/annuncio/${idAnnuncio}/candidati`, {
@@ -109,12 +112,13 @@
 											});
 
 											if (responseCand.ok) {
+												alert("Candidatura effettuata con successo!");
 												location.reload();
 											} else {
 												alert("Errore durante la candidatura.");
 											}
 										});
-
+										/*
 										document.getElementById("annullaCandidaturaBtn").addEventListener("click", async function () {
 											const responseCanc = await fetch(`api.php/annuncio/${idAnnuncio}/candidati/${userId}`, {
 												method: 'DELETE'
@@ -125,31 +129,55 @@
 											} else {
 												alert("Errore durante la rimozione della candidatura.");
 											}
-										});
+										});*/
 									}
 
 									if (tipo === "azienda" && userId == idAzienda) {
 										pagina.innerHTML += `
 											<br><button id="listaCandidatiBtn">Mostra la lista dei candidati</button>
+											<br><button id="eliminaAnnuncioBtn" style="background-color: red; color: white; margin-top: 10px;">Elimina annuncio</button>
 										`;
 
 										document.getElementById("listaCandidatiBtn").addEventListener("click", async function () {
-											const responseList = await fetch(`api.php/annuncio/${idAnnuncio}/candidati`, {
+											const response = await fetch(`api.php/annuncio/${idAnnuncio}/candidati`, {
 												method: 'GET'
 											});
 
-											if (responseList.ok) {
-												const candidati = await responseList.json();
+											const responseData = await response.json();
 
-												if (candidati.length === 0) {
+											if (response.ok) {
+												if (!responseData.esit) {
 													pagina.innerHTML += `<p>Al momento non sono presenti candidature</p>`;
 												} else {
+													const candidati = responseData.candidati;
+													pagina.innerHTML += `<p>`;
 													for (const studente of candidati) {
-														pagina.innerHTML += `<br><a href="schedaStudente.html?id=${studente.id}">${studente.nome} ${studente.cognome}</a>`;
+														pagina.innerHTML += `<br><a href="schedaStudente.html?id=${studente.idStudente}">${studente.nome} ${studente.cognome}</a>`;
 													}
+													pagina.innerHTML += `</p>`;
 												}
 											} else {
 												pagina.innerHTML += `<p>Non è stato possibile recuperare i dati.</p>`;
+											}
+										});
+										
+										document.getElementById("eliminaAnnuncioBtn").addEventListener("click", async function () {
+											const conferma = confirm("Sei sicuro di voler eliminare questo annuncio?");
+											if (!conferma) return;
+
+											try {
+												const response = await fetch(`api.php/annuncio/${idAnnuncio}`, {
+													method: 'DELETE'
+												});
+
+												if (response.ok) {
+													alert("Annuncio eliminato con successo.");
+													window.location.href = "mieiAnnunci.html";
+												} else {
+													alert("Errore durante l'eliminazione dell'annuncio.");
+												}
+											} catch (error) {
+												alert("Errore di rete durante l'eliminazione.");
 											}
 										});
 									}

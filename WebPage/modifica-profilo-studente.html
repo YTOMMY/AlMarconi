@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Modifica Studente</title>
+	<link rel="icon" type="image/png" href="logo.png">
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 30px;
+		}
+
+		.form-container {
+			background-color: #fff;
+			padding: 60px;
+			border-radius: 10px;
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+			width: 100%;
+			max-width: 500px;
+		}
+
+		h2 {
+			text-align: center;
+			color: #333;
+		}
+
+		label {
+			display: block;
+			margin-top: 15px;
+			color: #555;
+		}
+
+		input[type="text"],
+		input[type="email"],
+		input[type="date"],
+		input[type="password"],
+		input[type="tel"],
+		input[type="number"] {
+			width: 100%;
+			padding: 10px;
+			margin-top: 5px;
+			border-radius: 5px;
+			border: 1px solid #ccc;
+		}
+
+		input[disabled] {
+			background-color: #f0f0f0;
+		}
+
+		.error {
+			color: red;
+			font-size: 14px;
+			margin-top: 5px;
+		}
+
+		button {
+			margin-top: 20px;
+			width: 100%;
+			padding: 12px;
+			background-color: #007BFF;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			font-size: 16px;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background-color: #0056b3;
+		}
+
+		.certificazioni-container, .competenze-container {
+			margin-top: 15px;
+		}
+		</style>
+	</head>
+<body>
+
+	<div class="form-container">
+		<h2>Modifica Profilo Studente</h2>
+		<form id="registrazioneForm">
+		
+			<label for="nome">Nome</label>
+			<input type="text" id="nome">
+
+			<label for="cognome">Cognome</label>
+			<input type="text" id="cognome">
+			
+			<label>Sesso</label>
+			<label><input type="radio" name="sesso" value="Maschio"> Maschio</label>
+			<label><input type="radio" name="sesso" value="Femmina"> Femmina</label>
+			<label><input type="radio" name="sesso" value="Altro">Altro</label>
+			
+			<label for="citta-residenza">Citta di residenza</label>
+			<input type="text" id="citta-residenza">
+			<label for="via-residenza">Via di residenza</label>
+			<input type="text" id="via-residenza">
+			<label for="civico-residenza">Civico di Residenza</label>
+			<input type="text" id="civico-residenza">
+
+			<label for="domicilio">Citta di domicilio</label>
+			<input type="text" id="citta-domicilio">
+			<label for="domicilio">Via di domicilio</label>
+			<input type="text" id="via-domicilio">
+			<label for="domicilio">Civico di domicilio</label>
+			<input type="text" id="civico-domicilio">
+			
+			<label for="Descrizione">descrizione*</label>
+				<input type="text" id="Descrizione" name="Descrizione">
+			<button type="submit">Salva Modifica</button>
+		</form>
+	</div>
+	
+<script>
+
+	const userId = sessionStorage.getItem("userId");
+    const form = document.getElementById("registrazioneForm");
+
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const campi = {
+			nome: "nome",
+			cognome: "cognome",
+			sesso: "sesso",
+			cittaResidenza: "citta-residenza",
+			viaResidenza: "via-residenza",
+			civicoResidenza: "civico-residenza",
+			cittaDomicilio: "citta-domicilio",
+			viaDomicilio: "via-domicilio",
+			civicoDomicilio: "civico-domicilio",
+			descrizione: "Descrizione"
+		};
+
+		const data = {};
+
+		for (const [chiave, idCampo] of Object.entries(campi)) {
+			const valore = document.getElementById(idCampo)?.value.trim();
+			if (valore) {
+				data[chiave] = valore;
+			}
+		}
+
+		const dati = {data: data};
+
+        try {
+          const response = await fetch('api.php/account/' + userId, {
+            method: 'PATCH',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(dati)
+          });
+
+          if(response.ok) {
+            alert("Modifiche salvate con successo!");
+          } else {
+            alert("Errore durante il salvataggio delle modifiche.");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Errore nella comunicazione con il server.");
+        }
+    });
+	
+		</script>
+	</body>
+</html>

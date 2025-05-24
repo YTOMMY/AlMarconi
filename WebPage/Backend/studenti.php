@@ -40,7 +40,7 @@ function update_studente($id, $data) {
 		}
 	}
 	
-	if($attr_list != null) {
+	if(isset($attr_list)) {
 		return query_update(Table::Studenti, $attr_list, $var_list, [Arg::IdUtente], [$id]);
 	} else {
 		return true;

@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Scheda Azienda - AlMarconi</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -57,7 +58,7 @@
 							const responseData = await response.json();
 
 							if (response.ok) {
-								const nomeAzienda = responseData.nome;
+								const nomeAzienda = responseData.nomeAzienda;
 								const email = responseData.email;
 								const telefono = responseData.telefono;
 								const sito = responseData.link;

@@ -37,12 +37,12 @@ function create_account($data) {
 		}
 		
 		// Creazione in tabella 'Utenti'
-		$sql = 'INSERT INTO Utenti(Verificato, Mail, ' . ($data['telefono'] != null ? 'Telefono, ' : '') . 'HashPassword) ' .
-			   'VALUES(true, ?, ?, ' . ($data['telefono'] != null ? '?' : '') . ');';
+		$sql = 'INSERT INTO Utenti(Verificato, Mail, ' . (isset($data['telefono']) ? 'Telefono, ' : '') . 'HashPassword) ' .
+			   'VALUES(true, ?, ?' . (isset($data['telefono']) != null ? ', ?' : '') . ');';
 		$hashed_password = password_hash($data['password'], PASSWORD_DEFAULT);
 		
 		$stmt = $conn->prepare($sql);
-		if($data['telefono'] != null) {
+		if(isset($data['telefono'])) {
 			$stmt->bind_param('sss', $data['email'], $data['telefono'], $hashed_password);
 		} else {
 			$stmt->bind_param('ss', $data['email'], $hashed_password);

@@ -5,10 +5,37 @@
 
   <h3>Risposta:</h3>
   <pre id="response"></pre>
-  <script>
-    
-    const service = 'annuncio';
+  <script>/*
+    const service = 'annuncio/2/candidati';
     const method = 'GET';
+    const data = {
+      data: {
+        cittaDomicilio: 'Roma',
+        viaDomicilio: 'Via Roma',
+      }
+    };
+/*
+    const service = 'account/1';
+    const method = 'PATCH';
+    const data = {
+      data: {
+        cittaDomicilio: 'Roma',
+        viaDomicilio: 'Via Roma',
+      }
+    };
+/*
+    const service = 'annuncio';
+    const method = 'POST';
+    const data = {
+      tipo: 'a',
+      mansione: 'b',
+      areaDisciplinare: 'c',
+      abilita: 'd',
+      descrizione: 'e'
+    };  
+/*    
+    const service = 'annuncio/1/candidati';
+    const method = 'POST';
     const data = { 
       a: "a"
     };
@@ -47,15 +74,15 @@
     const method = 'POST';
     const data = {
     };*//*
-
+*/
     const service = 'account';
     const method = 'POST';
     const data = {
-        email: 'azienda@gmail.com',
-        password: 'azienda',
-        telefono: '0987654321',
-        tipo: 'azienda',
-        cf: 'AZNDNL99A01H501Z',
+        email: 'b@gmail.com',
+        password: 'a',
+        //telefono: '0987653321',
+        tipo: 'studente',
+        cf: 'wwewe',
         nome: 'Nome',
         cognome: 'Cognome',
         nascita: '1990-01-01',
@@ -71,15 +98,15 @@
             civico: 1,
         },
         settore: 'Informatica',
-        iva: 1232788273,
+        iva: 1232988273,
         nomeAzienda: 'Nome Azienda',
         sede: {
-            citta: 1,
+            citta: 'Roma',
             via: 'Via',
             civico: 2,
         }
     };
-*/
+/**/
     const jsonData = JSON.stringify(data, null, 2);
     document.getElementById('request').textContent = "service: " + service + "<br>method: " + method + "<br>data:<br>" + jsonData;
 
@@ -88,7 +115,7 @@
     headers: {
         'Content-Type': 'application/json'
     },
-    //body: JSON.stringify(data)
+    body: JSON.stringify(data)
     })
     .then(response => response.text())
     .then(result => {

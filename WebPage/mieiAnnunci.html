@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>I miei annunci - AlMarconi</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -41,7 +42,7 @@
 			`;
 		} else {
 			document.getElementById("account").innerHTML = `
-				<a href="impostazioni.html" class="menu">Impostazioni</a>
+				<a href="account.html" class="menu">Account</a>
 			`;
 
 			if (tipo === "studente") {
@@ -50,44 +51,37 @@
 				
 				window.addEventListener('DOMContentLoaded', async function () {
 					try {
-						const response = await fetch('api.php/annunci', {
-							method: 'GET'
+						const response = await fetch('api.php/annuncio', {
+							method: 'GET',
 						});
 
 						const responseData = await response.json();
 
 						if (response.ok) {
-							const idAnnunci = responseData.idAnnuncio;
-							const idAziende = responseData.azienda;
-							const nomiAziende = responseData.azienda.nomeAzienda;
-							const citta = responseData.sede.Citta;
-							const vie = responseData.sede.via;
-							const civici = responseData.sede.civico;
-							const contratti = responseData.tipoContratto;
-							const mansioni = responseData.mansione;
-
+							const annunci = responseData.annunci;
+							
 							const pagina = document.getElementById("pagina");
 							pagina.innerHTML = "";
 
-							// Mostra tutti gli annunci dell'azienda
-							for (let i = 0; i < idAnnunci.length; i++) {
-								if (idAziende[i] == userId) {
+							// Mostra tutti gli annunci
+							for (let i = 0; i < annunci.length; i++) {
+								if(annunci[i].azienda == userId) {
 									const riga = document.createElement('p');
 									riga.innerHTML = `
 										<br><hr>
-										<a href="annuncio.html?id=${idAnnunci[i]}"> 
-											<br>${nomiAziende[i]} 
-											<br>Luogo: ${vie[i]} ${civici[i]}, ${citta[i]}
-											<br>${contratti[i]} 
-											<br>${mansioni[i]}
+										<a href="annuncio.html?id=${annunci[i].id}"> 
+											<br>${annunci[i].nomeAzienda} 
+											<br>Luogo: ${annunci[i].cittaSede}
+											<br>${annunci[i].tipo}
+											<br>${annunci[i].mansione}
 										</a>
-										<br>
-									`;
+										<br>`;
 									pagina.appendChild(riga);
 								}
 							}
 						}
 					} catch (error) {
+						console.error(error);
 						document.getElementById("pagina").textContent = 'Errore nella comunicazione con il server.';
 					}
 				});

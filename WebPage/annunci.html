@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Tutti gli annunci - AlMarconi</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
 
@@ -41,7 +42,7 @@
 			`;
 		} else {
 			document.getElementById("account").innerHTML = `
-				<a href="impostazioni.html" class="menu">Impostazioni</a>
+				<a href="account.html" class="menu">Account</a>
 			`;
 
 			
@@ -56,29 +57,8 @@
 
 						if (response.ok) {
 							const annunci = responseData.annunci;
-
+							
 							const pagina = document.getElementById("pagina");
-
-							// paginaFiltro = `
-							// 	<img src="filtro.jpeg" id="filtroImg">
-							// 	<div id="filtroParam" style="display:none;">
-							// 		Tipo Contratto <input type="text" id="TipoContratto"><br>
-							// 		Mansione <input type="text" id="Mansione"><br>
-							// 		Area Disciplinare <input type="text" id="AreaDisciplinare"><br>
-							// 		Pubblicazione da <input type="date" id="DataPubblicazioneDa"><br>
-							// 		Pubblicazione a <input type="date" id="DataPubblicazioneA"><br>
-							// 		Scadenza da <input type="date" id="DataScadenzaDa"><br>
-							// 		Scadenza a <input type="date" id="DataScadenzaA"><br>
-							// 		Massimo Iscrizioni <input type="number" id="MaxIscrizioni"><br>
-							// 		Nome Azienda <input type="text" id="NomeAzienda"><br>
-							// 		Citta <input type="text" id="Citta"><br>
-							// 		Via <input type="text" id="Via"><br>
-							// 		Civico <input type="text" id="Civico"><br><br>
-							// 		<button id="filtroBtn">Filtra</button>
-							// 	</div>
-							// `;
-
-							// pagina.innerHTML = paginaFiltro;
 							pagina.innerHTML = "";
 
 							// Mostra tutti gli annunci
@@ -86,45 +66,15 @@
 								const riga = document.createElement('p');
 								riga.innerHTML = `
 									<br><hr>
-									<a href="annuncio.html?id=${idAnnunci[i]}"> 
-										<br>${nomiAziende[i]} 
-										<br>Luogo: ${vie[i]} ${civici[i]}, ${citta[i]}
-										<br>${contratti[i]} 
-										<br>${mansioni[i]}
+									<a href="annuncio.html?id=${annunci[i].id}"> 
+										<br>${annunci[i].nomeAzienda} 
+										<br>Luogo: ${annunci[i].cittaSede}
+										<br>${annunci[i].tipo}
+										<br>${annunci[i].mansione}
 									</a>
 									<br>`;
 								pagina.appendChild(riga);
 							}
-
-							/* IMPLEMENTAZIONE FILTRO (commentato per ora)
-							document.getElementById("filtroImg").addEventListener("click", function () {
-								const filtroParam = document.getElementById("filtroParam");
-								filtroParam.style.display = filtroParam.style.display === "none" ? "block" : "none";
-							});
-
-							document.getElementById("filtroBtn").addEventListener("click", function () {
-								pagina.innerHTML = paginaFiltro;
-
-								const dataFiltrato = {
-									TipoContratto: document.getElementById('TipoContratto').value,
-									Mansione: document.getElementById('Mansione').value,
-									AreaDisciplinare: document.getElementById('AreaDisciplinare').value,
-									DataPubblicazioneDa: document.getElementById('DataPubblicazioneDa').value,
-									DataPubblicazioneA: document.getElementById('DataPubblicazioneA').value,
-									DataScadenzaDa: document.getElementById('DataScadenzaDa').value,
-									DataScadenzaA: document.getElementById('DataScadenzaA').value,
-									MaxIscrizioni: document.getElementById('MaxIscrizioni').value,
-									NomeAzienda: document.getElementById('NomeAzienda').value,
-									Sede: {
-										Citta: document.getElementById('Citta').value,
-										Via: document.getElementById('Via').value,
-										Civico: document.getElementById('Civico').value
-									}
-								};
-
-								// Esegui nuova richiesta con i filtri
-							});
-							*/
 						}
 					} catch (error) {
 						console.error('Errore:', error);

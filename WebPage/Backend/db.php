@@ -73,10 +73,12 @@ function query_insert(Table $table, array $insert_args, array $insert_values): b
 	global $conn;
 	
 	$param_type = '';
-	foreach($insert_args as $arg) {
+	foreach($insert_args as &$arg) {
 		$insert_placeholder[] = '?';
 		$param_type .= $arg->info()['type'];
+		$arg = $arg->info()['dbName'];
 	}
+	unset($arg);
 
 	$sql = 'INSERT INTO '. $table->value . '(' . implode(', ', $insert_args) . ') VALUES(' . implode(', ', $insert_placeholder) . ');'; 
 

@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Registrazione Studente</title>
+	<link rel="icon" type="image/png" href="logo.png">
 	<style>
 		body {
 			font-family: Arial, sans-serif;
@@ -139,7 +140,7 @@
 			<label><input type="radio" name="sesso" value="F"> Femmina</label>
 			<label><input type="radio" name="sesso" value="A">Altro</label>
 			
-			<label for="Indirizzo-seguito">Indirizzo Seguito</label>
+			<label for="Indirizzo-seguito">Indirizzo Scolastico Seguito</label>
 			<input type="text" id="Indirizzo-seguito" name="Indirizzo-seguito">
 
 			<label for="password">Password*</label>
@@ -264,6 +265,8 @@
 					}
 				}
 			} catch (error) {
+				console.error(error);
+				errore.textContent = "Formato dei dati inseriti non valido.";
 			}
 		});
 	</script>

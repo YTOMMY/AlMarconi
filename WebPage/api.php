@@ -167,7 +167,17 @@ switch($uri[0]) {
 						$id = null;
 					}
 					
-					$output = get_annuncio($id);
+					$result = get_annuncio($id);
+					if(isset($id)) {
+						$output = $result;
+					} else {
+						$output['annunci'] = $result;
+					}
+					if($output == false) {
+						$output = ['esit' => false];
+					} else {
+						$output['esit'] = true;
+					}
 					break;
 
 				// Crea annuncio
@@ -203,20 +213,19 @@ switch($uri[0]) {
 
 				// Visualizza candidati
 				case 'GET':
-					check_content($input);
 					$id = $uri[1];
 					
-					$output = get_candidati($id);
-					if($output == false) {
+					$result = get_candidati($id);
+					if($result == false) {
 						$output = ['esit' => false];
 					} else {
+						$output['candidati'] = $result;
 						$output['esit'] = true;
 					}
 					break;
 				
 				// Candidarsi
 				case 'POST':
-					check_content($input);
 					$id_annuncio = $uri[1];
 					
 					$output = ['esit' => candidarsi($id_annuncio)];

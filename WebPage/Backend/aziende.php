@@ -38,18 +38,20 @@ function get_annuncio($id = null, $data = null) {
 			$attr = Arg::fromJson([Table::Annunci], $attr);
 		}
 		unset($attr);
+	} else {
+		$data = [Arg::AnnuncioAll, Arg::NomeAzienda, Arg::SedeCitta, Arg::SedeVia, Arg::SedeCivico, Arg::Settore];
 	}
 	
 	if(isset($id)) {
 		if(!exists_annuncio($id)) {
 			return false;
 		}
-		$result = query_select([Table::Annunci], $data, [Arg::IdAnnuncio], [$id]);
-		return $result->fetch_assoc();
+		$result = query_select([Table::Annunci, Table::Aziende], $data, [Arg::IdAnnuncio], [$id], [Arg::AziendaAnnuncio], [Arg::IdAzienda]);
+		return Arg::toJsonArray([Table::Annunci, Table::Aziende], $result->fetch_assoc());
 	} else {
-		$result = query_select([Table::Annunci], $data, null, null);
+		$result = query_select([Table::Annunci, Table::Aziende], $data, null, null, [Arg::AziendaAnnuncio], [Arg::IdAzienda]);
 		while($row = $result->fetch_assoc()) {
-			$output[] = $row;
+			$output[] = Arg::toJsonArray([Table::Annunci, Table::Aziende], $row);
 		}
 		return $output;
 	}
@@ -114,7 +116,7 @@ function update_annuncio($id, $password, $data) {
 }
 
 function create_annuncio($data) {
-	if(!isset($_SESSION['id']) || gettype($_SESSION['id']) != 'azienda') {
+	if(!isset($_SESSION['id']) || get_type($_SESSION['id']) != 'azienda') {
 		unauthorized_error();
 	}
 	$id = $_SESSION['id'];
@@ -131,6 +133,8 @@ function create_annuncio($data) {
             $var_list[] = $value;
         }
     }
+	$attr_list[] = Arg::AziendaAnnuncio;
+	$var_list[] = $id;
     return query_insert(Table::Annunci, $attr_list + [Arg::AziendaAnnuncio], $var_list + [$id]);
 }
 
@@ -154,10 +158,14 @@ function get_candidati($idAnnuncio) {
 		not_found_error();
 	}
 
-	$result = query_select([Table::Candidarsi], [Arg::StudenteCandidatura], [Arg::AnnuncioCandidatura], [$idAnnuncio]);
+	$result = query_select([Table::Candidarsi, Table::Studenti], [Arg::StudenteCandidatura, Arg::NomeStudente, Arg::Cognome], [Arg::AnnuncioCandidatura], [$idAnnuncio], [Arg::StudenteCandidatura], [Arg::IdStudente]);
+	
 	while($row = $result->fetch_assoc()) {
-		$idStudenti[] = $row[Arg::StudenteCandidatura->info()['dbName']];
+		$studenti[] = Arg::toJsonArray([Table::Candidarsi, Table::Studenti], $row);
 	}
-	return $idStudenti;
+	if(!isset($studenti)) {
+		return false;
+	}
+	return $studenti;
 }
 ?>
