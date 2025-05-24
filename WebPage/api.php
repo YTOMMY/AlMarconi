@@ -43,7 +43,7 @@ switch($uri[0]) {
 				
 				if(login($data['email'], $data['password'])) {
 					$id = $_SESSION['id'];
-					$output = ['id' => $id, 'verificato' => is_verified($id), 'tipo' => get_type($id)];
+					$output = ['id' => $id, 'tipo' => get_type($id)];
 					if($output['tipo'] == 'studente') {
 						$datiStudente = getStudente();
 						$output['nome'] = $datiStudente['Nome'] . ' ' . $datiStudente['Cognome'];
@@ -83,7 +83,7 @@ switch($uri[0]) {
 					
 					if(create_account($data)) {
 						$id = $_SESSION['id'];
-						$output = ['id' => $id, 'verificato' => is_verified($id), 'tipo' => get_type($id)];
+						$output = ['id' => $id, 'tipo' => get_type($id)];
 						if($output['tipo'] == 'studente') {
 							$datiStudente = getStudente();
 							$output['nome'] = $datiStudente['Nome'] . ' ' . $datiStudente['Cognome'];
