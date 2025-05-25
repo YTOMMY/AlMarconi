@@ -1,0 +1,11 @@
+email: luca.bianchi2006@gmail.com
+password: luca.bianchi2006
+
+email: martina.rossi06@gmail.com
+password: martina.rossi06
+
+email: info@softlab.it
+password: info
+
+email: hr@meccanicapontedera.it
+password: hr
