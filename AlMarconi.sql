@@ -171,8 +171,8 @@ CREATE TABLE `utenti` (
   `2FA` bit(1) NOT NULL DEFAULT b'0',
   `Verificato` bit(1) NOT NULL DEFAULT b'0',
   `DataCreazione` date NOT NULL DEFAULT curdate(),
-  `VisualizzaMail` bit(1) NOT NULL DEFAULT b'0',
-  `VisualizzaTelefono` bit(1) NOT NULL DEFAULT b'0',
+  `VisualizzaMail` bit(1) NOT NULL DEFAULT b'1',
+  `VisualizzaTelefono` bit(1) NOT NULL DEFAULT b'1',
   PRIMARY KEY (`IdUtente`),
   UNIQUE KEY `Mail` (`Mail`),
   UNIQUE KEY `Telefono` (`Telefono`)
