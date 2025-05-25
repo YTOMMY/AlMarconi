@@ -10,9 +10,10 @@ Utilizzo in locale
 
 - Scaricare la cartella del progetto da GitHub.
 - Avviare il progetto con un server apache (si consiglia di utilizzare XAMPP).
-- Importare le istruzioni sql contenute nel file *"database.sql"* in MySQL (si consiglia di utilizzare XAMPP).
-Di default per accedere al database viene usato un account con username *“root”* e password *“”*, se si vogliono cambiare inserire username e password del nuovo account nel file php *“/WebPage/Backend/db.php”*.
-Per utilizzare i web service forniti da AlMarconi andare a *“localhost/AlMarconi/WebPage/api.php/”*.
+- Importare le istruzioni sql contenute nel file *"AlMarconi.sql"* in MySQL (si consiglia di utilizzare XAMPP).
+- Di default per accedere al database viene usato un account con username *“root”* e password *“”*, se si vogliono cambiare inserire username e password del nuovo account nel file php *“/WebPage/Backend/db.php”*.
+- Per utilizzare i web service forniti da AlMarconi andare a *“localhost/AlMarconi/WebPage/api.php/”*.
+- Sono stati preparati degli account di prova per testare le funzionalità del sito, le loro credenziali si trovano nel file *"UtentiProva.txt"*
 
 Utilizzo online
 
